@@ -1,4 +1,3 @@
-@charset "UTF-8";
 *,
 *::before,
 *::after {
@@ -48,14 +47,6 @@ body::-webkit-scrollbar {
   display: none !important;
 }
 
-.highlight {
-  filter: brightness(1.3);
-  transition: filter 0.3s ease;
-  /* Można dodać np. obramowanie:
-     outline: 2px solid red; 
-  */
-}
-
 .inversionOverlay {
   position: fixed;
   top: 0;
@@ -66,13 +57,20 @@ body::-webkit-scrollbar {
   -webkit-backdrop-filter: invert(1);
           backdrop-filter: invert(1);
   z-index: 9998;
-  opacity: 0; /* domyślnie nieaktywna */
+  opacity: 0;
   transition: opacity 0.1s, -webkit-clip-path 0.1s;
   transition: opacity 0.1s, clip-path 0.1s;
   transition: opacity 0.1s, clip-path 0.1s, -webkit-clip-path 0.1s;
-  /* Początkowo clip-path ustawiony na zerowy promień */
   -webkit-clip-path: circle(0px at 0 0);
           clip-path: circle(0px at 0 0);
+}
+
+.invert-color {
+  transition: filter 0.3s ease;
+}
+
+.invert-color.white {
+  filter: invert(1) !important;
 }
 
 .nav {
@@ -182,7 +180,7 @@ body::-webkit-scrollbar {
   font-weight: bold;
 }
 .header__music-box {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   display: flex;
@@ -244,10 +242,9 @@ body::-webkit-scrollbar {
   white-space: nowrap;
   font-size: 1.6rem;
   font-weight: bold;
-  animation: scroll-left 3s linear infinite;
 }
 .header__music-waves {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   height: 8rem;
@@ -273,86 +270,78 @@ body::-webkit-scrollbar {
   }
 }
 .works {
-  height: 100vh;
-  background-color: #000;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  height: 100vh;
+  background-color: #000;
 }
 .works__slider {
   position: relative;
-  width: min(400px, 100%);
+  width: min(800px, 100%);
+  height: 50rem;
 }
 .works__list {
-  list-style: none;
+  position: relative;
   width: 100%;
   height: 100%;
-  position: relative;
+  list-style: none;
   perspective: 900px;
   transform-style: preserve-3d;
 }
-.works__list > li {
+.works__list-element {
   position: absolute;
-  left: 50%;
   top: calc(50% - 1.2rem);
-  --rotateX: calc(1deg * var(--rotateDegrees) * calc(var(--day_idx) - var(--currentDay)));
-  transform: rotateX(var(--rotateX)) translateZ(190px) translateX(-50%) scale(var(--scale, 1));
-  --hue: calc(var(--rotateDegrees) * var(--day_idx));
-  background-color: hsl(var(--hue), 50%, var(--lightness, 50%));
+  left: 50%;
   width: 70%;
+  height: 24rem;
+  background-size: cover;
   color: white;
-  display: grid;
-  grid-template-columns: 2.5rem auto;
-  height: 2.4rem;
   transition: transform 500ms ease, background-color 500ms ease;
+  transform: rotateX(var(--rotateX)) translateZ(190px) translateX(-50%) scale(var(--scale, 1));
+  --rotateX: calc(1deg * var(--rotateAngle) * calc(var(--slideIndex) - var(--currentSlide)));
+  --hue: calc(var(--rotateAngle) * var(--slideIndex));
 }
-.works__list > li.active {
+.works__list-element::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7));
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.works__list-element.active {
   --lightness: 30%;
   --scale: 1.1;
 }
-.works__list > li > * {
-  display: grid;
-  align-items: center;
+.works__list-element--centered {
+  background-position: center;
 }
-.works__list > time {
-  text-align: center;
-}
-.works__list > span {
-  padding-inline-start: 0.5rem;
-  color: white;
-}
-.works__controls {
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  transform: translateY(-50%);
+.works__list-link {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 1000;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
 }
-.works__btn {
-  width: 1.5rem;
-  aspect-ratio: 1;
-  font-size: 0.9rem;
-  color: white;
-  border: none;
-  background: #39657e;
-  display: grid;
-  place-items: center;
+.works__list-header {
+  z-index: 1000;
+  font-size: 4.4rem;
 }
-.works__btn:hover, .works__btn:focus {
-  background: rgb(6, 60, 131);
-}
-.works__btn:active {
-  transform: scale(0.9);
+.works__list-text {
+  z-index: 1000;
+  font-size: 2rem;
 }
 
-.border {
-  width: 96%;
-  height: 3em;
-  border: 1px solid white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+@keyframes fillText {
+  to {
+    background-position: 0;
+  }
 }/*# sourceMappingURL=style.css.map */

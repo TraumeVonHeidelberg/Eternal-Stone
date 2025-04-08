@@ -45,14 +45,6 @@ body::-webkit-scrollbar {
 	display: none !important;
 }
 
-.highlight {
-	filter: brightness(1.3);
-	transition: filter 0.3s ease;
-	/* Można dodać np. obramowanie:
-	   outline: 2px solid red; 
-	*/
-}
-
 .inversionOverlay {
 	position: fixed;
 	top: 0;
@@ -62,10 +54,17 @@ body::-webkit-scrollbar {
 	pointer-events: none;
 	backdrop-filter: invert(1);
 	z-index: 9998;
-	opacity: 0; /* domyślnie nieaktywna */
+	opacity: 0;
 	transition: opacity 0.1s, clip-path 0.1s;
-	/* Początkowo clip-path ustawiony na zerowy promień */
 	clip-path: circle(0px at 0 0);
+}
+
+.invert-color {
+	transition: filter 0.3s ease;
+}
+
+.invert-color.white {
+	filter: invert(1) !important;
 }
 
 // -------------------------------------------------------
@@ -203,7 +202,7 @@ body::-webkit-scrollbar {
 	}
 
 	&__music-box {
-		position: absolute;
+		position: fixed;
 		bottom: 0;
 		width: 100%;
 		display: flex;
@@ -275,12 +274,12 @@ body::-webkit-scrollbar {
 			white-space: nowrap;
 			font-size: 1.6rem;
 			font-weight: bold;
-			animation: scroll-left 3s linear infinite;
+			// animation: scroll-left 3s linear infinite;
 		}
 	}
 
 	&__music-waves {
-		position: absolute;
+		position: fixed;
 		bottom: 0;
 		width: 100%;
 		height: 8rem;
@@ -314,98 +313,88 @@ body::-webkit-scrollbar {
 // WORKS
 
 .works {
-	height: 100vh;
-	background-color: #000;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-start;
+	height: 100vh;
+	background-color: #000;
 
 	&__slider {
 		position: relative;
-		width: min(400px, 100%);
+		width: min(800px, 100%);
+		height: 50rem;
 	}
 
 	&__list {
-		list-style: none;
+		position: relative;
 		width: 100%;
 		height: 100%;
-		position: relative;
+		list-style: none;
 		perspective: 900px;
 		transform-style: preserve-3d;
 
-		& > li {
+		&-element {
 			position: absolute;
-			left: 50%;
 			top: calc(50% - 1.2rem);
-			--rotateX: calc(1deg * var(--rotateDegrees) * calc(var(--day_idx) - var(--currentDay)));
-			transform: rotateX(var(--rotateX)) translateZ(190px) translateX(-50%) scale(var(--scale, 1));
-			--hue: calc(var(--rotateDegrees) * var(--day_idx));
-			background-color: hsl(var(--hue), 50%, var(--lightness, 50%));
+			left: 50%;
 			width: 70%;
+			height: 24rem;
+			background-size: cover;
 			color: white;
-			display: grid;
-			grid-template-columns: 2.5rem auto;
-			height: 2.4rem;
 			transition: transform 500ms ease, background-color 500ms ease;
+
+			transform: rotateX(var(--rotateX)) translateZ(190px) translateX(-50%) scale(var(--scale, 1));
+			--rotateX: calc(1deg * var(--rotateAngle) * calc(var(--slideIndex) - var(--currentSlide)));
+			--hue: calc(var(--rotateAngle) * var(--slideIndex));
+
+			&::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7));
+				z-index: 0;
+				border-radius: inherit;
+				pointer-events: none;
+			}
+
+			&.active {
+				--lightness: 30%;
+				--scale: 1.1;
+			}
+
+			&--centered {
+				background-position: center;
+			}
 		}
 
-		& > li.active {
-			--lightness: 30%;
-			--scale: 1.1;
-		}
-
-		& > li > * {
-			display: grid;
+		&-link {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 			align-items: center;
-		}
-
-		& > time {
+			height: 100%;
+			width: 100%;
+			position: relative;
+			z-index: 1000;
+			color: #fff;
+			text-decoration: none;
 			text-align: center;
 		}
 
-		& > span {
-			padding-inline-start: 0.5rem;
-			color: white;
-		}
-	}
-
-	&__controls {
-		position: absolute;
-		top: 50%;
-		left: 100%;
-		transform: translateY(-50%);
-		display: flex;
-		flex-direction: column;
-		gap: 0.125rem;
-	}
-
-	&__btn {
-		width: 1.5rem;
-		aspect-ratio: 1;
-		font-size: 0.9rem;
-		color: white;
-		border: none;
-		background: #39657e;
-		display: grid;
-		place-items: center;
-
-		&:hover,
-		&:focus {
-			background: rgb(6, 60, 131);
+		&-header {
+			z-index: 1000;
+			font-size: 4.4rem;
 		}
 
-		&:active {
-			transform: scale(0.9);
+		&-text {
+			z-index: 1000;
+			font-size: 2rem;
 		}
 	}
 }
 
-.border {
-	width: 96%;
-	height: 3em;
-	border: 1px solid white;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+@keyframes fillText {
+	to {
+		background-position: 0;
+	}
 }

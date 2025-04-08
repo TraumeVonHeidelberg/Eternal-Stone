@@ -1,79 +1,80 @@
-const febHolidays = [
-	"Dark Chocolate Day",
-	"Groundhog Day",
-	"Carrot Cake Day",
-	"Wear Red Day",
-	"Weatherperson's Day",
-	"Chopsticks Day",
-	"Periodic Table Day",
-	"Kite Flying Day",
-	"Pizza Day",
-	"Umbrella Day",
-	"Inventor's Day",
-	"Global Movie Day",
-	"Tortellini Day",
-	"Valentine's Day",
-	"Gumdrop Day",
-	"Do a Grouch a Favor Day",
-	"Cabbage Day",
-	"Battery Day",
-	"Chocolate Mint Day",
-	"Love Your Pet Day",
-	"President's Day",
-	"Cook a Sweet Potato Day",
-	"Tile Day",
-	"Toast Day",
-	"Clam Chowder Day",
-	"Pistachio Day",
-	"Polar Bear Day",
-	"Tooth Fairy Day"
-];
+const slides = [
+	{
+		title: 'Nagłówek 1',
+		description: 'Tekst informacyjny 1',
+		image: '../img/slider/EternalStone.png',
+	},
+	{
+		title: 'Nagłówek 2',
+		description: 'Tekst informacyjny 2',
+		image: '../img/slider/VisualNovel.png',
+	},
+	{
+		title: 'Nagłówek 3',
+		description: 'Tekst informacyjny 3',
+		image: '../img/slider/AnimeRPG.png',
+	},
+]
 
-const ulEl = document.querySelector("ul");
-const d = new Date();
-let daynumber = d.getMonth() == 1 ? d.getDate() - 1 : 0;
-let activeIndex = daynumber;
-const rotate = -360 / febHolidays.length;
-init();
+const listElement = document.querySelector('.works__list')
+const sliderContainer = document.querySelector('.works__slider')
 
-function init() {
-	febHolidays.forEach((holiday, idx) => {
-		const liEl = document.createElement("li");
-		liEl.style.setProperty("--day_idx", idx);
-		liEl.innerHTML = `<time datetime="2022-02-${idx + 1}">${
-			idx + 1
-		}</time><span>${holiday}</span>`;
-		ulEl.append(liEl);
-	});
-	ulEl.style.setProperty("--rotateDegrees", rotate);
-	adjustDay(0);
+const today = new Date()
+let currentSlide = today.getMonth() === 1 ? today.getDate() - 1 : 0
+let activeIndex = currentSlide
+
+const rotationPerSlide = -360 / slides.length
+
+initializeSlider()
+
+function initializeSlider() {
+	slides.forEach((slide, index) => {
+		const li = document.createElement('li')
+		li.classList.add('works__list-element')
+		li.style.setProperty('--slideIndex', index)
+		li.style.backgroundImage = `url(${slide.image})`
+
+		if (index === 1) {
+			li.classList.add('works__list-element--centered')
+		}
+
+		const a = document.createElement('a')
+		a.href = `/podstrona-${index + 1}`
+		a.classList.add('works__list-link')
+
+		const h2 = document.createElement('h2')
+		h2.classList.add('works__list-header')
+		h2.textContent = slide.title
+
+		const span = document.createElement('span')
+		span.classList.add('works__list-text')
+		span.textContent = slide.description
+
+		a.appendChild(h2)
+		a.appendChild(span)
+		li.appendChild(a)
+		listElement.appendChild(li)
+	})
+
+	listElement.style.setProperty('--rotateAngle', rotationPerSlide)
+	updateActiveSlide(0)
+
+	sliderContainer.addEventListener('wheel', e => {
+		e.preventDefault()
+		updateActiveSlide(e.deltaY < 0 ? -1 : 1)
+	})
 }
 
-function adjustDay(nr) {
-	daynumber += nr;
-	ulEl.style.setProperty("--currentDay", daynumber);
+function updateActiveSlide(offset) {
+	currentSlide += offset
+	listElement.style.setProperty('--currentSlide', currentSlide)
 
-	const activeEl = document.querySelector("li.active");
-	if (activeEl) activeEl.classList.remove("active");
+	const prevActive = document.querySelector('.works__list-element.active')
+	if (prevActive) prevActive.classList.remove('active')
 
-	activeIndex = (activeIndex + nr + febHolidays.length) % febHolidays.length;
-	const newActiveEl = document.querySelector(`li:nth-child(${activeIndex + 1})`);
-	document.body.style.backgroundColor = window.getComputedStyle(
-		newActiveEl
-	).backgroundColor;
+	activeIndex = (activeIndex + offset + slides.length) % slides.length
+	const currentElement = document.querySelector(`.works__list-element:nth-child(${activeIndex + 1})`)
 
-	newActiveEl.classList.add("active");
+	document.body.style.backgroundColor = window.getComputedStyle(currentElement).backgroundColor
+	currentElement.classList.add('active')
 }
-
-window.addEventListener("keydown", (e) => {
-	switch (e.key) {
-		case "ArrowUp":
-			adjustDay(-1);
-			break;
-		case "ArrowDown":
-			adjustDay(1);
-			break;
-		default:
-			return;
-	}
-});

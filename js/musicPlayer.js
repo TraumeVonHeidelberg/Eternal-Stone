@@ -1,13 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-	//------------------------------------------------
-	// 1) PLAYLISTA I OBSŁUGA AUDIO
-	//------------------------------------------------
 	const audio = document.getElementById('myAudio')
 	const playPauseIcon = document.getElementById('playPauseIcon')
 	const playPauseShape = document.getElementById('playPauseShape')
 	const morphAnim = document.getElementById('morphAnim')
 	const [leftArrow, rightArrow] = document.querySelectorAll('.header__music-arrow')
-	const marqueeText = document.getElementById('marqueeText')
 
 	let isPlaying = false
 	let currentTrackIndex = 0
@@ -20,10 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const playlist = [
 		{ title: 'Love 2000', src: './audio/Love 2000.mp3' },
 		{ title: 'Coraz bliżej śmierci', src: './audio/SLASHEC.mp3' },
-		{ title: 'Doki Doki 1', src: './audio/Eternal Stone.mp3' },
-		{ title: 'testrrrrr', src: './audio/jego zbroja bebech tlusty.mp3' },
-		{ title: 'sex', src: './audio/kurwa telefony.mp3' },
-		{ title: 'sef', src: './audio/DOKI DOKIIII.mp3' },
 	]
 
 	function animateIcon(fromPath, toPath) {
@@ -39,12 +31,22 @@ document.addEventListener('DOMContentLoaded', () => {
 		const separator = ' ● '
 		const repeatedTitle = (separator + rawTitle).repeat(10).trim()
 
-		// Wstawiamy zawartość do #marqueeText
 		const marqueeText = document.getElementById('marqueeText')
 		marqueeText.textContent = repeatedTitle
+
+		requestAnimationFrame(() => {
+			const container = marqueeText.parentElement
+			const textWidth = marqueeText.scrollWidth
+			const containerWidth = container.offsetWidth
+
+			const distance = textWidth + containerWidth
+			const speed = 200 
+			const duration = distance / speed
+
+			marqueeText.style.animation = `scroll-left ${duration}s linear infinite`
+		})
 	}
 
-	// Kliknięcie w ikonę – Play/Pause
 	playPauseIcon.addEventListener('click', () => {
 		if (isPlaying) {
 			audio.pause()
@@ -72,40 +74,32 @@ document.addEventListener('DOMContentLoaded', () => {
 		animateIcon(iconPaths.play, iconPaths.pause)
 	})
 
-	// Gdy utwór się skończy – automatycznie przechodzimy do następnego
 	audio.addEventListener('ended', () => {
 		currentTrackIndex = (currentTrackIndex + 1) % playlist.length
 		loadTrack(currentTrackIndex)
-		audio.play() // automatyczne odtworzenie następnego
+		audio.play() 
 	})
 
-	// Ustawiamy domyślnie ikonę "Play" i ładujemy pierwszy utwór
 	playPauseShape.setAttribute('d', iconPaths.play)
 	loadTrack(currentTrackIndex)
 
-	//------------------------------------------------
-	// 2) AUDIO CONTEXT + ANALYSER
-	//------------------------------------------------
 	const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 	const analyser = audioCtx.createAnalyser()
-	analyser.fftSize = 8192 // można zmienić, np. 4096 albo 2048 dla lżejszej animacji
-	const dataArray = new Uint8Array(analyser.frequencyBinCount) // 4096 próbek, gdy fftSize=8192
+	analyser.fftSize = 8192 
+	const dataArray = new Uint8Array(analyser.frequencyBinCount) 
 
 	const source = audioCtx.createMediaElementSource(audio)
 	source.connect(analyser)
 	analyser.connect(audioCtx.destination)
 
-	// By uruchomić audioCtx w niektórych przeglądarkach
 	audio.addEventListener('play', () => {
 		if (audioCtx.state === 'suspended') {
 			audioCtx.resume()
 		}
-		// Przy ponownym play - zerujemy słupki, żeby startowały od 0
+
 		smoothedData.fill(0)
-		// Losowy kolor HSL
 		const baseHue = Math.floor(Math.random() * 360) // 0–359
 
-		// Jasność i nasycenie mogą być delikatnie różne
 		const saturation = 80
 		const lightTop = 60
 		const lightBottom = 25
@@ -114,9 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		gradientBottom = `hsl(${baseHue}, ${saturation}%, ${lightBottom}%)`
 	})
 
-	//------------------------------------------------
-	// 3) FUNKCJE POMOCNICZE
-	//------------------------------------------------
 	function constrain(val, min, max) {
 		return Math.min(Math.max(val, min), max)
 	}
@@ -124,14 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin
 	}
 
-	//------------------------------------------------
-	// 4) KANWA + ZMIENNE DO ANIMACJI
-	//------------------------------------------------
 	const $canvas = document.getElementById('header__music-waves')
 	const ctx = $canvas.getContext('2d')
 
-	let barScale = 5 // dynamicznie aktualizowane w resize()
-	let smoothedData = new Float32Array(dataArray.length) // do fade-out
+	let barScale = 5 
+	let smoothedData = new Float32Array(dataArray.length) 
 
 	function resize() {
 		const { width: w, height: h } = $canvas.parentNode.getBoundingClientRect()
@@ -145,32 +133,24 @@ document.addEventListener('DOMContentLoaded', () => {
 	resize()
 	window.addEventListener('resize', resize)
 
-	//------------------------------------------------
-	// 5) RYSOWANIE + GRADIENT
-	//------------------------------------------------
 
 	let gradientTop = 'rgba(139, 92, 246, 0.7)'
 	let gradientBottom = 'rgba(139, 92, 246, 0.1)'
 
 	function update() {
-		// POBIERAMY DANE Z ANALIZERA (0..255)
 		analyser.getByteFrequencyData(dataArray)
 
-		// CZYŚCIMY EKRAN
 		ctx.clearRect(0, 0, $canvas.width, $canvas.height)
 
-		const length = dataArray.length // np. 4096
+		const length = dataArray.length 
 		const barWidth = ($canvas.width / length) * barScale
 		const barsCount = length / barScale // np. 4096/5 = 819
 		const smoothingSpeed = 0.15 // im mniejsze, tym wolniej opada
 
 		let r = 0
 		for (let s = 0; s < barsCount; s++) {
-			// surowa wartość [0..255] -> normalizacja [0..1]
 			const rawNorm = dataArray[s] / 255
-			// docelowa wartość -> 0 gdy pauza, rawNorm gdy play
 			const target = isPlaying ? rawNorm : 0
-			// płynne przejście
 			smoothedData[s] = smoothedData[s] * (1 - smoothingSpeed) + target * smoothingSpeed
 
 			const barHeight = smoothedData[s] * $canvas.height
@@ -187,9 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	//------------------------------------------------
-	// 6) ANIMACJA requestAnimationFrame
-	//------------------------------------------------
 	function animate() {
 		requestAnimationFrame(animate)
 		update()

@@ -22,20 +22,21 @@
     <script src="./js/pictureBlink.js" defer></script>
     <script src="./js/updateClock.js" defer></script>
     <script src="./js/slider.js" defer></script>
+    <script src="./js/changeColor.js" defer></script>
 </head>
 
 <body>
     <div class="inversionOverlay" id="inversionOverlay"></div>
     <canvas class="laser-cursor" id="laserCursor"></canvas>
-    
+
     <nav class="nav section-padding">
         <a class="nav__logo" href="#">
-            <img class="nav__logo-text" src="./img/logo/logo-text.svg"
+            <img class="nav__logo-text invert-color" src="./img/logo/logo-text.svg"
                 alt="Eternal Stone Industries text rotating around logo">
-            <img class="nav__logo-img" src="./img/logo/logo-img.svg"
+            <img class="nav__logo-img " src="./img/logo/logo-img.svg"
                 alt="Part of the Eternal Stone Industries logo without text">
         </a>
-        <div class="nav__clock">
+        <div class="nav__clock invert-color">
             <div class="nav__clock-container">
                 <div class="nav__clock-hand nav__clock-hand--hour" id="hour-hand"></div>
                 <div class="nav__clock-hand nav__clock-hand--minute" id="minute-hand"></div>
@@ -75,26 +76,26 @@
             </div>
             <div class="header__music-playlist">
                 <img src="./img/left.svg" alt="Left arrow portraying a cat used to change a song"
-                    class="header__music-arrow" data-interactive>
-                <div class="header__scroll-container">
-                    <p class="header__scroll-text" id="marqueeText"></p>
+                    class="header__music-arrow invert-color" data-interactive>
+                <div class="header__scroll-container invert-color">
+                    <p class="header__scroll-text " id="marqueeText"></p>
                 </div>
                 <img src="./img/right.svg" alt="Right arrow portraying a cat used to change a song"
-                    class="header__music-arrow" data-interactive>
+                    class="header__music-arrow invert-color" data-interactive>
             </div>
             <div class="header__socials">
-                <a href="mailto:eternalstoneindustries@gmail.com" class="header__social-link" target="_blank"
+                <a href="mailto:eternalstoneindustries@gmail.com" class="header__social-link invert-color" target="_blank"
                     rel="noopener">
                     <i class="fa-solid fa-envelope"></i>
                 </a>
-                <a href="https://www.youtube.com/channel/UCagq84rPxHootM2tkMQJebQ" class="header__social-link"
+                <a href="https://www.youtube.com/channel/UCagq84rPxHootM2tkMQJebQ" class="header__social-link invert-color"
                     target="_blank" rel="noopener">
                     <i class="fa-brands fa-youtube"></i>
                 </a>
-                <a href="https://discord.gg/AgBAPUE9uj" class="header__social-link" target="_blank" rel="noopener">
+                <a href="https://discord.gg/AgBAPUE9uj" class="header__social-link invert-color" target="_blank" rel="noopener">
                     <i class="header__social-icon fa-brands fa-discord"></i>
                 </a>
-                <a href="https://www.instagram.com/eternalstoneindustries/" class="header__social-link" target="_blank"
+                <a href="https://www.instagram.com/eternalstoneindustries/" class="header__social-link invert-color" target="_blank"
                     rel="noopener">
                     <i class="fa-brands fa-instagram"></i>
                 </a>
@@ -108,10 +109,6 @@
         <section class="works">
             <div class="works__slider">
                 <ul class="works__list"></ul>
-                <div class="works__controls">
-                    <button onclick="adjustDay(-1)" class="works__btn"></button>
-                    <button onclick="adjustDay(1)" class="works__btn"></button>
-                </div>
             </div>
         </section>
     </main>
