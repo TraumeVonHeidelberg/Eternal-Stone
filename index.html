@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="eng">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Eternal Stone Industries – official site of a studio crafting deep and immersive MMO-RPG worlds. Join us on epic journeys where legends are born, alliances forged, and destinies shaped." />
+    <title>Eternal Stone Industries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@200..800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="./img/logo/favicon-64.png" type="image/png">
+    <link rel="apple-touch-icon" href="img/logo/favicon-180.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/wavesurfer.js" defer></script>
+    <script src="./js/laserCursor.js" defer></script>
+    <script src="./js/musicPlayer.js" defer></script>
+    <script src="./js/pictureBlink.js" defer></script>
+    <script src="./js/updateClock.js" defer></script>
+    <script src="./js/slider.js" defer></script>
+</head>
+
+<body>
+    <div class="inversionOverlay" id="inversionOverlay"></div>
+    <canvas class="laser-cursor" id="laserCursor"></canvas>
+    
+    <nav class="nav section-padding">
+        <a class="nav__logo" href="#">
+            <img class="nav__logo-text" src="./img/logo/logo-text.svg"
+                alt="Eternal Stone Industries text rotating around logo">
+            <img class="nav__logo-img" src="./img/logo/logo-img.svg"
+                alt="Part of the Eternal Stone Industries logo without text">
+        </a>
+        <div class="nav__clock">
+            <div class="nav__clock-container">
+                <div class="nav__clock-hand nav__clock-hand--hour" id="hour-hand"></div>
+                <div class="nav__clock-hand nav__clock-hand--minute" id="minute-hand"></div>
+                <div class="nav__clock-hand nav__clock-hand--second" id="second-hand"></div>
+            </div>
+            <div class="nav__clock-time-text">
+                <p class="nav__clock-time-paragraph" id="city-name"></p>
+                <span class="nav__clock-time-digital" id="digital-time">--:--:--</span>
+                <span class="nav__clock-square"></span>
+            </div>
+        </div>
+    </nav>
+    <header class="header">
+        <img src="./img/title character.png" alt="A picture of young girl with glasses with caracal around her neck"
+            class="header__img">
+        <h1 class="header__heading">
+            <!-- <p class="header__text">Eternal Stone</p>
+            <p class="header__text">Industries</p> -->
+            Eternal Stone
+        </h1>
+        <div class="header__music-box">
+            <div class="header__music-player">
+                <div class="header__character-wrapper">
+                    <img src="./img/play-character.png" id="eyes-open" class="header__music-img"
+                        alt="Postać z otwartymi oczami">
+                    <img src="./img/play-character-blink.png" id="eyes-closed"
+                        class="header__music-img header__music-img--closed" alt="Postać z zamkniętymi oczami">
+                </div>
+                <svg id="playPauseIcon" class="header__music-icon" viewBox="0 0 100 100" data-interactive>
+                    <path id="playPauseShape" fill="white"
+                        d="M30,20 L70,50 L30,80 L30,80 Z M30,20 L30,20 L30,20 L30,20 Z">
+                        <animate id="morphAnim" attributeName="d" begin="indefinite" dur="0.4s" fill="freeze"
+                            calcMode="linear" />
+                    </path>
+                </svg>
+                <audio id="myAudio" src=""></audio>
+            </div>
+            <div class="header__music-playlist">
+                <img src="./img/left.svg" alt="Left arrow portraying a cat used to change a song"
+                    class="header__music-arrow" data-interactive>
+                <div class="header__scroll-container">
+                    <p class="header__scroll-text" id="marqueeText"></p>
+                </div>
+                <img src="./img/right.svg" alt="Right arrow portraying a cat used to change a song"
+                    class="header__music-arrow" data-interactive>
+            </div>
+            <div class="header__socials">
+                <a href="mailto:eternalstoneindustries@gmail.com" class="header__social-link" target="_blank"
+                    rel="noopener">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+                <a href="https://www.youtube.com/channel/UCagq84rPxHootM2tkMQJebQ" class="header__social-link"
+                    target="_blank" rel="noopener">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+                <a href="https://discord.gg/AgBAPUE9uj" class="header__social-link" target="_blank" rel="noopener">
+                    <i class="header__social-icon fa-brands fa-discord"></i>
+                </a>
+                <a href="https://www.instagram.com/eternalstoneindustries/" class="header__social-link" target="_blank"
+                    rel="noopener">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+
+        <canvas class="header__music-waves" id="header__music-waves"></canvas>
+    </header>
+
+    <main>
+        <section class="works">
+            <div class="works__slider">
+                <ul class="works__list"></ul>
+                <div class="works__controls">
+                    <button onclick="adjustDay(-1)" class="works__btn"></button>
+                    <button onclick="adjustDay(1)" class="works__btn"></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+</body>
+
+</html>

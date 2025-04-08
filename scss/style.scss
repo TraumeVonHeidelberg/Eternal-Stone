@@ -1,0 +1,411 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+html {
+	font-size: 62.5%;
+	scroll-behavior: smooth;
+}
+
+body {
+	min-height: 100vh;
+	font-family: 'Manrope', sans-serif;
+	scrollbar-width: 0;
+	user-select: none;
+}
+
+body,
+button,
+a,
+input {
+	cursor: none !important;
+}
+
+body::-webkit-scrollbar {
+	display: none;
+}
+
+.laser-cursor {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 9999;
+	pointer-events: none;
+}
+
+.section-padding {
+	padding: 1.2rem 2.4rem;
+}
+
+.hidden {
+	display: none !important;
+}
+
+.highlight {
+	filter: brightness(1.3);
+	transition: filter 0.3s ease;
+	/* Można dodać np. obramowanie:
+	   outline: 2px solid red; 
+	*/
+}
+
+.inversionOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+	backdrop-filter: invert(1);
+	z-index: 9998;
+	opacity: 0; /* domyślnie nieaktywna */
+	transition: opacity 0.1s, clip-path 0.1s;
+	/* Początkowo clip-path ustawiony na zerowy promień */
+	clip-path: circle(0px at 0 0);
+}
+
+// -------------------------------------------------------
+// NAV
+.nav {
+	position: fixed;
+	top: 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+
+	&__logo {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 17.2rem;
+		height: 17.2rem;
+	}
+
+	&__logo-text,
+	&__logo-img {
+		position: absolute;
+	}
+
+	&__logo-text {
+		margin-bottom: 0.8rem;
+		width: 17.2rem;
+		animation: rotate 12s linear infinite;
+	}
+
+	&__logo-img {
+		z-index: 1000;
+		width: 12.4rem;
+	}
+
+	&__clock {
+		display: flex;
+		align-self: flex-start;
+		gap: 3.2rem;
+		padding: 4.8rem 0;
+		&-container {
+			position: relative;
+		}
+
+		&-hand {
+			position: absolute;
+			bottom: 50%;
+			left: 50%;
+			width: 0.15rem;
+			transform-origin: bottom center;
+			background-color: #000;
+
+			&--hour {
+				height: 20px;
+			}
+
+			&--minute {
+				height: 2.6rem;
+			}
+
+			&--second {
+				height: 3rem;
+				background-color: #ff0000;
+			}
+		}
+
+		&-time-text {
+			display: flex;
+			align-items: center;
+			gap: 0.4rem;
+			font-size: 1.6rem;
+		}
+
+		&-time-paragraph {
+			font-weight: bold;
+		}
+
+		&-time-digital {
+			width: 6.4rem;
+		}
+
+		&-square {
+			display: inline-block;
+			width: 0.8rem;
+			height: 0.8rem;
+			background-color: #000;
+			border-radius: 0.3rem;
+		}
+	}
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+// -------------------------------------------------------
+
+// HEADER
+.header {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	text-align: center;
+	overflow: hidden;
+	pointer-events: none;
+
+	&__img {
+		position: absolute;
+		top: 2.4rem;
+		width: 52.8rem;
+		filter: drop-shadow(0 0 1px #000);
+		mask-image: linear-gradient(to bottom, black 70%, rgba(0, 0, 0, 0.8) 75%, rgba(0, 0, 0, 0.4) 85%, transparent 100%);
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			black 70%,
+			rgba(0, 0, 0, 0.8) 75%,
+			rgba(0, 0, 0, 0.4) 85%,
+			transparent 100%
+		);
+	}
+
+	&__heading {
+		font-family: 'Anton', sans-serif;
+		font-size: 24.8rem;
+		font-weight: bold;
+	}
+
+	&__music-box {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 0 0 2.4rem;
+		pointer-events: all;
+	}
+
+	&__music-player {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 12.4rem;
+		height: 18.6rem;
+	}
+
+	&__character-wrapper {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	&__music-img {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+	}
+
+	&__music-icon {
+		position: absolute;
+		top: 6.5rem;
+		left: 2.75rem;
+		z-index: 1000;
+		width: 8rem;
+		height: 8rem;
+		color: #fff;
+		filter: drop-shadow(0 0 2px #000);
+	}
+
+	&__music-playlist {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		align-self: flex-end;
+		gap: 3.2rem;
+		// padding: 2.4rem;
+		margin-bottom: 2.4rem;
+	}
+
+	&__music-arrow {
+		width: 8rem;
+	}
+
+	.header__scroll {
+		&-container {
+			width: 20rem;
+			overflow: hidden;
+			mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+			-webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+		}
+
+		&-text {
+			display: inline-block;
+			white-space: nowrap;
+			font-size: 1.6rem;
+			font-weight: bold;
+			animation: scroll-left 3s linear infinite;
+		}
+	}
+
+	&__music-waves {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		height: 8rem;
+		pointer-events: none;
+		z-index: 5000;
+	}
+
+	&__socials {
+		display: flex;
+	}
+
+	&__social-link {
+		color: #000;
+		font-size: 3.6rem;
+		text-decoration: none;
+		padding: 2.4rem;
+	}
+}
+
+@keyframes scroll-left {
+	0% {
+		transform: translateX(0%);
+	}
+	100% {
+		transform: translateX(-10%);
+	}
+}
+
+// -------------------------------------------------------
+
+// WORKS
+
+.works {
+	height: 100vh;
+	background-color: #000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&__slider {
+		position: relative;
+		width: min(400px, 100%);
+	}
+
+	&__list {
+		list-style: none;
+		width: 100%;
+		height: 100%;
+		position: relative;
+		perspective: 900px;
+		transform-style: preserve-3d;
+
+		& > li {
+			position: absolute;
+			left: 50%;
+			top: calc(50% - 1.2rem);
+			--rotateX: calc(1deg * var(--rotateDegrees) * calc(var(--day_idx) - var(--currentDay)));
+			transform: rotateX(var(--rotateX)) translateZ(190px) translateX(-50%) scale(var(--scale, 1));
+			--hue: calc(var(--rotateDegrees) * var(--day_idx));
+			background-color: hsl(var(--hue), 50%, var(--lightness, 50%));
+			width: 70%;
+			color: white;
+			display: grid;
+			grid-template-columns: 2.5rem auto;
+			height: 2.4rem;
+			transition: transform 500ms ease, background-color 500ms ease;
+		}
+
+		& > li.active {
+			--lightness: 30%;
+			--scale: 1.1;
+		}
+
+		& > li > * {
+			display: grid;
+			align-items: center;
+		}
+
+		& > time {
+			text-align: center;
+		}
+
+		& > span {
+			padding-inline-start: 0.5rem;
+			color: white;
+		}
+	}
+
+	&__controls {
+		position: absolute;
+		top: 50%;
+		left: 100%;
+		transform: translateY(-50%);
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+	}
+
+	&__btn {
+		width: 1.5rem;
+		aspect-ratio: 1;
+		font-size: 0.9rem;
+		color: white;
+		border: none;
+		background: #39657e;
+		display: grid;
+		place-items: center;
+
+		&:hover,
+		&:focus {
+			background: rgb(6, 60, 131);
+		}
+
+		&:active {
+			transform: scale(0.9);
+		}
+	}
+}
+
+.border {
+	width: 96%;
+	height: 3em;
+	border: 1px solid white;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
