@@ -44,7 +44,8 @@ body::-webkit-scrollbar {
 }
 
 .hidden {
-  display: none !important;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .inversionOverlay {
@@ -76,10 +77,12 @@ body::-webkit-scrollbar {
 .nav {
   position: fixed;
   top: 0;
+  z-index: 2000;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  transition: opacity 0.3s ease;
 }
 .nav__logo {
   position: relative;
@@ -182,12 +185,14 @@ body::-webkit-scrollbar {
 .header__music-box {
   position: fixed;
   bottom: 0;
+  z-index: 2000;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 0 0 2.4rem;
   pointer-events: all;
+  transition: opacity 0.3s ease;
 }
 .header__music-player {
   position: relative;
@@ -270,15 +275,31 @@ body::-webkit-scrollbar {
   }
 }
 .works {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   height: 100vh;
   background-color: #000;
+  transition: background 0.8s ease;
+}
+.works__bg-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.works__bg-layer--current {
+  opacity: 1;
+}
+.works__bg-layer--next {
+  opacity: 0;
 }
 .works__slider {
   position: relative;
-  width: min(800px, 100%);
+  width: min(80rem, 90%);
   height: 50rem;
 }
 .works__list {
@@ -305,10 +326,9 @@ body::-webkit-scrollbar {
 .works__list-element::before {
   content: "";
   position: absolute;
+  z-index: 0;
   inset: 0;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7));
-  z-index: 0;
-  border-radius: inherit;
   pointer-events: none;
 }
 .works__list-element.active {
@@ -319,14 +339,14 @@ body::-webkit-scrollbar {
   background-position: center;
 }
 .works__list-link {
+  position: relative;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   width: 100%;
-  position: relative;
-  z-index: 1000;
   color: #fff;
   text-decoration: none;
   text-align: center;
@@ -338,10 +358,4 @@ body::-webkit-scrollbar {
 .works__list-text {
   z-index: 1000;
   font-size: 2rem;
-}
-
-@keyframes fillText {
-  to {
-    background-position: 0;
-  }
 }/*# sourceMappingURL=style.css.map */
