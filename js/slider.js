@@ -148,10 +148,20 @@ function updateActiveSlide(offset) {
 	if (prevActive) {
 		const prevSpan = prevActive.querySelector('.works__list-text')
 		if (prevSpan) {
+			// Zatrzymaj aktualne animacje
+			if (prevSpan.dataset.timeoutId) {
+				clearTimeout(parseInt(prevSpan.dataset.timeoutId))
+				prevSpan.dataset.timeoutId = ''
+			}
+			if (prevSpan.dataset.timerId) {
+				clearInterval(parseInt(prevSpan.dataset.timerId))
+				prevSpan.dataset.timerId = ''
+			}
 			prevSpan.textContent = ''
 		}
 		prevActive.classList.remove('active')
 	}
+
 	activeIndex = (activeIndex + offset + slides.length) % slides.length
 	const currentElement = document.querySelector(`.works__list-element:nth-child(${activeIndex + 1})`)
 	currentElement.classList.add('active')
@@ -159,6 +169,7 @@ function updateActiveSlide(offset) {
 	if (span) {
 		typeText(span, 30)
 	}
+
 	if (isHover) {
 		crossFadeBackground(activeIndex)
 	} else {
@@ -169,18 +180,31 @@ function updateActiveSlide(offset) {
 /* ======== 5. ANIMACJA TEKSTU LITERKA-PO-LITERCE ======== */
 function typeText(span, speed = 30, delay = 300) {
 	const fullText = span.getAttribute('data-fulltext') || ''
+
+	// Usuń istniejące animacje
+	if (span.dataset.timeoutId) {
+		clearTimeout(parseInt(span.dataset.timeoutId))
+		span.dataset.timeoutId = ''
+	}
+	if (span.dataset.timerId) {
+		clearInterval(parseInt(span.dataset.timerId))
+		span.dataset.timerId = ''
+	}
 	span.textContent = ''
 
-	setTimeout(() => {
+	const timeoutId = setTimeout(() => {
 		let i = 0
-		const timer = setInterval(() => {
+		const timerId = setInterval(() => {
 			span.textContent += fullText[i]
 			i++
 			if (i >= fullText.length) {
-				clearInterval(timer)
+				clearInterval(timerId)
+				span.dataset.timerId = ''
 			}
 		}, speed)
+		span.dataset.timerId = timerId.toString()
 	}, delay)
+	span.dataset.timeoutId = timeoutId.toString()
 }
 
 /* ======== 6. PRZERWANIE EWENTUALNEJ POPRZEDNIEJ ANIMACJI ======== */
