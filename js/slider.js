@@ -4,25 +4,31 @@ const slides = [
 		description: 'MMO-RPG Project',
 		image: '../img/slider/EternalStone.png',
 		bgImage: 'url("../img/slider/EternalStone-large.png")',
+		videoSrc: '../videos/EternalStone.mp4',
 	},
 	{
 		title: 'Coming Soon',
 		description: 'Visual Novel Project',
 		image: '../img/slider/VisualNovel.png',
 		bgImage: 'url("../img/slider/VisualNovel-large.png")',
+		videoSrc: '../img/slider/jakie to trudneee.mp4',
 	},
 	{
 		title: 'Coming Soon',
 		description: 'Anime RPG project',
 		image: '../img/slider/AnimeRPG.png',
 		bgImage: 'url("../img/slider/AnimeRPG--large.png")',
+		videoSrc: '../img/slider/test2.mp4',
 	},
 ]
 
+/* ======== 2. POBRANIE ELEMENTÓW ======== */
 const listElement = document.querySelector('.works__list')
 const sliderContainer = document.querySelector('.works__slider')
-const bgCurrent = document.querySelector('.works__bg-layer--current')
-const bgNext = document.querySelector('.works__bg-layer--next')
+const layerCurrent = document.querySelector('.works__bg-layer--current')
+const layerNext = document.querySelector('.works__bg-layer--next')
+const videoCurrent = layerCurrent.querySelector('.works__video--current')
+const videoNext = layerNext.querySelector('.works__video--next')
 const nav = document.querySelector('.nav')
 const musicBox = document.querySelector('.header__music-box')
 
@@ -32,13 +38,57 @@ let isHover = false
 const rotationPerSlide = -360 / slides.length
 let currentTransitionEndCallback = null
 
+// Funkcja pomocnicza zwracająca modyfikator kolejności jako napis (np. --first, --second, ...)
+function getModifierClass(index) {
+	const ordinals = [
+		'--first',
+		'--second',
+		'--third',
+		'--fourth',
+		'--fifth',
+		'--sixth',
+		'--seventh',
+		'--eighth',
+		'--ninth',
+		'--tenth',
+	]
+	return ordinals[index] || `--${index + 1}`
+}
+
+// Funkcja pomocnicza aktualizująca klasy modyfikatora dla elementów video
+function updateVideoModifier(videoElement, slideIndex) {
+	const ordinals = [
+		'--first',
+		'--second',
+		'--third',
+		'--fourth',
+		'--fifth',
+		'--sixth',
+		'--seventh',
+		'--eighth',
+		'--ninth',
+		'--tenth',
+	]
+	const modifier = ordinals[slideIndex] || `--${slideIndex + 1}`
+	// Usuwamy potencjalne klasy modyfikatora (tylko dla liczby slajdów, tu przyjmujemy max 10)
+	const possibleModifiers = ordinals.slice(0, slides.length)
+	possibleModifiers.forEach(mod => {
+		videoElement.classList.remove(`works__video${mod}`)
+	})
+	videoElement.classList.add(`works__video${modifier}`)
+}
+
 initializeSlider()
 
+/* ======== 3. FUNKCJA INICJUJĄCA SLIDER ======== */
 function initializeSlider() {
 	slides.forEach((slide, index) => {
 		const li = document.createElement('li')
 		li.classList.add('works__list-element')
+		// Dodajemy dodatkową klasę modyfikatora (np. works__list-element--first, --second, ...)
+		li.classList.add(`works__list-element${getModifierClass(index)}`)
 		li.style.setProperty('--slideIndex', index)
+		// Zostawiamy np. backgroundImage => miniatura (nie jest już kluczowa, bo i tak wideo wypełnia tło)
 		li.style.backgroundImage = `url(${slide.image})`
 
 		const a = document.createElement('a')
@@ -70,6 +120,7 @@ function initializeSlider() {
 
 	sliderContainer.addEventListener('wheel', e => {
 		e.preventDefault()
+		e.stopPropagation()
 		updateActiveSlide(e.deltaY < 0 ? -1 : 1)
 	})
 
@@ -88,9 +139,11 @@ function initializeSlider() {
 	})
 }
 
+/* ======== 4. AKTUALIZACJA SLAJDU ======== */
 function updateActiveSlide(offset) {
 	currentSlide += offset
 	listElement.style.setProperty('--currentSlide', currentSlide)
+
 	const prevActive = document.querySelector('.works__list-element.active')
 	if (prevActive) {
 		const prevSpan = prevActive.querySelector('.works__list-text')
@@ -113,80 +166,114 @@ function updateActiveSlide(offset) {
 	}
 }
 
-function typeText(span, speed) {
+/* ======== 5. ANIMACJA TEKSTU LITERKA-PO-LITERCE ======== */
+function typeText(span, speed = 30, delay = 300) {
 	const fullText = span.getAttribute('data-fulltext') || ''
 	span.textContent = ''
-	let i = 0
-	const timer = setInterval(() => {
-		span.textContent += fullText[i]
-		i++
-		if (i >= fullText.length) {
-			clearInterval(timer)
-		}
-	}, speed)
+
+	setTimeout(() => {
+		let i = 0
+		const timer = setInterval(() => {
+			span.textContent += fullText[i]
+			i++
+			if (i >= fullText.length) {
+				clearInterval(timer)
+			}
+		}, speed)
+	}, delay)
 }
 
+/* ======== 6. PRZERWANIE EWENTUALNEJ POPRZEDNIEJ ANIMACJI ======== */
 function stopAllTransitions() {
 	if (currentTransitionEndCallback) {
-		bgNext.removeEventListener('transitionend', currentTransitionEndCallback)
+		layerNext.removeEventListener('transitionend', currentTransitionEndCallback)
 		currentTransitionEndCallback = null
 	}
-	bgCurrent.style.transition = 'none'
-	bgNext.style.transition = 'none'
-	bgCurrent.style.opacity = 1
-	bgNext.style.opacity = 0
-	bgNext.getBoundingClientRect()
-	bgCurrent.getBoundingClientRect()
-	bgCurrent.style.transition = ''
-	bgNext.style.transition = ''
+	layerCurrent.style.transition = 'none'
+	layerNext.style.transition = 'none'
+	layerCurrent.style.opacity = 1
+	layerNext.style.opacity = 0
+	layerNext.getBoundingClientRect()
+	layerCurrent.getBoundingClientRect()
+	layerCurrent.style.transition = ''
+	layerNext.style.transition = ''
 }
 
-function preloadBackgroundImage(bgUrl) {
+/* ======== 6a. CZEKA NA MOŻLIWOŚĆ ODTWARZANIA WIDEO (ABY UNIKNĄĆ CZARNEJ KLATKI) ======== */
+function waitForCanPlay(video) {
 	return new Promise(resolve => {
-		const match = bgUrl.match(/url\(["']?(.*?)["']?\)/)
-		const src = match ? match[1] : bgUrl
-		const img = new Image()
-		img.src = src
-		if (img.complete) {
+		if (video.readyState >= 3) {
 			resolve()
 		} else {
-			img.onload = () => resolve()
-			img.onerror = () => resolve()
+			const canPlayHandler = () => {
+				video.removeEventListener('canplay', canPlayHandler)
+				resolve()
+			}
+			video.addEventListener('canplay', canPlayHandler)
 		}
 	})
 }
 
+/* ======== 7. CROSS-FADE WIDEO ======== */
 async function crossFadeBackground(newIndex) {
 	stopAllTransitions()
-	await preloadBackgroundImage(slides[newIndex].bgImage)
-	bgNext.style.backgroundImage = slides[newIndex].bgImage
-	bgNext.style.backgroundColor = ''
-	bgNext.style.opacity = 1
+
+	// Tu przerywamy stare wideo natychmiast, aby nie grało w tle
+	videoCurrent.pause()
+	videoCurrent.src = '' // opcjonalnie, żeby je „wyczyścić” w 100%
+
+	// Przygotowujemy warstwę next
+	videoNext.pause()
+	videoNext.src = slides[newIndex].videoSrc || ''
+	videoNext.currentTime = 0
+
+	// Dodajemy dodatkową klasę modyfikatora dla videoNext
+	updateVideoModifier(videoNext, newIndex)
+
+	await waitForCanPlay(videoNext)
+	videoNext.play()
+	layerNext.style.opacity = 1
+
 	const handleTransitionEnd = () => {
-		bgNext.removeEventListener('transitionend', handleTransitionEnd)
+		layerNext.removeEventListener('transitionend', handleTransitionEnd)
 		currentTransitionEndCallback = null
-		bgCurrent.style.backgroundImage = slides[newIndex].bgImage
-		bgCurrent.style.backgroundColor = ''
-		bgCurrent.style.opacity = 1
-		bgNext.style.opacity = 0
+
+		// Po zakończonym fade przenosimy nowe wideo do warstwy current
+		videoCurrent.src = videoNext.src
+		videoCurrent.currentTime = videoNext.currentTime
+		videoCurrent.play()
+
+		// Aktualizujemy klasę modyfikatora dla videoCurrent
+		updateVideoModifier(videoCurrent, newIndex)
+
+		layerCurrent.style.opacity = 1
+		layerNext.style.opacity = 0
 	}
+
 	currentTransitionEndCallback = handleTransitionEnd
-	bgNext.addEventListener('transitionend', handleTransitionEnd)
+	layerNext.addEventListener('transitionend', handleTransitionEnd)
 }
 
+/* ======== 8. FADE DO CZARNEGO TŁA ======== */
 function fadeToBlack() {
 	stopAllTransitions()
-	bgNext.style.backgroundImage = 'none'
-	bgNext.style.backgroundColor = 'black'
-	bgNext.style.opacity = 1
+	videoNext.pause()
+	videoNext.src = ''
+	videoNext.load()
+	layerNext.style.backgroundColor = 'black'
+	layerNext.style.opacity = 1
+
 	const handleTransitionEnd = () => {
-		bgNext.removeEventListener('transitionend', handleTransitionEnd)
+		layerNext.removeEventListener('transitionend', handleTransitionEnd)
 		currentTransitionEndCallback = null
-		bgCurrent.style.backgroundImage = 'none'
-		bgCurrent.style.backgroundColor = 'black'
-		bgCurrent.style.opacity = 1
-		bgNext.style.opacity = 0
+
+		videoCurrent.pause()
+		videoCurrent.src = ''
+		videoCurrent.load()
+		layerCurrent.style.backgroundColor = 'black'
+		layerCurrent.style.opacity = 1
+		layerNext.style.opacity = 0
 	}
 	currentTransitionEndCallback = handleTransitionEnd
-	bgNext.addEventListener('transitionend', handleTransitionEnd)
+	layerNext.addEventListener('transitionend', handleTransitionEnd)
 }

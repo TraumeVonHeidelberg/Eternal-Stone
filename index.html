@@ -23,6 +23,7 @@
     <script src="./js/updateClock.js" defer></script>
     <script src="./js/slider.js" defer></script>
     <script src="./js/changeColor.js" defer></script>
+    <script src="./js/changeSection.js" defer></script>
 </head>
 
 <body>
@@ -108,8 +109,13 @@
 
     <main>
         <section class="works">
-            <div class="works__bg-layer works__bg-layer--current"></div>
-            <div class="works__bg-layer works__bg-layer--next"></div>
+            <div class="works__bg-layer works__bg-layer--current">
+                <video class="works__video works__video--current" muted playsinline loop></video>
+            </div>
+            <div class="works__bg-layer works__bg-layer--next">
+                <video class="works__video works__video--next" muted playsinline loop></video>
+            </div>
+
             <div class="works__slider">
                 <ul class="works__list"></ul>
             </div>
