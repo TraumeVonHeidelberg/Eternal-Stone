@@ -4,7 +4,7 @@ const slides = [
 		description: 'MMO-RPG Project',
 		image: '../img/slider/EternalStone.png',
 		bgImage: 'url("../img/slider/EternalStone-large.png")',
-		videoSrc: '../videos/EternalStone.mp4',
+		videoSrc: '../img/slider/test4.mp4',
 	},
 	{
 		title: 'Coming Soon',
