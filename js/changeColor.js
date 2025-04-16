@@ -15,7 +15,7 @@ function checkAllOverlaps() {
 	images.forEach(img => {
 		if (isOverlapping(img, worksSection)) {
 			img.classList.add('white')
-		} else if (isOverlapping(img, headerSection)) {
+		} else {
 			img.classList.remove('white')
 		}
 	})

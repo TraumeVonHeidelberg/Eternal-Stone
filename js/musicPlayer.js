@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-	/********************************************
-	 * PODSTAWOWE ZMIENNE I ELEMENTY Z DOM
-	 ********************************************/
 	const audio = document.getElementById('myAudio')
 	const playPauseIcon = document.getElementById('playPauseIcon')
 	const playPauseShape = document.getElementById('playPauseShape')
@@ -18,17 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		pause: 'M30,20 L40,20 L40,80 L30,80 Z M60,20 L70,20 L70,80 L60,80 Z',
 	}
 
-	/********************************************
-	 * PLAYLISTA UTWORÓW
-	 ********************************************/
 	const playlist = [
-		{ title: 'Love 2000', src: './audio/Love 2000.mp3' },
-		{ title: 'Coraz bliżej śmierci', src: './audio/SLASHEC.mp3' },
+		{ title: 'Eternal Stone', src: './audio/Eternal Stone.mp3' },
+		{ title: 'My Dearest Sister', src: './audio/My dearest sister.mp3' },
+		{ title: 'Narebutsuki No Yoru', src: './audio/Narebutsuki No Yoru.mp3' },
 	]
 
-	/********************************************
-	 * FUNKCJE POMOCNICZE
-	 ********************************************/
 	function animateIcon(fromPath, toPath) {
 		morphAnim.setAttribute('from', fromPath)
 		morphAnim.setAttribute('to', toPath)
@@ -56,9 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
-	/********************************************
-	 * OBSŁUGA PLAY/PAUSE
-	 ********************************************/
 	playPauseIcon.addEventListener('click', () => {
 		if (isPlaying) {
 			audio.pause()
@@ -70,9 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		isPlaying = !isPlaying
 	})
 
-	/********************************************
-	 * ZMIANA UTWORU (strzałki)
-	 ********************************************/
 	leftArrow.addEventListener('click', () => {
 		currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length
 		loadTrack(currentTrackIndex)
@@ -98,9 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	playPauseShape.setAttribute('d', iconPaths.play)
 	loadTrack(currentTrackIndex)
 
-	/********************************************
-	 * AUDIO KONTEXT + ANALYSER DLA WIZUALIZACJI
-	 ********************************************/
 	const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 	const analyser = audioCtx.createAnalyser()
 	analyser.fftSize = 8192
@@ -132,9 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin
 	}
 
-	/********************************************
-	 * RYSOWANIE FAL
-	 ********************************************/
 	const $canvas = document.getElementById('header__music-waves')
 	const ctx = $canvas.getContext('2d')
 	let barScale = 5
@@ -188,19 +168,15 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	animate()
 
-	/********************************************
-	 * PAUZOWANIE MUZYKI NA HOVERZE SLAJDERA
-	 ********************************************/
 	if (sliderContainer) {
 		sliderContainer.addEventListener('mouseenter', () => {
-			// Jeśli odtwarzacz gra, zatrzymujemy go
 			if (isPlaying) {
 				audio.pause()
 				animateIcon(iconPaths.pause, iconPaths.play)
 				isPlaying = false
 			}
 		})
-		// Jeśli chciałbyś wznawiać automatycznie po wyjściu:
+		// To resume music playing
 		// sliderContainer.addEventListener('mouseleave', () => {
 		//   if (!isPlaying) {
 		//     audio.play()
