@@ -90,7 +90,8 @@ function initializeSlider() {
 		li.style.backgroundImage = `url(${slide.image})`
 
 		const a = document.createElement('a')
-		
+		a.rel = 'noopener'
+
 		if (index === 0) {
 			a.href = 'eternalstone.html'
 		} else {
