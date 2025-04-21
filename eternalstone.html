@@ -9,15 +9,70 @@
     <title>Eternal Stone</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@200..800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" rel="stylesheet">
     <link rel="icon" href="./img/logo/favicon-64.png" type="image/png">
     <link rel="apple-touch-icon" href="img/logo/favicon-180.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="./css/eternalstone.css">
+    <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
+    <script src="./js/eternal stone/changeBackground.js" defer></script>
 </head>
 
 <body>
+    <nav class="nav">
+        <a href="index.html" class="nav__link" rel="noopener">
+            <i class="nav__icon fa-solid fa-reply"></i>
+        </a>
+        <button class="nav__btn" id="mute-btn">
+            <i class="nav__icon fa-solid fa-volume-xmark" id="icon-muted"></i>
+            <i class="nav__icon fa-solid fa-volume-high hidden" id="icon-unmuted"></i>
+        </button>
+    </nav>
+
+    <header class="header">
+        <img src="img/logo-test.png" alt="Eternal Stone logo portraying a game's name and a knight"
+            class="header__logo">
+
+        <div class="header__grid">
+            <div class="header__col">
+                <button class="header__box">
+                    <div class="header__box-img"></div>
+                    <p class="header__box-text">News</p>
+                </button>
+            </div>
+            <div class="header__col">
+                <button class="header__btn">Lore</button>
+                <button class="header__btn">Gameplay</button>
+            </div>
+            <div class="header__col">
+                <button class="header__box">
+                    <div class="header__box-img"></div>
+                    <p class="header__box-text">World</p>
+                </button>
+            </div>
+        </div>
+
+        <video id="header-video" class="header__video" autoplay muted loop playsinline>
+            <!-- domyślne źródło na wypadek problemów z JavaScriptem -->
+            <source src="./img/eternal backgrounds/night b.mp4" type="video/mp4">
+        </video>
+        <audio id="background-music" loop autoplay muted>
+            <source src="morning.mp3" type="audio/mpeg">
+        </audio>
+    </header>
+
+    <section class="section hidden">
+
+    </section>
+    <section class="section  hidden">
+
+    </section>
+    <section class="section  hidden">
+
+    </section>
+    <section class="section  hidden">
+
+    </section>
 
 </body>
 

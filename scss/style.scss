@@ -1,13 +1,11 @@
 @use './base';
 
-
 body,
 button,
 a,
 input {
 	cursor: none !important;
 }
-
 
 .laser-cursor {
 	position: fixed;
@@ -295,7 +293,7 @@ input {
 		font-size: 58%;
 	}
 	.header {
-		&__heading{
+		&__heading {
 			font-size: 22rem;
 			padding: 24rem;
 		}
@@ -315,7 +313,7 @@ input {
 	}
 
 	.header {
-		&__heading{
+		&__heading {
 			padding: 0;
 		}
 		&__img {
@@ -330,10 +328,10 @@ input {
 		font-size: 38%;
 	}
 	.header {
-		&__music-box{
+		&__music-box {
 			padding: 0;
 		}
-		&__music-playlist{
+		&__music-playlist {
 			left: 53%;
 		}
 		&__scroll {
@@ -489,20 +487,17 @@ input {
 	}
 }
 
-
-@media(width<992px)
-{
-	.works{
-		&__slider{
+@media (width<992px) {
+	.works {
+		&__slider {
 			height: 75%;
 		}
 	}
 }
 
-@media(width<576px)
-{
-	.works{
-		&__slider{
+@media (width<576px) {
+	.works {
+		&__slider {
 			height: 80%;
 		}
 	}
