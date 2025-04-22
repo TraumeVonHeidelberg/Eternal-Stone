@@ -1,132 +1,97 @@
 @use '_base.scss';
+@use '_colors.scss' as *;
 
 body {
+	font-family: 'Roboto', sans-serif;
 	background-color: #303030;
 	cursor: url('../img/cursor.cur'), auto;
 }
 
 button:hover,
 a:hover,
-input:hover {
+input:hover,
+li:hover {
 	cursor: url('../img/cursor\ hover.cur'), auto;
 	// cursor:pointer;
 }
 
-.hidden {
-	display: none !important;
-}
-
-// -------------------------------------------------------
-// NAV
-
-.nav {
-	position: fixed;
-	top: 0;
-	z-index: 9999;
-	display: flex;
-	justify-content: space-between;
-	padding: 1.6rem 4.8rem;
-	width: 100%;
-
-	&__link,
-	&__btn {
-		color: #fff;
-		font-size: 3.6rem;
-	}
-
-	&__btn {
-		background: none;
-		border: none;
-	}
-
-	&__icon {
-		display: inline-block;
-		width: 1em;
-	}
-}
+// .hidden {
+// 	display: none !important;
+// }
 
 // -------------------------------------------------------
 // HEADER
 
 .header {
+	position: relative;
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
-	gap: 6.4rem;
+	gap: 12rem;
 	height: 100vh;
 	overflow: hidden;
 
-	&__logo {
-		margin-top: 8rem;
-		width: 40.4rem;
-		filter: drop-shadow(0 0 1px #000);
-	}
-
-	&__grid {
-		display: grid;
-		grid-template-columns: 1fr 2fr 1fr;
-		align-items: center;
-		column-gap: 6.4rem;
-	}
-
-	&__col {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: 2.4rem;
-		height: 24rem;
-	}
-
-	&__box {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		width: 12.4rem;
-		background-color: #000;
-		color:#fff;
-		border: none;
-
-		&-img {
-			background-image: url('../img/eternal\ backgrounds/morning-img.png');
-			background-size: cover;
-			height: 18rem;
-		}
-
-		&-text {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			padding: 0.8rem;
-		}
-	}
-
-	&__btn {
-		position: relative;
+	&__overlay {
+		position: absolute;
+		inset: 0;
+		background-color: rgba(0, 0, 0, 0.5);
 		z-index: 1;
-		padding: 1.2rem 2.4rem;
-		font-weight: bold;
+	}
+
+	&__container {
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4.8rem;
+	}
+
+	&__logo {
+		margin-bottom: 12rem;
+		width: 40rem;
+	}
+
+	&__list {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.2rem;
+		list-style: none;
+
+		filter: blur(0.5px);
+		transition: filter 0.25s, opacity 0.25s;
+	}
+
+	&__link {
+		text-decoration: none;
+	}
+
+	&__element {
+		position: relative;
+	}
+
+	&__list-element,
+	&__link {
+		font-size: 2.4rem;
+		font-weight: 400;
+		text-transform: capitalize;
+		color: $eternal-menu-link;
+	}
+
+	&__list-element.active,
+	&__list-element.active > &__link {
 		color: #fff;
-		background-color: transparent;
-		border: none;
+		text-shadow: 0 0 2px rgba(255, 255, 255, 0.9);
+		transform: scale(1.05);
+	}
 
-		&::before,
-		&::after {
-			content: '';
-			position: absolute;
-			clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%);
-		}
+	&__list-element:focus {
+		outline: none;
+	}
 
-		&::before {
-			z-index: -2;
-			inset: 0;
-			background: #fff;
-		}
-
-		&::after {
-			z-index: -1;
-			inset: 1px; //frame thickness
-			background-color: #000;
-		}
+	&__text {
+		color: #fff;
 	}
 
 	&__video {
@@ -136,38 +101,6 @@ input:hover {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-	}
-}
-
-@media (width<576px) {
-	.header {
-		&__logo {
-			width: 2rem;
-		}
-
-		&__grid {
-			grid-template-areas:
-				'btns'
-				'boxes';
-			grid-template-columns: 1fr;
-			gap: 2.4rem;
-		}
-
-		&__col:nth-child(1) {
-			grid-area: boxes;
-		}
-
-		&__col:nth-child(2) {
-			grid-area: btns;
-		}
-
-		&__col:nth-child(3) {
-			grid-area: boxes;
-		}
-
-		&__box {
-			width: 2rem;
-		}
 	}
 }
 

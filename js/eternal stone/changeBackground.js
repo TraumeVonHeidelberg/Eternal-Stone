@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const videoEl = document.getElementById('header-video')
 	const audioEl = document.getElementById('background-music')
-	const muteBtn = document.getElementById('mute-btn')
-	const iconMuted = document.getElementById('icon-muted')
-	const iconUnmuted = document.getElementById('icon-unmuted')
 	const hour = new Date().getHours()
 
 	let videoFile, audioFile
@@ -22,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (el.src && el.src.includes(file)) return
 		el.src = file
 		el.load()
-		el.play().catch(() => {})
+		el.play().catch(() => {}) 
 	}
 
 	audioEl.muted = true
@@ -30,12 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	updateMedia(videoEl, videoFile)
 	updateMedia(audioEl, audioFile)
 
-	iconMuted.classList.remove('hidden')
-	iconUnmuted.classList.add('hidden')
-
-	muteBtn.addEventListener('click', () => {
-		audioEl.muted = !audioEl.muted
-		iconMuted.classList.toggle('hidden')
-		iconUnmuted.classList.toggle('hidden')
-	})
+	setTimeout(() => {
+		audioEl.muted = false
+		audioEl.volume = 1.0
+	}, 1000)
 })
