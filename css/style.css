@@ -102,7 +102,6 @@ input {
   animation: rotate 12s linear infinite;
 }
 .nav__logo-img {
-  z-index: 1000;
   width: 12.4rem;
 }
 .nav__clock {
@@ -293,10 +292,10 @@ input {
 }
 @media (width < 992px) {
   html {
-    font-size: 43%;
+    font-size: 48%;
   }
   .header__heading {
-    padding: 0;
+    padding: 12.4rem;
   }
   .header__img {
     top: 50%;

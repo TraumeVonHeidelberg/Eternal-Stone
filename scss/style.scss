@@ -75,7 +75,6 @@ input {
 	}
 
 	&__logo-img {
-		z-index: 1000;
 		width: 12.4rem;
 	}
 
@@ -309,12 +308,12 @@ input {
 
 @media (width<992px) {
 	html {
-		font-size: 43%;
+		font-size: 48%;
 	}
 
 	.header {
 		&__heading {
-			padding: 0;
+			padding: 12.4rem;
 		}
 		&__img {
 			top: 50%;

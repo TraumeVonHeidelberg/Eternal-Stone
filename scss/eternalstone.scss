@@ -82,8 +82,9 @@ input:hover {
 		flex-direction: column;
 		justify-content: center;
 		width: 12.4rem;
-		background-color: #fff;
-		border: 1px solid #000;
+		background-color: #000;
+		color:#fff;
+		border: none;
 
 		&-img {
 			background-image: url('../img/eternal\ backgrounds/morning-img.png');
@@ -124,7 +125,7 @@ input:hover {
 		&::after {
 			z-index: -1;
 			inset: 1px; //frame thickness
-			background: #000;
+			background-color: #000;
 		}
 	}
 

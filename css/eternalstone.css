@@ -98,8 +98,9 @@ input:hover {
   flex-direction: column;
   justify-content: center;
   width: 12.4rem;
-  background-color: #fff;
-  border: 1px solid #000;
+  background-color: #000;
+  color: #fff;
+  border: none;
 }
 .header__box-img {
   background-image: url("../img/eternal backgrounds/morning-img.png");
@@ -135,7 +136,7 @@ input:hover {
 .header__btn::after {
   z-index: -1;
   inset: 1px;
-  background: #000;
+  background-color: #000;
 }
 .header__video {
   position: absolute;
