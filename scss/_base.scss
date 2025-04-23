@@ -23,6 +23,10 @@ body::-webkit-scrollbar {
 }
 
 .hidden {
-	opacity: 0;
-	pointer-events: none;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+.panel-hidden {
+	display: none !important;
 }

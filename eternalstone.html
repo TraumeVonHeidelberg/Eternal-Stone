@@ -19,10 +19,15 @@
     <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
     <script src="./js/getCurrentYear.js" defer></script>
     <script src="./js/eternal stone/changeBackground.js" defer></script>
-    <script src="./js/eternal stone/listChange.js" defer></script>
+    <!-- <script src="./js/eternal stone/listChange.js" defer></script> -->
+    <script src="./js/eternal stone/menu.js" defer></script>
 </head>
 
 <body>
+    <audio id="list-sound" src="./audio/list-sound.mp3" preload="auto"></audio>
+    <audio id="eternal-section-open" src="./audio/eternal-section-open.mp3" preload="auto"></audio>
+    <audio id="eternal-section-close" src="./audio/eternal-section-close.mp3" preload="auto"></audio>
+
     <header class="header">
         <div class="header__overlay"></div>
 
@@ -48,23 +53,108 @@
         <audio id="background-music" loop autoplay muted>
             <source src="morning.mp3" type="audio/mpeg">
         </audio>
-        <audio id="list-sound" src="./audio/list-sound.mp3" preload="auto"></audio>
     </header>
 
 
 
-    <section class="section hidden">
-
+    <section class="section gameplay hidden">
+        11111111111111
     </section>
-    <section class="section  hidden">
-
+    <section class="section lore hidden">
+        222222222222222222222
     </section>
-    <section class="section  hidden">
+    <section class="section options hidden">
+        <div class="options__main">
+            <div class="options__nav">
+                <button class="options__btn">Display</button>
+                <button class="options__btn">Audio</button>
+                <button class="options__btn">Language</button>
+            </div>
+            <div class="options__settings">
+                <div class="options__settings-window">
+                    <div class="options__settings-el">
 
-    </section>
-    <section class="section  hidden">
+                    </div>
+                    <div class="options__settings-el">
+                        <ul class="options__settings-list">
+                            <li class="options__settings-item">
+                                <div class="options__settings-group">
+                                    <div class="options__settings-indicator"></div>
+                                    <p class="options__settings-text">Music volume</p>
+                                </div>
+                                <div class="options__settings-group">
+                                    <input class="options__settings-range" type="range">
+                                    <p class="options__settings-value">1</p>
+                                </div>
+                            </li>
+                            <li class="options__settings-item">
+                                <div class="options__settings-group">
+                                    <div class="options__settings-indicator"></div>
+                                    <p class="options__settings-text">Sound Effects</p>
+                                </div>
+                                <div class="options__settings-group">
+                                    <input class="options__settings-range" type="range">
+                                    <p class="options__settings-value">1</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="options__settings-el">
+                        <ul class="options__settings-list">
+                            <li class="options__settings-item">
+                                <div class="options__settings-group">
+                                    <div class="options__settings-indicator"></div>
+                                    <p class="options__settings-text">Text Language</p>
+                                </div>
+                                <div class="options__settings-group">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                    <ul class="options__settings-language-list">
+                                        <li class="options__settings-list-item">English</li>
+                                        <li class="options__settings-list-item">German</li>
+                                        <li class="options__settings-list-item">Polish</li>
+                                    </ul>
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </div>
+                            </li>
+                            <li class="options__settings-item">
+                                <div class="options__settings-group">
+                                    <div class="options__settings-indicator"></div>
+                                    <p class="options__settings-text">Text Style</p>
+                                </div>
+                                <div class="options__settings-group">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                    <ul class="options__settings-language-list">
+                                        <li class="options__settings-list-item">Decorative</li>
+                                        <li class="options__settings-list-item">Plain</li>
+                                    </ul>
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="options__settings-description">Adjust the volume of music</p>
+            </div>
+        </div>
 
+
+
+        <div class="section__controls">
+            <div class="section__control">
+                <div class="section__control-btn">Q</div>
+                <p class="section__control-text">Close</p>
+            </div>
+            <div class="section__control">
+                <div class="section__control-btn">W</div>
+                <p class="section__control-text">Select</p>
+            </div>
+            <div class="section__control">
+                <div class="section__control-btn">E</div>
+                <p class="section__control-text">Defaults</p>
+            </div>
+        </div>
     </section>
+
 
 </body>
 
