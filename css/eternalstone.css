@@ -45,8 +45,8 @@ body::-webkit-scrollbar {
 body {
   font-family: "Cinzel", sans-serif;
   background-color: #303030;
-  cursor: url("../img/cursor.cur"), auto;
   overflow: hidden;
+  cursor: url("../img/cursor.cur"), auto;
 }
 
 button:hover,
@@ -217,7 +217,8 @@ ul {
 }
 .options__btn {
   position: relative;
-  padding: 1.2rem 4.8rem;
+  padding: 1.2rem 0rem;
+  width: 17.6rem;
   font-weight: bold;
   text-transform: uppercase;
   color: #d7d7d7;
@@ -228,6 +229,9 @@ ul {
   inset: 2px;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
+.options__btn.active {
+  background-color: red;
+}
 .options__settings {
   display: flex;
   flex-direction: column;
@@ -236,9 +240,6 @@ ul {
 }
 .options__settings-window {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 120rem;
   height: 50rem;
   border: 1px solid #fff;
@@ -251,16 +252,59 @@ ul {
   box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.5);
 }
 .options__settings-el {
-  width: 99.6rem;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  filter: brightness(40%);
+  pointer-events: none;
+}
+.options__settings-el--first {
+  align-items: flex-end;
+}
+.options__settings-el.active {
+  filter: brightness(1);
+  pointer-events: all;
+}
+.options__settings-imgs {
+  position: absolute;
+  top: -8rem;
+  display: flex;
+}
+.options__settings-imgs::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+.options__settings-img {
+  width: 24.8rem;
+  height: 38rem;
+  background-size: cover;
+  background-position: center;
+}
+.options__settings-img--first {
+  background-image: url("../img/eternal backgrounds/morning-img.avif");
+}
+.options__settings-img--second {
+  background-image: url("../img/eternal backgrounds/afternoon-img.avif");
+}
+.options__settings-img--third {
+  background-image: url("../img/eternal backgrounds/night-img.avif");
 }
 .options__settings-list {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  padding: 3.2rem 0;
 }
 .options__settings-item {
   display: flex;
   gap: 4.8rem;
+  width: 99.6rem;
   font-size: 2rem;
 }
 .options__settings-group {
@@ -297,12 +341,15 @@ ul {
   width: 50rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
+.options__settings-text.active {
+  background-color: red;
+}
 .options__settings-value {
-  width: 2rem;
+  width: 15.6rem;
+}
+.options__settings-value--text {
+  text-align: center;
 }
 .options__settings-description {
   font-size: 1.6rem;
-}
-.options__settings-language-list {
-  display: flex;
 }/*# sourceMappingURL=eternalstone.css.map */

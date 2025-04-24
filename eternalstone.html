@@ -19,7 +19,6 @@
     <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
     <script src="./js/getCurrentYear.js" defer></script>
     <script src="./js/eternal stone/changeBackground.js" defer></script>
-    <!-- <script src="./js/eternal stone/listChange.js" defer></script> -->
     <script src="./js/eternal stone/menu.js" defer></script>
 </head>
 
@@ -35,10 +34,11 @@
             <img src="./img/logo-test.png" alt="Logo of eternal stone" class="header__logo">
             <div class="header__container">
                 <ul class="header__list">
-                    <li class="header__list-element" tabindex="0">Gameplay</li>
-                    <li class="header__list-element" tabindex="0">Lore</li>
-                    <li class="header__list-element" tabindex="0">Options</li>
-                    <li class="header__list-element" tabindex="0"><a class="header__link" href="./index.html">Quit</a>
+                    <li class="header__list-element" data-i18n="gameplay">Gameplay</li>
+                    <li class="header__list-element" data-i18n="lore">Lore</li>
+                    <li class="header__list-element" data-i18n="options">Options</li>
+                    <li class="header__list-element" data-i18n="quit"><a class="header__link"
+                            href="./index.html">Quit</a>
                     </li>
                 </ul>
                 <p class="header__text">&copy; Eternal Stone Industries <span id="header-year">Current Year</span></p>
@@ -60,41 +60,57 @@
     <section class="section gameplay hidden">
         11111111111111
     </section>
+
+    
     <section class="section lore hidden">
         222222222222222222222
     </section>
+
+
     <section class="section options hidden">
         <div class="options__main">
             <div class="options__nav">
-                <button class="options__btn">Display</button>
-                <button class="options__btn">Audio</button>
-                <button class="options__btn">Language</button>
+                <button class="options__btn" data-i18n="display">Display</button>
+                <button class="options__btn" data-i18n="audio">Audio</button>
+                <button class="options__btn" data-i18n="language">Language</button>
             </div>
             <div class="options__settings">
                 <div class="options__settings-window">
-                    <div class="options__settings-el">
-
-                    </div>
-                    <div class="options__settings-el">
+                    <div class="options__settings-el options__settings-el--first">
+                        <div class="options__settings-imgs">
+                            <div class="options__settings-img options__settings-img--first"></div>
+                            <div class="options__settings-img options__settings-img--second"></div>
+                            <div class="options__settings-img options__settings-img--third"></div>
+                        </div>
                         <ul class="options__settings-list">
                             <li class="options__settings-item">
                                 <div class="options__settings-group">
                                     <div class="options__settings-indicator"></div>
-                                    <p class="options__settings-text">Music volume</p>
+                                    <p class="options__settings-text" data-i18n="brightness">Brightness</p>
                                 </div>
                                 <div class="options__settings-group">
                                     <input class="options__settings-range" type="range">
-                                    <p class="options__settings-value">1</p>
+                                    <p class="options__settings-value">1.0</p>
                                 </div>
                             </li>
                             <li class="options__settings-item">
                                 <div class="options__settings-group">
                                     <div class="options__settings-indicator"></div>
-                                    <p class="options__settings-text">Sound Effects</p>
+                                    <p class="options__settings-text" data-i18n="contrast">Contrast</p>
                                 </div>
                                 <div class="options__settings-group">
                                     <input class="options__settings-range" type="range">
-                                    <p class="options__settings-value">1</p>
+                                    <p class="options__settings-value">1.0</p>
+                                </div>
+                            </li>
+                            <li class="options__settings-item">
+                                <div class="options__settings-group">
+                                    <div class="options__settings-indicator"></div>
+                                    <p class="options__settings-text" data-i18n="saturation">Saturation</p>
+                                </div>
+                                <div class="options__settings-group">
+                                    <input class="options__settings-range" type="range">
+                                    <p class="options__settings-value">1.0</p>
                                 </div>
                             </li>
                         </ul>
@@ -104,29 +120,46 @@
                             <li class="options__settings-item">
                                 <div class="options__settings-group">
                                     <div class="options__settings-indicator"></div>
-                                    <p class="options__settings-text">Text Language</p>
+                                    <p class="options__settings-text" data-i18n="music.volume">Music volume</p>
+                                </div>
+                                <div class="options__settings-group">
+                                    <input class="options__settings-range" type="range">
+                                    <p class="options__settings-value">1.0</p>
+                                </div>
+                            </li>
+                            <li class="options__settings-item">
+                                <div class="options__settings-group">
+                                    <div class="options__settings-indicator"></div>
+                                    <p class="options__settings-text" data-i18n="sound.effects">Sound Effects</p>
+                                </div>
+                                <div class="options__settings-group">
+                                    <input class="options__settings-range" type="range">
+                                    <p class="options__settings-value">1.0</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="options__settings-el">
+                        <ul class="options__settings-list">
+                            <li class="options__settings-item">
+                                <div class="options__settings-group">
+                                    <div class="options__settings-indicator"></div>
+                                    <p class="options__settings-text" data-i18n="text.language">Text Language</p>
                                 </div>
                                 <div class="options__settings-group">
                                     <i class="fa-solid fa-angle-left"></i>
-                                    <ul class="options__settings-language-list">
-                                        <li class="options__settings-list-item">English</li>
-                                        <li class="options__settings-list-item">German</li>
-                                        <li class="options__settings-list-item">Polish</li>
-                                    </ul>
+                                    <p class="options__settings-value options__settings-value--text"></p>
                                     <i class="fa-solid fa-angle-right"></i>
                                 </div>
                             </li>
                             <li class="options__settings-item">
                                 <div class="options__settings-group">
                                     <div class="options__settings-indicator"></div>
-                                    <p class="options__settings-text">Text Style</p>
+                                    <p class="options__settings-text" data-i18n="text.style">Text Style</p>
                                 </div>
                                 <div class="options__settings-group">
                                     <i class="fa-solid fa-angle-left"></i>
-                                    <ul class="options__settings-language-list">
-                                        <li class="options__settings-list-item">Decorative</li>
-                                        <li class="options__settings-list-item">Plain</li>
-                                    </ul>
+                                    <p class="options__settings-value options__settings-value--text"></p>
                                     <i class="fa-solid fa-angle-right"></i>
                                 </div>
                             </li>
@@ -142,15 +175,15 @@
         <div class="section__controls">
             <div class="section__control">
                 <div class="section__control-btn">Q</div>
-                <p class="section__control-text">Close</p>
+                <p class="section__control-text" data-i18n="close">Close</p>
             </div>
             <div class="section__control">
                 <div class="section__control-btn">W</div>
-                <p class="section__control-text">Select</p>
+                <p class="section__control-text" data-i18n="select">Select</p>
             </div>
             <div class="section__control">
                 <div class="section__control-btn">E</div>
-                <p class="section__control-text">Defaults</p>
+                <p class="section__control-text" data-i18n="defaults">Defaults</p>
             </div>
         </div>
     </section>
