@@ -138,6 +138,7 @@ ul {
 	top: 0;
 	left: 0;
 	z-index: 1000;
+	padding: 2.4rem;
 	width: 100%;
 	height: 100%;
 	background-color: #000;
@@ -233,7 +234,6 @@ ul {
 		}
 
 		&.active {
-			// box-shadow: 0px 0px 5px rgba(255, 255, 255, 1);
 			background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
 			filter: brightness(1);
 			animation: pulse 1.5s linear infinite alternate;
@@ -249,6 +249,7 @@ ul {
 		&-window {
 			position: relative;
 			width: 120rem;
+			// width: 80vw;
 			height: 50rem;
 			border: 1px solid #fff;
 
@@ -297,6 +298,7 @@ ul {
 
 		&-img {
 			width: 24.8rem;
+			// width: 18vw;
 			height: 38rem;
 			background-size: cover;
 			background-position: center;
@@ -317,28 +319,24 @@ ul {
 		&-list {
 			display: flex;
 			flex-direction: column;
+			align-items: center;
 			gap: 1.6rem;
 			padding: 3.2rem 0;
 		}
 
 		&-item {
 			display: flex;
+			justify-content: center;
 			gap: 4.8rem;
 			width: 99.6rem;
+			// width: 72vw;
 			font-size: 2rem;
 		}
 
 		&-group {
 			display: flex;
 			align-items: center;
-		}
-
-		&-group:first-child {
-			gap: 1.2rem;
-		}
-
-		&-group:nth-child(2) {
-			gap: 1.2rem;
+			gap:1.2rem;
 		}
 
 		&-indicator,
@@ -363,6 +361,7 @@ ul {
 			-webkit-appearance: none;
 			appearance: none;
 			width: 24.8rem;
+			// width: 18vw;
 			height: 8px;
 			background-color: #151517;
 			border: 1px solid rgba(255, 255, 255, 0.3);
@@ -374,6 +373,7 @@ ul {
 
 		&-text {
 			width: 50rem;
+			// width: 35vw;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 
 			&.active {
@@ -382,10 +382,12 @@ ul {
 		}
 
 		&-value {
-			width: 15.6rem;
+			// width: 15.6rem;
+			width: fit-content;
 
 			&--text {
 				text-align: center;
+				width: 15.6rem;
 			}
 		}
 
@@ -403,3 +405,69 @@ ul {
 		box-shadow: 0px 0px 3px rgba(255, 255, 255, 1);
 	}
 }
+
+// @media (width<992px) {
+// 	.section {
+// 		&__controls {
+// 			display: none;
+// 		}
+// 	}
+// 	.options {
+// 		&__main {
+// 			flex-direction: column;
+// 		}
+
+// 		&__nav {
+// 			order: 2;
+// 			flex-direction: row;
+// 		}
+
+// 		&__settings {
+// 			order: 1;
+// 			gap: 0;
+
+// 			&-window {
+// 				width: 90vw;
+// 			}
+
+// 			&-item {
+// 				gap: 0rem;
+// 			}
+// 		}
+// 	}
+// }
+
+// @media (width<768px) {
+// 	.options {
+// 		&__settings {
+// 			&-img {
+// 				width: 50vw;
+// 			}
+// 			&-img--second,
+// 			&-img--third {
+// 				display: none;
+// 			}
+// 		}
+// 	}
+// }
+
+// @media (width<576px) {
+// 	.options {
+// 		&__btn {
+// 			width: 9.6rem;
+// 		}
+
+// 		&__settings {
+// 			&-item {
+// 				justify-content: center;
+// 			}
+// 			&-img {
+// 				width: 70vw;
+// 			}
+
+// 			&-value {
+// 				width: 4.8rem;
+// 			}
+// 		}
+// 	}
+// }

@@ -327,11 +327,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	const hiItm = i => {
 		items.forEach((el, k) => {
 			el.classList.toggle('active', k === i)
-			const txt = el.querySelector('.options__settings-text')
-			const ind = el.querySelector('.options__settings-indicator')
-			if (txt) txt.classList.toggle('active', k === i)
-			if (ind) ind.classList.toggle('active', k === i)
+			el.querySelector('.options__settings-text')?.classList.toggle('active', k === i)
+			el.querySelector('.options__settings-indicator')?.classList.toggle('active', k === i)
 		})
+		const key = items[i]?.querySelector('.options__settings-text')?.dataset.i18n
+		if (key) {
+			currentKey = key
+			setDesc(key)
+		} // ← przywrócone
 		play(navSound)
 	}
 
@@ -385,16 +388,20 @@ document.addEventListener('DOMContentLoaded', () => {
 		layer = 'optItems'
 		optPanels[bIdx].classList.add('active')
 		items = [...optPanels[bIdx].querySelectorAll('.options__settings-item')]
+
 		items.forEach((el, k) => {
 			el.addEventListener('mouseenter', () => {
 				iIdx = k
 				hiItm(k)
 			})
 			el.addEventListener('mouseleave', () => {
-				const ind = el.querySelector('.options__settings-indicator')
-				if (ind) ind.classList.remove('active')
+				el.querySelector('.options__settings-text')?.classList.remove('active')
+				el.querySelector('.options__settings-indicator')?.classList.remove('active')
+				const key = items[iIdx]?.querySelector('.options__settings-text')?.dataset.i18n
+				setDesc(key || '') // opis zawsze wraca
 			})
 		})
+
 		if (items.length) {
 			iIdx = 0
 			hiItm(0)
@@ -411,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 		items = []
 		iIdx = -1
-		setDesc('')
+		setDesc('') // opis znika, gdy wychodzimy z panelu
 		play(closeSound)
 	}
 

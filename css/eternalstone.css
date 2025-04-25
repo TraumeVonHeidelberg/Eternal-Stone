@@ -151,6 +151,7 @@ ul {
   top: 0;
   left: 0;
   z-index: 1000;
+  padding: 2.4rem;
   width: 100%;
   height: 100%;
   background-color: #000;
@@ -301,11 +302,13 @@ ul {
 .options__settings-list {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1.6rem;
   padding: 3.2rem 0;
 }
 .options__settings-item {
   display: flex;
+  justify-content: center;
   gap: 4.8rem;
   width: 99.6rem;
   font-size: 2rem;
@@ -313,11 +316,6 @@ ul {
 .options__settings-group {
   display: flex;
   align-items: center;
-}
-.options__settings-group:first-child {
-  gap: 1.2rem;
-}
-.options__settings-group:nth-child(2) {
   gap: 1.2rem;
 }
 .options__settings-indicator, .options__settings-range::-webkit-slider-thumb {
@@ -354,10 +352,12 @@ ul {
   background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5) 0%, #0d0d0d 80%);
 }
 .options__settings-value {
-  width: 15.6rem;
+  width: -moz-fit-content;
+  width: fit-content;
 }
 .options__settings-value--text {
   text-align: center;
+  width: 15.6rem;
 }
 .options__settings-description {
   font-size: 1.6rem;
