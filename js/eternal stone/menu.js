@@ -325,14 +325,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	const hiItm = i => {
-		items.forEach((el, k) => el.classList.toggle('active', k === i))
-		items.forEach(el => el.querySelector('.options__settings-text')?.classList.remove('active'))
-		items[i]?.querySelector('.options__settings-text')?.classList.add('active')
-		const key = items[i]?.querySelector('.options__settings-text')?.dataset.i18n
-		if (key) {
-			currentKey = key
-			setDesc(key)
-		}
+		items.forEach((el, k) => {
+			el.classList.toggle('active', k === i)
+			const txt = el.querySelector('.options__settings-text')
+			const ind = el.querySelector('.options__settings-indicator')
+			if (txt) txt.classList.toggle('active', k === i)
+			if (ind) ind.classList.toggle('active', k === i)
+		})
 		play(navSound)
 	}
 
@@ -386,9 +385,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		layer = 'optItems'
 		optPanels[bIdx].classList.add('active')
 		items = [...optPanels[bIdx].querySelectorAll('.options__settings-item')]
+		items.forEach((el, k) => {
+			el.addEventListener('mouseenter', () => {
+				iIdx = k
+				hiItm(k)
+			})
+			el.addEventListener('mouseleave', () => {
+				const ind = el.querySelector('.options__settings-indicator')
+				if (ind) ind.classList.remove('active')
+			})
+		})
 		if (items.length) {
 			iIdx = 0
-			hiItm(iIdx)
+			hiItm(0)
 		}
 		play(openSound)
 	}
@@ -396,7 +405,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const leaveItems = () => {
 		layer = 'optBtns'
 		optPanels[bIdx].classList.remove('active')
-		items.forEach(el => el.querySelector('.options__settings-text')?.classList.remove('active'))
+		items.forEach(el => {
+			el.querySelector('.options__settings-text')?.classList.remove('active')
+			el.querySelector('.options__settings-indicator')?.classList.remove('active')
+		})
 		items = []
 		iIdx = -1
 		setDesc('')
