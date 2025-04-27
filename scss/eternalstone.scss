@@ -40,15 +40,10 @@ ul {
 
 .header {
 	position: relative;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 12rem;
 	height: 100vh;
 	overflow: hidden;
 
-	&__overlay {
+	&::before {
 		position: absolute;
 		z-index: 1;
 		inset: 0;
@@ -56,17 +51,27 @@ ul {
 	}
 
 	&__container {
-		z-index: 2;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 4.8rem;
+		gap: 6.4rem;
+		// margin-top: -2.4rem;
 	}
 
 	&__logo {
-		margin-bottom: 8rem;
 		width: 40rem; //40rem - 48rem
 		filter: drop-shadow(0 0 1px #000);
+	}
+
+	&__logo,
+	&__menu-container {
+		z-index: 2;
+	}
+
+	&__menu-container {
+		display: flex;
+		flex-direction: column;
+		gap: 3.2rem;
 	}
 
 	&__list {
@@ -248,8 +253,8 @@ ul {
 
 		&-window {
 			position: relative;
-			width: 120rem;
-			// width: 80vw;
+			// width: 120rem;
+			width: 80vw;
 			height: 50rem;
 			border: 1px solid #fff;
 
@@ -285,6 +290,7 @@ ul {
 		&-imgs {
 			position: absolute;
 			top: -8rem;
+			// top: -5.6vw;
 			display: flex;
 
 			&::before {
@@ -297,8 +303,8 @@ ul {
 		}
 
 		&-img {
-			width: 24.8rem;
-			// width: 18vw;
+			// width: 24.8rem;
+			width: 17.7vw;
 			height: 38rem;
 			background-size: cover;
 			background-position: center;
@@ -327,16 +333,17 @@ ul {
 		&-item {
 			display: flex;
 			justify-content: center;
+			align-items: center;
 			gap: 4.8rem;
-			width: 99.6rem;
-			// width: 72vw;
+			// width: 99.6rem;
+			width: 70vw;
 			font-size: 2rem;
 		}
 
 		&-group {
 			display: flex;
 			align-items: center;
-			gap:1.2rem;
+			gap: 1.2rem;
 		}
 
 		&-indicator,
@@ -351,17 +358,17 @@ ul {
 
 		&-indicator {
 			opacity: 0;
-		}
 
-		&-indicator.active {
-			opacity: 1;
+			&.active {
+				opacity: 1;
+			}
 		}
 
 		&-range {
 			-webkit-appearance: none;
 			appearance: none;
-			width: 24.8rem;
-			// width: 18vw;
+			// width: 24.8rem;
+			width: 17.7vw;
 			height: 8px;
 			background-color: #151517;
 			border: 1px solid rgba(255, 255, 255, 0.3);
@@ -372,18 +379,18 @@ ul {
 		}
 
 		&-text {
-			width: 50rem;
-			// width: 35vw;
+			// width: 50rem;
+			width: 35vw;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 
 			&.active {
-				background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5) 0%, #0d0d0d 80%);
+				background-image: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5) 0%, #0d0d0d 80%);
 			}
 		}
 
 		&-value {
 			// width: 15.6rem;
-			width: fit-content;
+			width: 4.8rem;
 
 			&--text {
 				text-align: center;
@@ -406,68 +413,84 @@ ul {
 	}
 }
 
-// @media (width<992px) {
-// 	.section {
-// 		&__controls {
-// 			display: none;
-// 		}
-// 	}
-// 	.options {
-// 		&__main {
-// 			flex-direction: column;
-// 		}
+@media (width<992px) {
+	.section {
+		&__controls {
+			display: none;
+		}
+	}
 
-// 		&__nav {
-// 			order: 2;
-// 			flex-direction: row;
-// 		}
+	.options {
+		&__main {
+			flex-direction: column;
+		}
 
-// 		&__settings {
-// 			order: 1;
-// 			gap: 0;
+		&__nav {
+			order: 2;
+			flex-direction: row;
+		}
 
-// 			&-window {
-// 				width: 90vw;
-// 			}
+		&__settings {
+			order: 1;
+			gap: 0;
 
-// 			&-item {
-// 				gap: 0rem;
-// 			}
-// 		}
-// 	}
-// }
+			&-window {
+				width: 90vw;
+			}
 
-// @media (width<768px) {
-// 	.options {
-// 		&__settings {
-// 			&-img {
-// 				width: 50vw;
-// 			}
-// 			&-img--second,
-// 			&-img--third {
-// 				display: none;
-// 			}
-// 		}
-// 	}
-// }
+			&-description {
+				display: none;
+			}
+		}
+	}
+}
 
-// @media (width<576px) {
-// 	.options {
-// 		&__btn {
-// 			width: 9.6rem;
-// 		}
+@media (width<768px) {
+	.options {
+		&__settings {
+			&-img {
+				width: 53.1vw;
 
-// 		&__settings {
-// 			&-item {
-// 				justify-content: center;
-// 			}
-// 			&-img {
-// 				width: 70vw;
-// 			}
+				&--second,
+				&--third {
+					display: none;
+				}
+			}
+		}
+	}
+}
 
-// 			&-value {
-// 				width: 4.8rem;
-// 			}
-// 		}
-// 	}
-// }
+@media (width<576px) {
+	.options {
+		&__btn {
+			width: 9.2rem;
+		}
+
+		&__settings {
+			&-item {
+				gap: 0;
+			}
+
+			&-item--column {
+				flex-direction: column;
+				gap: 1.2rem;
+			}
+
+			&-img {
+				width: 70vw;
+			}
+
+			&-text {
+				text-align: center;
+
+				&.active {
+					background-image: none;
+				}
+			}
+
+			&-indicator {
+				display: none;
+			}
+		}
+	}
+}

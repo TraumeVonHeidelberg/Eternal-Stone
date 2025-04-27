@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const morphAnim = document.getElementById('morphAnim')
 	const [leftArrow, rightArrow] = document.querySelectorAll('.header__music-arrow')
 
-	const sliderContainer = document.querySelector('.works__slider') // <--- DODANE
+	const sliderContainer = document.querySelector('.works__slider') 
 
 	let isPlaying = false
 	let currentTrackIndex = 0

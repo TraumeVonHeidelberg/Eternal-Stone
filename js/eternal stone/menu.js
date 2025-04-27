@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				el.querySelector('.options__settings-text')?.classList.remove('active')
 				el.querySelector('.options__settings-indicator')?.classList.remove('active')
 				const key = items[iIdx]?.querySelector('.options__settings-text')?.dataset.i18n
-				setDesc(key || '') // opis zawsze wraca
+				setDesc(key || '')
 			})
 		})
 
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 		items = []
 		iIdx = -1
-		setDesc('') // opis znika, gdy wychodzimy z panelu
+		setDesc('')
 		play(closeSound)
 	}
 
@@ -431,31 +431,38 @@ document.addEventListener('DOMContentLoaded', () => {
 				hiHdr(i)
 			}
 		})
-		li.addEventListener('click', () => {
-			if (layer === 'header') {
-				hIdx = i
-				hiHdr(i)
-				openSec(i)
+
+		li.addEventListener('click', e => {
+			const link = e.currentTarget.querySelector('a.header__link')
+			if (link) {
+				window.location.href = link.href
+				return
 			}
+
+			hIdx = i
+			hiHdr(i)
+			openSec(i)
 		})
 	})
 
 	optBtns.forEach((b, i) => {
 		b.addEventListener('mouseenter', () => {
-			if (layer === 'optBtns') {
+			if (layer !== 'header') {
 				bIdx = i
 				hiBtn(i)
 				showPanel(i)
-				setDesc('')
+				if (layer === 'optBtns') setDesc('')
 			}
 		})
+
 		b.addEventListener('click', () => {
-			if (layer === 'optBtns') {
-				bIdx = i
-				hiBtn(i)
-				showPanel(i)
-				enterItems()
-			}
+			if (layer === 'optItems') leaveItems()
+
+			bIdx = i
+			hiBtn(i)
+			showPanel(i)
+			layer = 'optBtns'
+			enterItems()
 		})
 	})
 

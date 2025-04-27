@@ -2,23 +2,23 @@ const slides = [
 	{
 		title: 'Eternal Stone',
 		description: 'MMO-RPG Project',
-		image: '../img/slider/EternalStone.webp',
-		bgImage: 'url("../img/slider/EternalStone-large.png")',
-		videoSrc: '../img/slider/Eternal Stone.mp4',
+		image: './img/slider/EternalStone.webp',
+		bgImage: 'url("./img/slider/EternalStone-large.png")',
+		videoSrc: './img/slider/Eternal Stone.mp4',
 	},
 	{
 		title: 'Coming Soon',
 		description: 'Visual Novel Project',
-		image: '../img/slider/VisualNovel.webp',
-		bgImage: 'url("../img/slider/VisualNovel-large.png")',
-		videoSrc: '../img/slider/Visual Novel.mp4',
+		image: './img/slider/VisualNovel.webp',
+		bgImage: 'url("./img/slider/VisualNovel-large.png")',
+		videoSrc: './img/slider/Visual Novel.mp4',
 	},
 	{
 		title: 'Coming Soon',
 		description: 'Anime RPG project',
-		image: '../img/slider/AnimeRPG.webp',
-		bgImage: 'url("../img/slider/AnimeRPG--large.png")',
-		videoSrc: '../img/slider/Anime RPG.mp4',
+		image: './img/slider/AnimeRPG.webp',
+		bgImage: 'url("./img/slider/AnimeRPG--large.png")',
+		videoSrc: './img/slider/Anime RPG.mp4',
 	},
 ]
 
