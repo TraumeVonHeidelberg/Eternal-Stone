@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const LANGS = ['English', 'Deutsch', 'Polski']
 	const STYLES = ['Decorative', 'Plain']
 	const DEF_VOL = 1.0
-	const DEF_DISP = 0.5
 
 	const i18n = {
 		English: {
@@ -125,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			f: DEF_VOL,
 			br: 1,
 			co: 1,
-			sa: 1,
+			sa: 1.5,
 			lg: LANGS[0],
 			ts: STYLES[0],
 		}

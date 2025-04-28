@@ -5,6 +5,6 @@ setInterval(() => {
 		closed.style.opacity = 1
 		setTimeout(() => {
 			closed.style.opacity = 0
-		}, 300)
+		}, 800)
 	}
 }, 5000)
