@@ -1,13 +1,13 @@
 @use '_base.scss';
-@use '_colors.scss' as *;
+@use './mixins' as *;
+
+*:focus {
+	outline: none;
+}
 
 *::before,
 *::after {
 	content: '';
-}
-
-*:focus {
-	outline: none;
 }
 
 body {
@@ -252,19 +252,7 @@ ul {
 		gap: 3.2rem;
 
 		&-window {
-			position: relative;
-			// width: 120rem;
-			width: 80vw;
-			height: 50rem;
-			border: 1px solid #fff;
-
-			&::before {
-				position: absolute;
-				z-index: -1;
-				inset: 2px;
-				border: 1px solid #fff;
-				box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.5);
-			}
+			@include eternal-window;
 		}
 
 		&-el {
@@ -290,7 +278,6 @@ ul {
 		&-imgs {
 			position: absolute;
 			top: -8rem;
-			// top: -5.6vw;
 			display: flex;
 
 			&::before {
@@ -303,7 +290,6 @@ ul {
 		}
 
 		&-img {
-			// width: 24.8rem;
 			width: 17.7vw;
 			height: 38rem;
 			background-size: cover;
@@ -335,7 +321,6 @@ ul {
 			justify-content: center;
 			align-items: center;
 			gap: 4.8rem;
-			// width: 99.6rem;
 			width: 70vw;
 			font-size: 2rem;
 		}
@@ -367,7 +352,6 @@ ul {
 		&-range {
 			-webkit-appearance: none;
 			appearance: none;
-			// width: 24.8rem;
 			width: 17.7vw;
 			height: 8px;
 			background-color: #151517;
@@ -379,7 +363,6 @@ ul {
 		}
 
 		&-text {
-			// width: 50rem;
 			width: 35vw;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 
@@ -389,7 +372,6 @@ ul {
 		}
 
 		&-value {
-			// width: 15.6rem;
 			width: 4.8rem;
 
 			&--text {

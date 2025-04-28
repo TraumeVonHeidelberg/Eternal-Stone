@@ -33,13 +33,13 @@ body::-webkit-scrollbar {
   display: none !important;
 }
 
+*:focus {
+  outline: none;
+}
+
 *::before,
 *::after {
   content: "";
-}
-
-*:focus {
-  outline: none;
 }
 
 body {

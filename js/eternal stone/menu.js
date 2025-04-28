@@ -65,13 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	const NAMES = {
-		English: {
-			English: 'English',
-			Deutsch: 'German',
-			Polski: 'Polish',
-			Decorative: 'Decorative',
-			Plain: 'Plain',
-		},
+		English: { English: 'English', Deutsch: 'German', Polski: 'Polish', Decorative: 'Decorative', Plain: 'Plain' },
 		Deutsch: {
 			English: 'Englisch',
 			Deutsch: 'Deutsch',
@@ -79,13 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			Decorative: 'Verspielt',
 			Plain: 'Schlicht',
 		},
-		Polski: {
-			English: 'Angielski',
-			Deutsch: 'Niemiecki',
-			Polski: 'Polski',
-			Decorative: 'Ozdobny',
-			Plain: 'Zwykły',
-		},
+		Polski: { English: 'Angielski', Deutsch: 'Niemiecki', Polski: 'Polski', Decorative: 'Ozdobny', Plain: 'Zwykły' },
 	}
 
 	const DESC = {
@@ -119,20 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function loadPrefs() {
-		const defaults = {
-			m: DEF_VOL,
-			f: DEF_VOL,
-			br: 1,
-			co: 1,
-			sa: 1.5,
-			lg: LANGS[0],
-			ts: STYLES[0],
-		}
+		const d = { m: DEF_VOL, f: DEF_VOL, br: 1, co: 1, sa: 1.5, lg: LANGS[0], ts: STYLES[0] }
 		try {
-			const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
-			return { ...defaults, ...stored }
+			return { ...d, ...(JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}) }
 		} catch {
-			return defaults
+			return d
 		}
 	}
 
@@ -143,21 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
 		a.currentTime = 0
 		a.play().catch(() => {})
 	}
-
 	const cycle = (arr, cur, dir) => arr[(arr.indexOf(cur) + (dir === 'next' ? 1 : -1) + arr.length) % arr.length]
-
 	const clamp = v => Math.max(0, Math.min(1, v))
-
 	const setFont = s => (document.body.style.fontFamily = s === 'Plain' ? "'Roboto',sans-serif" : "'Cinzel',serif")
 
 	const headerItems = [...document.querySelectorAll('.header__list-element')]
 	const headerVideo = document.getElementById('header-video')
 	const sections = [...document.querySelectorAll('.section')]
-
 	const navSound = document.getElementById('list-sound')
 	const openSound = document.getElementById('eternal-section-open')
 	const closeSound = document.getElementById('eternal-section-close')
-
 	const bgMusic = document.getElementById('background-music')
 	const fxAudios = [navSound, openSound, closeSound]
 
@@ -165,18 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const optSection = sections[optIdx]
 	const optBtns = [...optSection.querySelectorAll('.options__btn')]
 	const optPanels = [...optSection.querySelectorAll('.options__settings-el')]
-
 	const displaySliders = [...optPanels[0].querySelectorAll('.options__settings-range')]
 	const audioSliders = [...optPanels[1].querySelectorAll('.options__settings-range')]
 	const propKey = { 0: 'br', 1: 'co', 2: 'sa' }
-
-	//Real range of video filter value
-	const dispScale = {
-		br: [0.5, 1.5],
-		co: [0.5, 1.5],
-		sa: [0.5, 1.5],
-	}
-
+	const dispScale = { br: [0.5, 1.5], co: [0.5, 1.5], sa: [0.5, 1.5] }
 	const imgsBox = optPanels[0].querySelector('.options__settings-imgs')
 
 	const applyFilter = () => {
@@ -185,17 +151,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		headerVideo.style.filter = f
 	}
 
-	const setDisp = (i, sliderVal) => {
-		const v = Math.max(0, Math.min(1, +sliderVal))
-
+	const setDisp = (i, val) => {
+		const v = clamp(+val)
 		displaySliders[i].value = v
 		displaySliders[i].parentElement.querySelector('.options__settings-value').textContent = v.toFixed(2)
-
-		const key = propKey[i]
-		const [mn, mx] = dispScale[key]
-		const real = mn + v * (mx - mn)
-		prefs[key] = +real.toFixed(2)
-
+		const key = propKey[i],
+			[mn, mx] = dispScale[key]
+		prefs[key] = +(mn + v * (mx - mn)).toFixed(2)
 		applyFilter()
 		savePrefs()
 	}
@@ -204,18 +166,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		s.min = 0
 		s.max = 1
 		s.step = 0.1
-
-		const key = propKey[i]
-		const [mn, mx] = dispScale[key]
-		const initSlider = (prefs[key] - mn) / (mx - mn)
-
-		setDisp(i, initSlider)
+		const key = propKey[i],
+			[mn, mx] = dispScale[key],
+			init = (prefs[key] - mn) / (mx - mn)
+		setDisp(i, init)
 		s.addEventListener('input', () => {
 			setDisp(i, s.value)
 			play(navSound)
 		})
 	})
-
 	applyFilter()
 
 	const setVol = (i, v) => {
@@ -242,7 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			play(navSound)
 		})
 	})
-
 	const resetVolumes = () => [0, 1].forEach(i => setVol(i, DEF_VOL))
 
 	const langItem = [...optSection.querySelectorAll('.options__settings-item')].find(it =>
@@ -251,15 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	const styItem = [...optSection.querySelectorAll('.options__settings-item')].find(it =>
 		it.querySelector('[data-i18n="text.style"]')
 	)
-
 	const langVal = langItem.querySelector('.options__settings-value')
 	const styleVal = styItem.querySelector('.options__settings-value')
-
 	const langLeft = langItem.querySelector('.fa-angle-left')
 	const langRight = langItem.querySelector('.fa-angle-right')
 	const styLeft = styItem.querySelector('.fa-angle-left')
 	const styRight = styItem.querySelector('.fa-angle-right')
-
 	const descEl = optSection.querySelector('.options__settings-description')
 	let currentKey = 'music.volume'
 
@@ -285,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		play(navSound)
 		updateTexts(v)
 	}
-
 	const setStyle = v => {
 		prefs.ts = v
 		savePrefs()
@@ -296,11 +250,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	setFont(prefs.ts)
 	updateTexts(prefs.lg)
-
 	langLeft.addEventListener('click', () => setLang(cycle(LANGS, prefs.lg, 'prev')))
 	langRight.addEventListener('click', () => setLang(cycle(LANGS, prefs.lg, 'next')))
 	styLeft.addEventListener('click', () => setStyle(cycle(STYLES, prefs.ts, 'prev')))
 	styRight.addEventListener('click', () => setStyle(cycle(STYLES, prefs.ts, 'next')))
+
+	const resetDisplay = () => {
+		;['br', 'co', 'sa'].forEach((k, i) => {
+			const [mn, mx] = dispScale[k]
+			const def = k === 'sa' ? 1.5 : 1
+			setDisp(i, (def - mn) / (mx - mn))
+		})
+	}
+	const resetLangStyle = () => {
+		prefs.lg = LANGS[0]
+		prefs.ts = STYLES[0]
+		savePrefs()
+		updateTexts(prefs.lg)
+		play(navSound)
+	}
 
 	let layer = 'header',
 		hIdx = 0,
@@ -316,13 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (lastHdr !== -1 && layer === 'header') play(navSound)
 		lastHdr = i
 	}
-
 	const hiBtn = i => {
 		optBtns.forEach((b, k) => b.classList.toggle('active', k === i))
 		if (lastBtn !== -1 && layer === 'optBtns') play(navSound)
 		lastBtn = i
 	}
-
 	const hiItm = i => {
 		items.forEach((el, k) => {
 			el.classList.toggle('active', k === i)
@@ -333,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (key) {
 			currentKey = key
 			setDesc(key)
-		} // ← przywrócone
+		}
 		play(navSound)
 	}
 
@@ -353,7 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			return
 		}
-
 		if (lastSec !== -1 && lastSec !== i) play(closeSound)
 		if (lastSec !== i) play(openSound)
 		sections.forEach((s, k) => s.classList.toggle('hidden', k !== i))
@@ -387,7 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		layer = 'optItems'
 		optPanels[bIdx].classList.add('active')
 		items = [...optPanels[bIdx].querySelectorAll('.options__settings-item')]
-
 		items.forEach((el, k) => {
 			el.addEventListener('mouseenter', () => {
 				iIdx = k
@@ -396,11 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			el.addEventListener('mouseleave', () => {
 				el.querySelector('.options__settings-text')?.classList.remove('active')
 				el.querySelector('.options__settings-indicator')?.classList.remove('active')
-				const key = items[iIdx]?.querySelector('.options__settings-text')?.dataset.i18n
-				setDesc(key || '')
+				setDesc('')
 			})
 		})
-
 		if (items.length) {
 			iIdx = 0
 			hiItm(0)
@@ -430,14 +392,12 @@ document.addEventListener('DOMContentLoaded', () => {
 				hiHdr(i)
 			}
 		})
-
 		li.addEventListener('click', e => {
 			const link = e.currentTarget.querySelector('a.header__link')
 			if (link) {
 				window.location.href = link.href
 				return
 			}
-
 			hIdx = i
 			hiHdr(i)
 			openSec(i)
@@ -446,17 +406,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	optBtns.forEach((b, i) => {
 		b.addEventListener('mouseenter', () => {
+			if (layer === 'optItems') leaveItems()
 			if (layer !== 'header') {
 				bIdx = i
 				hiBtn(i)
 				showPanel(i)
-				if (layer === 'optBtns') setDesc('')
+				setDesc('')
 			}
 		})
-
 		b.addEventListener('click', () => {
 			if (layer === 'optItems') leaveItems()
-
 			bIdx = i
 			hiBtn(i)
 			showPanel(i)
@@ -465,20 +424,21 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	})
 
-	const adjDisp = (sl, delta) => {
+	const adjDisp = (sl, d) => {
 		const idx = displaySliders.indexOf(sl)
-		if (idx === -1) return
-		setDisp(idx, +sl.value + delta)
-		play(navSound)
+		if (idx !== -1) {
+			setDisp(idx, +sl.value + d)
+			play(navSound)
+		}
 	}
 
 	document.addEventListener(
 		'keydown',
 		e => {
-			const k = e.key.toLowerCase()
-			const stop = arr => {
-				if (arr.includes(k)) e.preventDefault()
-			}
+			const k = e.key.toLowerCase(),
+				stop = a => {
+					if (a.includes(k)) e.preventDefault()
+				}
 
 			if (layer === 'header') {
 				stop(['arrowup', 'arrowdown', 'enter', 'w'])
@@ -504,21 +464,21 @@ document.addEventListener('DOMContentLoaded', () => {
 					showPanel(bIdx)
 					setDesc('')
 				} else if (['enter', 'w'].includes(k)) enterItems()
-				else if (k === 'e') resetVolumes()
-				else if (['escape', 'q'].includes(k)) closeSec()
+				else if (k === 'e') {
+					if (bIdx === 0) resetDisplay()
+					else if (bIdx === 1) resetVolumes()
+					else if (bIdx === 2) resetLangStyle()
+				} else if (['escape', 'q'].includes(k)) closeSec()
 			} else if (layer === 'optItems') {
 				stop(['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'e', 'escape', 'q'])
 				const cur = items[iIdx]
 				const sld = cur?.querySelector('.options__settings-range')
 				const txt = cur?.querySelector('.options__settings-text')?.dataset.i18n
-
 				if (sld && ['arrowleft', 'arrowright'].includes(k)) {
-					const d = k === 'arrowright' ? 0.1 : -0.1
-					const di = displaySliders.indexOf(sld)
-					if (di !== -1) {
-						setDisp(di, +sld.value + d)
-						play(navSound)
-					} else {
+					const d = k === 'arrowright' ? 0.1 : -0.1,
+						di = displaySliders.indexOf(sld)
+					if (di !== -1) adjDisp(sld, d)
+					else {
 						const ai = audioSliders.indexOf(sld)
 						if (ai !== -1) {
 							setVol(ai, +sld.value + d)
@@ -545,10 +505,10 @@ document.addEventListener('DOMContentLoaded', () => {
 					iIdx = (iIdx - 1 + items.length) % items.length
 					hiItm(iIdx)
 				} else if (k === 'e') {
-					resetVolumes()
-				} else if (['escape', 'q'].includes(k)) {
-					leaveItems()
-				}
+					if (bIdx === 0) resetDisplay()
+					else if (bIdx === 1) resetVolumes()
+					else if (bIdx === 2) resetLangStyle()
+				} else if (['escape', 'q'].includes(k)) leaveItems()
 			}
 		},
 		true

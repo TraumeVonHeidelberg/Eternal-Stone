@@ -1,0 +1,14 @@
+@mixin eternal-window($width: 80vw, $height: 50rem) {
+	position: relative;
+	width: $width;
+	height: $height;
+	border: 1px solid #fff;
+
+	&::before {
+		position: absolute;
+		z-index: -1;
+		inset: 2px;
+		border: 1px solid #fff;
+		box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.5);
+	}
+}
