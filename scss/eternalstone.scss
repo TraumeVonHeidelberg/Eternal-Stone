@@ -298,28 +298,40 @@ ul {
 			position: relative;
 			display: flex;
 			justify-content: center;
+			width: 500px;
+			height: 500px;
+		}
+
+		&-canvas {
+			width: 700px;
+			height: 600px;
 		}
 
 		&-window {
-			@include eternal-window(20vw, 20vw);
+			@include eternal-window(55rem, 20rem);
 			position: absolute;
 			bottom: 0;
 			z-index: 2000;
 			display: flex;
 			align-items: center;
 			flex-direction: column;
-			gap: 1.2rem;
 			padding: 3.2rem;
-			background-color: rgba(0,0,0,.6);
+			background-color: rgba(0, 0, 0, 0.6);
 		}
 
 		&-title {
 			width: 50%;
 			text-align: center;
+			font-size: 2.4rem;
 			border-bottom: 1px solid $eternal-border;
 		}
 
 		&-description {
+			display: flex;
+			align-items: center;
+			height: 100%;
+			font-size: 1.2rem;
+			line-height: 2rem;
 		}
 	}
 }

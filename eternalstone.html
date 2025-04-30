@@ -17,9 +17,18 @@
     <link rel="manifest" href="manifest-eternal.webmanifest">
     <link rel="stylesheet" href="./css/eternalstone.css">
     <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+          }
+        }
+        </script>
     <script src="./js/getCurrentYear.js" defer></script>
     <script src="./js/eternal stone/changeBackground.js" defer></script>
     <script type="module" src="./js/eternal stone/menu.js" defer></script>
+    <script type="module" src="./js/eternal stone/displayModel.js" defer></script>
 </head>
 
 <body>
@@ -115,11 +124,14 @@
             </div>
             <div class="lore__character panel-hidden">
                 <i class="fa-solid fa-angle-left lore__character-arrow"></i>
-                <div class="lore__character-box">
-                    <img src="./img/eternal-models/knight-img.png" alt="">
+                <div class="lore__character-box" id="model-container">
+                    <!-- <img src="./img/eternal-models/knight-img.png" alt=""> -->
+                    <canvas class="lore__character-canvas"></canvas>
                     <div class="lore__character-window">
                         <p class="lore__character-title">Knight</p>
-                        <p class="lore__character-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique voluptatum sit facere eveniet doloremque voluptatem possimus repellendus suscipit ducimus vero.</p>
+                        <p class="lore__character-description">Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                            Similique voluptatum sit facere eveniet doloremque voluptatem possimus repellendus suscipit
+                            ducimus vero.</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-angle-right lore__character-arrow"></i>
