@@ -12,14 +12,14 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <link rel="icon" href="./img/logo/Eternal Stone/test2.png" type="image/png">
-    <link rel="apple-touch-icon" href="img/logo/favicon-180.png">
-    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="./img/logo/Eternal-Stone/favicon-64.png" type="image/png">
+    <link rel="apple-touch-icon" href="img/logo/Eternal-Stone/favicon-180.png">
+    <link rel="manifest" href="manifest-eternal.webmanifest">
     <link rel="stylesheet" href="./css/eternalstone.css">
     <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
     <script src="./js/getCurrentYear.js" defer></script>
     <script src="./js/eternal stone/changeBackground.js" defer></script>
-    <script src="./js/eternal stone/menu.js" defer></script>
+    <script type="module" src="./js/eternal stone/menu.js" defer></script>
 </head>
 
 <body>
@@ -29,7 +29,7 @@
 
     <header class="header">
         <div class="header__container">
-            <img src="./img/logo-test.png" alt="Logo of eternal stone" class="header__logo">
+            <img src="./img/logo/Eternal-Stone/logo.webp" alt="Logo of eternal stone" class="header__logo">
             <div class="header__menu-container">
                 <ul class="header__list">
                     <li class="header__list-element" data-i18n="gameplay">Gameplay</li>
@@ -61,7 +61,81 @@
 
 
     <section class="section lore hidden">
-        222222222222222222222
+        <div class="lore__nav">
+            <button class="lore__nav-btn" data-i18n="world">World</button>
+            <button class="lore__nav-btn" data-i18n="characters">Characters</button>
+        </div>
+        <div class="lore__container">
+            <div class="lore__world">
+                <div class="lore__world-item">
+                    <p class="lore__world-title" data-i18n="worldTitle1">Capital of Bright Future</p>
+                    <img src="./img/eternal-cards/Knight.webp"
+                        alt="Card resembling the area in Eternal Stone world portraying a noble knight"
+                        class="lore__world-img">
+                    <p class="lore__world-description" data-i18n="worldDescription1">A prosperous region where brave
+                        humans stand ready to fight
+                        against the darkness and defend the light of the world
+                    </p>
+                </div>
+                <div class="lore__world-item">
+                    <p class="lore__world-title" data-i18n="worldTitle2">Magical Stronghold of Fortune</p>
+                    <img src="./img/eternal-cards/Mage.webp"
+                        alt="Card resembling the area in Eternal Stone world portraying a mage" class="lore__world-img">
+                    <p class="lore__world-description" data-i18n="worldDescription2">A land elevated by a magical
+                        faction devoted to wisdom,
+                        guarding secrets of the universe known only to the worthy</p>
+                </div>
+                <div class="lore__world-item">
+                    <p class="lore__world-title" data-i18n="worldTitle3">Snalaria, Bastion of Lizards</p>
+                    <img src="./img/eternal-cards/lizard.webp"
+                        alt="Card resembling the area in Eternal Stone world portraying a lizard warrior"
+                        class="lore__world-img">
+                    <p class="lore__world-description" data-i18n="worldDescription3">A wild region where lizardfolk,
+                        wyvern riders, and wyrm masters
+                        harness the power of nature, poison, and ancient beasts</p>
+                </div>
+                <div class="lore__world-item">
+                    <p class="lore__world-title" data-i18n="worldTitle4">Dominion of the Undead</p>
+                    <img src="./img/eternal-cards/Undead.webp"
+                        alt="Card resembling the area in Eternal Stone world portraying a necromancer"
+                        class="lore__world-img">
+                    <p class="lore__world-description" data-i18n="worldDescription4">A cursed land where necromancers
+                        and undead dragons draw power
+                        from death itself, seeking to engulf the world in eternal darkness</p>
+                </div>
+                <div class="lore__world-item">
+                    <p class="lore__world-title" data-i18n="worldTitle5">Realm of Eternal Frost</p>
+                    <img src="./img/eternal-cards/Eternal Frost.webp"
+                        alt="Card resembling the area in Eternal Stone world portraying an ice ghost"
+                        class="lore__world-img">
+                    <p class="lore__world-description" data-i18n="worldDescription5">A frozen land where ice entities,
+                        frost beasts, and spirits of
+                        endless winter reign over desolate, glacial dominions.</p>
+                </div>
+            </div>
+            <div class="lore__character panel-hidden">
+                <i class="fa-solid fa-angle-left lore__character-arrow"></i>
+                <div class="lore__character-box">
+                    <img src="./img/eternal-models/knight-img.png" alt="">
+                    <div class="lore__character-window">
+                        <p class="lore__character-title">Knight</p>
+                        <p class="lore__character-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique voluptatum sit facere eveniet doloremque voluptatem possimus repellendus suscipit ducimus vero.</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-angle-right lore__character-arrow"></i>
+            </div>
+        </div>
+
+        <div class="section__controls section__controls--lore">
+            <div class="section__control">
+                <div class="section__control-btn">Q</div>
+                <p class="section__control-text" data-i18n="close">Close</p>
+            </div>
+            <div class="section__control">
+                <div class="section__control-btn">W</div>
+                <p class="section__control-text" data-i18n="select">Select</p>
+            </div>
+        </div>
     </section>
 
 
@@ -182,6 +256,34 @@
             <div class="section__control">
                 <div class="section__control-btn">E</div>
                 <p class="section__control-text" data-i18n="defaults">Defaults</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section locations hidden">
+        <div class="locations__window">
+            <div class="locations__main">
+                <div class="locations__imgs">
+                    <div class="locations__img"></div>
+                </div>
+                <div class="locations__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias
+                    autem fugit impedit enim ducimus iusto earum nihil labore, explicabo beatae.</div>
+            </div>
+            <div class="locations__nav">
+                <div class="locations__heading">
+                    <h2 class="locations__header">Sexo</h2>
+                    <p class="locations__subheader">Place of hardcore sex</p>
+                </div>
+                <ul class="locations__list">
+                    <li class="locations__list-item">Sex</li>
+                    <li class="locations__list-item">Sex2</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section__controls">
+            <div class="section__control">
+                <div class="section__control-btn">Q</div>
+                <p class="section__control-text" data-i18n="close">Close</p>
             </div>
         </div>
     </section>
