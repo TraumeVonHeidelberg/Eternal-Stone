@@ -39,6 +39,34 @@ export const i18n = {
 			'A cursed land where necromancers and undead dragons draw power from death itself, seeking to engulf the world in eternal darkness',
 		worldDescription5:
 			'A frozen land where ice entities, frost beasts, and spirits of endless winter reign over desolate, glacial dominions',
+		vitality: 'Vitality',
+		strength: 'Strength',
+		dexterity: 'Dexterity',
+		intelligence: 'Intelligence',
+		mentality: 'Mentality',
+		luck: 'Luck',
+		charisma: 'Charisma',
+		knight: 'Knight',
+		paladin: 'Paladin',
+		necromancer: 'Necromancer',
+		gladiator: 'Gladiator',
+		berserker: 'Berserker',
+		assassin: 'Assassin',
+		hunter: 'Hunter',
+		knightDesc:
+			'Defenders clad in heavy armor, Knights wield sword and shield with unwavering resolve, attracting foes and absorbing their wrath to protect their comrades on the battlefield.',
+		paladinDesc:
+			'Warriors touched by divine power, Paladins channel holy energy through their hammers, punishing enemies with sacred blows while healing and shielding allies from harm.',
+		necromancerDesc:
+			'Masters of the dark arts, Necromancers raise undead minions and unleash debilitating curses, controlling the battlefield with deathly precision.',
+		gladiatorDesc:
+			'Deadly combatants wielding dual swords with lethal efficiency, Gladiators overwhelm foes with rapid, devastating attacks and relentless fury.',
+		berserkerDesc:
+			'Brutal warriors harnessing raw fury, Berserkers devastate enemies with massive area attacks, relentless strikes, and terrifying power capable of crippling entire groups.',
+		assassinDesc:
+			'Stealthy and lethal, Assassins strike swiftly from shadows, using teleportation and deception to deliver devastating blows before disappearing into darkness.',
+		hunterDesc:
+			'Marksmen bonded with their beast companions, Hunters coordinate lethal ranged attacks, enhancing both their and their pets’ capabilities through precise strategy and coordination.',
 	},
 	Deutsch: {
 		English: 'Englisch',
@@ -80,6 +108,34 @@ export const i18n = {
 			'Ein verfluchtes Land, in dem Nekromanten und untote Drachen Macht aus dem Tod ziehen, um die Welt in ewige Dunkelheit zu stürzen',
 		worldDescription5:
 			'Ein gefrorenes Land, in dem Eiswesen, Frostbestien und Geister endlosen Winters über trostlose, eisige Reiche herrschen',
+		vitality: 'Vitalität',
+		strength: 'Stärke',
+		dexterity: 'Geschicklichkeit',
+		intelligence: 'Intelligenz',
+		mentality: 'Mentalität',
+		luck: 'Glück',
+		charisma: 'Charisma',
+		knight: 'Ritter',
+		paladin: 'Paladin',
+		necromancer: 'Nekromant',
+		gladiator: 'Gladiator',
+		berserker: 'Berserker',
+		assassin: 'Attentäter',
+		hunter: 'Jäger',
+		knightDesc:
+			'Verteidiger in schwerer Rüstung, Ritter führen Schwert und Schild mit unerschütterlicher Entschlossenheit, ziehen Gegner an und absorbieren deren Zorn, um ihre Kameraden auf dem Schlachtfeld zu schützen.',
+		paladinDesc:
+			'Krieger, die von göttlicher Macht berührt sind, leiten Paladine heilige Energie durch ihre Hämmer, bestrafen Feinde mit heiligen Schlägen und heilen sowie schützen Verbündete.',
+		necromancerDesc:
+			'Meister der dunklen Künste, Nekromanten erwecken untote Diener und entfesseln lähmende Flüche, kontrollieren das Schlachtfeld mit tödlicher Präzision.',
+		gladiatorDesc:
+			'Tödliche Kämpfer mit Doppelschwertern, Gladiatoren überwältigen Gegner mit schnellen, verheerenden Angriffen und unermüdlicher Wut.',
+		berserkerDesc:
+			'Brutale Krieger, die rohe Wut kanalisieren, Berserker verwüsten Feinde mit massiven Flächenangriffen und unaufhörlichen Schlägen.',
+		assassinDesc:
+			'Heimlich und tödlich, Attentäter schlagen blitzschnell aus den Schatten zu, nutzen Teleportation und Täuschung für verheerende Angriffe und verschwinden dann wieder.',
+		hunterDesc:
+			'Fernkämpfer im Bündnis mit ihren Bestien, Jäger koordinieren tödliche Fernangriffe und verbessern ihre und die Fähigkeiten ihrer Gefährten durch präzise Strategie.',
 	},
 	Polski: {
 		English: 'Angielski',
@@ -121,6 +177,34 @@ export const i18n = {
 			'Przeklęta ziemia, gdzie nekromanci i nieumarłe smoki czerpią moc z samej śmierci, pragnąc pogrążyć świat w wiecznej ciemności',
 		worldDescription5:
 			'Zamarznięta kraina, gdzie lodowe byty, bestie mrozu i duchy niekończącej się zimy panują nad opustoszałymi lodowymi domenami',
+		vitality: 'Witalność',
+		strength: 'Siła',
+		dexterity: 'Zręczność',
+		intelligence: 'Inteligencja',
+		mentality: 'Mentalność',
+		luck: 'Szczęście',
+		charisma: 'Charyzma',
+		knight: 'Rycerz',
+		paladin: 'Paladyn',
+		necromancer: 'Nekromanta',
+		gladiator: 'Gladiator',
+		berserker: 'Berserker',
+		assassin: 'Zabójca',
+		hunter: 'Łowca',
+		knightDesc:
+			'Obrońcy w ciężkiej zbroi, którzy władają mieczem i tarczą z niezachwianą determinacją, przyciągając wrogów i pochłaniając ich gniew, by chronić towarzyszy na polu bitwy.',
+		paladinDesc:
+			'Wojownicy obdarzeni boską mocą, Paladyni kierują świętą energię przez swoje młoty, karząc wrogów świętymi ciosami i leczą oraz chronią sojuszników.',
+		necromancerDesc:
+			'Mistrzowie czarnej magii, Nekromanci wskrzeszają nieumarłe posiłki i uwalniają wyniszczające klątwy, kontrolując pole bitwy z morderczą precyzją.',
+		gladiatorDesc:
+			'Zabójczy wojownicy walczący podwójnymi mieczami, Gladiatorzy miażdżą wrogów szybkimi, niszczycielskimi atakami i nieustającą furią.',
+		berserkerDesc:
+			'Brutalni wojownicy czerpiący moc z czystej wściekłości, Berserkerzy niszczą wrogów potężnymi atakami obszarowymi i bezlitosnymi ciosami.',
+		assassinDesc:
+			'Cisi i śmiertelni, Zabójcy uderzają błyskawicznie z cienia, wykorzystując teleportację i podstęp, a następnie znikają.',
+		hunterDesc:
+			'Strzelcy w sojuszu z bestiami, Łowcy koordynują zabójcze ataki z dystansu, wzmacniając zarówno siebie, jak i swoje zwierzęta poprzez precyzyjną strategię.',
 	},
 }
 

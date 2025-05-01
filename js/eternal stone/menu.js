@@ -1,44 +1,46 @@
 import { i18n, DESC } from './locales.js'
+import { CHAR_INFO } from './charData.js'
+import { createViewer } from './displayModel.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-	const STORAGE_KEY = 'eternalOptions'
-	const LANGS = ['English', 'Deutsch', 'Polski']
-	const STYLES = ['Decorative', 'Plain']
-	const DEF_VOL = 1.0
-
-	const dflt = { m: DEF_VOL, f: DEF_VOL, br: 1, co: 1, sa: 1.5, lg: LANGS[0], ts: STYLES[0] }
+	const STORAGE_KEY = 'eternalOptions',
+		LANGS = ['English', 'Deutsch', 'Polski'],
+		STYLES = ['Decorative', 'Plain'],
+		DEF_VOL = 1.0
+	const defaults = { m: DEF_VOL, f: DEF_VOL, br: 1, co: 1, sa: 1.5, lg: LANGS[0], ts: STYLES[0] }
 	const prefs = (() => {
 		try {
-			return { ...dflt, ...(JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}) }
+			return { ...defaults, ...(JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}) }
 		} catch {
-			return dflt
+			return defaults
 		}
 	})()
 	const save = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
-
 	const play = a => {
 		a.currentTime = 0
 		a.play().catch(() => {})
 	}
-	const cycle = (a, c, dir) => a[(a.indexOf(c) + (dir === 'next' ? 1 : -1) + a.length) % a.length]
+	const cycle = (a, c, d) => a[(a.indexOf(c) + (d === 'next' ? 1 : -1) + a.length) % a.length]
 	const clamp = v => Math.min(1, Math.max(0, v))
-	const setFont = s => (document.body.style.fontFamily = s === 'Plain' ? "'Roboto',sans-serif" : "'Cinzel',serif")
+	const setFont = s => {
+		document.body.style.fontFamily = s === 'Plain' ? "'Roboto',sans-serif" : "'Cinzel',serif"
+	}
 
 	const headerEl = document.querySelector('header')
 	const headerItems = [...document.querySelectorAll('.header__list-element')]
 	const headerVideo = document.getElementById('header-video')
 	const sections = [...document.querySelectorAll('.section')]
-	const navSound = document.getElementById('list-sound')
-	const openSound = document.getElementById('eternal-section-open')
-	const closeSound = document.getElementById('eternal-section-close')
-	const bgMusic = document.getElementById('background-music')
-	const fxAudios = [navSound, openSound, closeSound]
+	const navSound = document.getElementById('list-sound'),
+		openSound = document.getElementById('eternal-section-open'),
+		closeSound = document.getElementById('eternal-section-close')
+	const bgMusic = document.getElementById('background-music'),
+		fxAudios = [navSound, openSound, closeSound]
 
 	const optIdx = headerItems.findIndex(li => li.textContent.trim().toLowerCase() === 'options')
 	const loreIdx = headerItems.findIndex(li => li.textContent.trim().toLowerCase() === 'lore')
-	const optSec = sections[optIdx]
-	const loreSec = sections[loreIdx]
-	const locSec = document.querySelector('.section.locations')
+	const optSec = sections[optIdx],
+		loreSec = sections[loreIdx],
+		locSec = document.querySelector('.section.locations')
 
 	const optBtns = [...optSec.querySelectorAll('.options__btn')]
 	const optPanels = [...optSec.querySelectorAll('.options__settings-el')]
@@ -47,9 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const displaySliders = [...optPanels[0].querySelectorAll('.options__settings-range')]
 	const audioSliders = [...optPanels[1].querySelectorAll('.options__settings-range')]
-	const propKey = { 0: 'br', 1: 'co', 2: 'sa' }
-	const dispScale = { br: [0.5, 1.5], co: [0.5, 1.5], sa: [0.5, 1.5] }
+	const propKey = { 0: 'br', 1: 'co', 2: 'sa' },
+		dispScale = { br: [0.5, 1.5], co: [0.5, 1.5], sa: [0.5, 1.5] }
 	const imgsBox = optPanels[0].querySelector('.options__settings-imgs')
+	const viewer = createViewer('.lore__character-canvas')
+	const charTitle = loreSec.querySelector('.lore__character-title')
+	const charDesc = loreSec.querySelector('.lore__character-description')
+	const charStats = loreSec.querySelectorAll('.lore__character-list-item--attributes')
 
 	const applyFilter = () => {
 		const f = `brightness(${prefs.br}) contrast(${prefs.co}) saturate(${prefs.sa})`
@@ -123,8 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const styItem = [...optSec.querySelectorAll('.options__settings-item')].find(n =>
 		n.querySelector('[data-i18n="text.style"]')
 	)
-	const langVal = langItem.querySelector('.options__settings-value')
-	const styVal = styItem.querySelector('.options__settings-value')
+	const langVal = langItem.querySelector('.options__settings-value'),
+		styVal = styItem.querySelector('.options__settings-value')
 	const langLeft = langItem.querySelector('.fa-angle-left'),
 		langRight = langItem.querySelector('.fa-angle-right')
 	const styLeft = styItem.querySelector('.fa-angle-left'),
@@ -133,10 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	let currentKey = 'music.volume'
 
 	const setDesc = k => {
-		const active = document.querySelector('.options__settings-el.active')
-		if (active && k) descEl.textContent = (DESC[prefs.lg] && DESC[prefs.lg][k]) || k
-		if (!active) descEl.style.opacity = '0'
-		else descEl.style.opacity = '1'
+		const act = document.querySelector('.options__settings-el.active')
+		if (act && k) descEl.textContent = (DESC[prefs.lg] && DESC[prefs.lg][k]) || k
+		descEl.style.opacity = act ? '1' : '0'
 	}
 	const updateTexts = lang => {
 		document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -179,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		lastBtn = -1,
 		lastLore = -1,
 		lastSec = -1
+
 	const hiHdr = i => {
 		headerItems.forEach((li, k) => li.classList.toggle('active', k === i))
 		if (lastHdr !== -1 && layer === 'header') play(navSound)
@@ -194,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (lastLore !== -1 && layer === 'loreBtns') play(navSound)
 		lastLore = i
 	}
+
 	const hiItm = i => {
 		items.forEach((el, k) => {
 			el.classList.toggle('active', k === i)
@@ -207,12 +214,44 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		play(navSound)
 	}
+
 	const hiLoreItem = i => {
-		loreItems.forEach((el, k) => {
-			const a = k === i
-			el.classList.toggle('active', a)
-			el.querySelector('img')?.classList.toggle('active', a)
-		})
+		if (lIdx === 0) {
+			// WORLD
+			loreItems.forEach((el, k) => {
+				const active = k === i
+				el.classList.toggle('active', active)
+				el.querySelector('img')?.classList.toggle('active', active)
+			})
+		} else {
+			// CHARACTERS
+			loreItems.forEach((el, k) => {
+				const active = k === i
+				el.querySelector('.lore__character-list-indicator')?.classList.toggle('active', active)
+				el.querySelector('.lore__character-list-text')?.classList.toggle('active', active)
+			})
+
+			const info = CHAR_INFO[i] ?? CHAR_INFO[0]
+			const lang = prefs.lg
+
+			// localized title & description
+			charTitle.textContent = i18n[lang][info.titleKey] || ''
+			charDesc.textContent = i18n[lang][info.descKey] || ''
+
+			// show the correct 3D model
+			viewer.show(info.model, info.rotY || 0)
+
+			// update attributes
+			const attrs = info.attributes || {}
+			charStats.forEach(statEl => {
+				const [nameEl, valEl] = statEl.querySelectorAll('.lore__character-list-text--attributes')
+				if (nameEl && valEl) {
+					const key = nameEl.textContent.trim()
+					valEl.textContent = String(attrs[key] ?? 0)
+				}
+			})
+		}
+
 		play(navSound)
 	}
 
@@ -246,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		if (lastSec !== -1 && lastSec !== i) play(closeSound)
 		if (lastSec !== i) play(openSound)
+		headerEl.classList.remove('hidden')
 		sections.forEach((s, k) => s.classList.toggle('hidden', k !== i))
 		lastSec = i
 		if (i === optIdx) {
@@ -267,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			sections.forEach(s => s.classList.add('hidden'))
 			lorePanels.forEach(p => p.classList.remove('active'))
 		}
-		headerEl.classList.remove('hidden')
 		lastSec = -1
 		layer = 'header'
 		items = []
@@ -282,10 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		optPanels[bIdx].classList.add('active')
 		items = [...optPanels[bIdx].querySelectorAll('.options__settings-item')]
 		items.forEach((el, k) => {
-			el.addEventListener('mouseenter', () => {
+			const over = () => {
 				iIdx = k
 				hiItm(k)
-			})
+			}
+			el.addEventListener('mouseenter', over)
+			el._overHandler = over
 			el.addEventListener('mouseleave', () => {
 				el.querySelector('.options__settings-text')?.classList.remove('active')
 				el.querySelector('.options__settings-indicator')?.classList.remove('active')
@@ -304,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		items.forEach(el => {
 			el.querySelector('.options__settings-text')?.classList.remove('active')
 			el.querySelector('.options__settings-indicator')?.classList.remove('active')
+			el.removeEventListener('mouseenter', el._overHandler)
 		})
 		items = []
 		iIdx = -1
@@ -315,14 +357,24 @@ document.addEventListener('DOMContentLoaded', () => {
 		layer = 'loreItems'
 		actLore(lIdx)
 		const panel = lorePanels[lIdx]
+
 		loreItems =
 			lIdx === 0
 				? [...panel.querySelectorAll('.lore__world-item')]
-				: [...panel.querySelectorAll('.lore__character-item, .lore__character')]
+				: [...panel.querySelectorAll('.lore__character-list-item:not(.lore__character-list-item--attributes)')]
+
+		// ustawienie indeksu i aktywnego elementu
 		if (loreItems.length) {
 			liIdx = 0
 			hiLoreItem(liIdx)
+
+			// jeśli to Characters, to włączamy interakcję i pokazujemy pierwszy model
+			if (lIdx === 1) {
+				viewer.setInteractive(true)
+			}
 		}
+
+		// nawigacja myszką
 		loreItems.forEach((el, k) => {
 			const over = () => {
 				liIdx = k
@@ -330,18 +382,36 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			el.addEventListener('mouseenter', over)
 			el._overHandler = over
-			if (lIdx === 0) el.addEventListener('click', openLoc)
+
+			if (lIdx === 0) {
+				el.addEventListener('click', openLoc)
+				el._clickHandler = openLoc
+			}
 		})
+
 		play(openSound)
 	}
+
 	const leaveLoreItems = () => {
 		loreItems.forEach(el => {
 			el.classList.remove('active')
 			el.querySelector('img')?.classList.remove('active')
+			el.querySelector('.lore__character-list-indicator')?.classList.remove('active')
+			el.querySelector('.lore__character-list-text')?.classList.remove('active')
+
+			// usuwanie handlerów
 			el.removeEventListener('mouseenter', el._overHandler)
 			delete el._overHandler
-			el.removeEventListener('click', openLoc)
+
+			if (lIdx === 0 && el._clickHandler) {
+				el.removeEventListener('click', el._clickHandler)
+				delete el._clickHandler
+			}
 		})
+
+		// wyłącz interakcję z modelem
+		viewer.setInteractive(false)
+
 		loreItems = []
 		liIdx = -1
 		layer = 'loreBtns'

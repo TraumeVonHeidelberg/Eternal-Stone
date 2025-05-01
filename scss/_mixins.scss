@@ -37,3 +37,21 @@
 		animation: pulse 1.5s linear infinite alternate;
 	}
 }
+
+@mixin eternal-indicator($size: 1.2rem, $border-color: rgba(255, 255, 255, 1), $spread: 2px) {
+	width: $size;
+	height: $size;
+	background-color: #fff;
+	box-shadow: inset 0px 0 0 $spread rgba(0, 0, 0, 1);
+	border: 1px solid $border-color;
+	transform: rotate(45deg);
+}
+
+@mixin eternal-stat-window($width, $height) {
+	@include eternal-window($width, $height);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.6rem;
+	padding: 1.2rem;
+}
