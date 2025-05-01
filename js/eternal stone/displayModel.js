@@ -4,8 +4,15 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
 export function createViewer(canvasSel) {
 	const canvas = document.querySelector(canvasSel)
-	const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
+	const renderer = new THREE.WebGLRenderer({
+		canvas,
+		antialias: true,
+		alpha: true,
+		preserveDrawingBuffer: true, // keep the last frame on screen
+	})
 	renderer.setPixelRatio(window.devicePixelRatio)
+	// make the canvas transparent rather than black
+	renderer.setClearColor(0x000000, 0)
 
 	const scene = new THREE.Scene()
 	const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
@@ -19,12 +26,11 @@ export function createViewer(canvasSel) {
 	const controls = new OrbitControls(camera, canvas)
 	controls.enableDamping = true
 	controls.enablePan = false
-	// na start wyłączamy interakcję
 	controls.enabled = false
 
 	const loader = new GLTFLoader()
 	let current = null
-	let loadId = 0 // unikalny identyfikator każdego requestu
+	let loadId = 0
 
 	function disposeRecursively(obj) {
 		obj.traverse(node => {
@@ -51,20 +57,15 @@ export function createViewer(canvasSel) {
 	}
 
 	function showModel(path, rotY = 0) {
-		loadId += 1
-		const thisLoad = loadId
-
-		// usuń stary model zaraz, żeby nie czekać na load
-		if (current) {
-			scene.remove(current)
-			disposeRecursively(current)
-			current = null
-		}
-
+		const thisLoad = ++loadId
+		// do NOT remove the old model yet – wait until the new one is ready
 		loader.load(path, gltf => {
-			// jeśli to nie jest najnowszy request, ignorujemy
 			if (thisLoad !== loadId) return
-
+			// now swap out
+			if (current) {
+				scene.remove(current)
+				disposeRecursively(current)
+			}
 			current = gltf.scene
 			fit(current, rotY)
 			scene.add(current)
@@ -72,7 +73,6 @@ export function createViewer(canvasSel) {
 		})
 	}
 
-	// pozwala włączać/wyłączać nawigację (myszka, dotyk)
 	function setInteractive(on) {
 		controls.enabled = on
 		if (!on) renderer.render(scene, camera)
@@ -86,6 +86,7 @@ export function createViewer(canvasSel) {
 		camera.aspect = w / h
 		camera.updateProjectionMatrix()
 	}
+
 	window.addEventListener('resize', resize)
 	new ResizeObserver(resize).observe(canvas)
 	requestAnimationFrame(resize)
