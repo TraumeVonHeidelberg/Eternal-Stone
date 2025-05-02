@@ -39,6 +39,7 @@ export const i18n = {
 			'A cursed land where necromancers and undead dragons draw power from death itself, seeking to engulf the world in eternal darkness',
 		worldDescription5:
 			'A frozen land where ice entities, frost beasts, and spirits of endless winter reign over desolate, glacial dominions',
+		attributes: 'Attributes',
 		vitality: 'Vitality',
 		strength: 'Strength',
 		dexterity: 'Dexterity',
@@ -108,6 +109,7 @@ export const i18n = {
 			'Ein verfluchtes Land, in dem Nekromanten und untote Drachen Macht aus dem Tod ziehen, um die Welt in ewige Dunkelheit zu stürzen',
 		worldDescription5:
 			'Ein gefrorenes Land, in dem Eiswesen, Frostbestien und Geister endlosen Winters über trostlose, eisige Reiche herrschen',
+		attributes: 'Attribute',
 		vitality: 'Vitalität',
 		strength: 'Stärke',
 		dexterity: 'Geschicklichkeit',
@@ -177,6 +179,7 @@ export const i18n = {
 			'Przeklęta ziemia, gdzie nekromanci i nieumarłe smoki czerpią moc z samej śmierci, pragnąc pogrążyć świat w wiecznej ciemności',
 		worldDescription5:
 			'Zamarznięta kraina, gdzie lodowe byty, bestie mrozu i duchy niekończącej się zimy panują nad opustoszałymi lodowymi domenami',
+		attributes: 'Atrybuty',
 		vitality: 'Witalność',
 		strength: 'Siła',
 		dexterity: 'Zręczność',

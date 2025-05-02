@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			charDesc.textContent = i18n[lang][info.descKey] || ''
 
 			// show the correct 3D model
-			viewer.show(info.model, info.rotY || 0)
+			viewer.show(info.model, info.rotY || 0, info.yOffset || 0)
 
 			// update attributes
 			const attrs = info.attributes || {}

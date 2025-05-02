@@ -8,10 +8,10 @@ export function createViewer(canvasSel) {
 		canvas,
 		antialias: true,
 		alpha: true,
-		preserveDrawingBuffer: true, // keep the last frame on screen
+		preserveDrawingBuffer: true, // keep last frame
 	})
 	renderer.setPixelRatio(window.devicePixelRatio)
-	// make the canvas transparent rather than black
+	// transparent background
 	renderer.setClearColor(0x000000, 0)
 
 	const scene = new THREE.Scene()
@@ -45,29 +45,31 @@ export function createViewer(canvasSel) {
 		})
 	}
 
-	function fit(model, rotY = 0) {
-		model.rotation.y = rotY
+	function fit(model, extraRotY = 0, yOffset = 0) {
+		// rotate model so its front faces camera:
+		model.rotation.x = -0.5
+		model.rotation.y = -Math.PI / 2 + extraRotY
+		model.rotation.z = 0
 		const box = new THREE.Box3().setFromObject(model)
 		const size = box.getSize(new THREE.Vector3()).length()
 		const center = box.getCenter(new THREE.Vector3())
 		model.position.sub(center)
-		model.scale.setScalar(1 / size)
+		model.scale.setScalar(1.9 / size)
 		box.setFromObject(model)
-		model.position.y -= box.min.y
+		model.position.y -= box.min.y + yOffset
 	}
 
-	function showModel(path, rotY = 0) {
+	function showModel(path, rotY = 0, yOffset = 0) {
 		const thisLoad = ++loadId
-		// do NOT remove the old model yet – wait until the new one is ready
 		loader.load(path, gltf => {
 			if (thisLoad !== loadId) return
-			// now swap out
 			if (current) {
 				scene.remove(current)
 				disposeRecursively(current)
 			}
 			current = gltf.scene
-			fit(current, rotY)
+			// teraz trzecim argumentem jest yOffset
+			fit(current, rotY, yOffset)
 			scene.add(current)
 			resize()
 		})
