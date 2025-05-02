@@ -10,15 +10,14 @@ body {
 	font-family: 'Cinzel', sans-serif;
 	background-color: #303030;
 	overflow: hidden;
-	cursor: url('../img/cursor.cur'), auto;
+	cursor: url('/img/cursor.cur'), auto;
 }
 
 button:hover,
 a:hover,
 input:hover,
 li:hover {
-	cursor: url('../img/cursor\ hover.cur'), auto;
-	// cursor:pointer;
+	cursor: url('/img/cursor-hover.cur'), auto;
 }
 
 button {
@@ -260,7 +259,7 @@ ul {
 				transform: scale(1.05);
 
 				&:hover {
-					cursor: url('../img/cursor\ hover.cur'), auto;
+					cursor: url('../img/cursor-hover.cur'), auto;
 				}
 			}
 		}
@@ -290,13 +289,22 @@ ul {
 	}
 
 	&__character.active &__character-canvas:hover {
-		cursor: url('../img/cursor\ hover.cur'), auto;
+		cursor: url('../img/cursor-hover.cur'), auto;
 	}
 
 	&__character {
 		display: flex;
 		align-items: center;
 		gap: 8rem;
+
+		&-icon {
+			display: none;
+			font-size: 4.4rem;
+
+			&:hover {
+				cursor: url('../img/cursor-hover.cur'), auto;
+			}
+		}
 
 		&-classes {
 			@include eternal-stat-window(25rem, 40rem);
@@ -371,14 +379,13 @@ ul {
 			position: relative;
 			display: flex;
 			justify-content: center;
-			width: 500px;
-			height: 500px;
+			width: 50rem;
+			height: 50rem;
 		}
 
 		&-canvas {
 			width: 100%;
 			height: 100rem;
-			// background-color: red;
 		}
 
 		&-window {
@@ -429,6 +436,18 @@ ul {
 				}
 			}
 		}
+
+		&__character {
+			overflow-y: hidden;
+			&-classes,
+			&-attributes {
+				display: none;
+			}
+
+			&-icon {
+				display: inline-block;
+			}
+		}
 	}
 }
 
@@ -453,14 +472,51 @@ ul {
 				width: 50%;
 			}
 		}
+
+		&__character {
+			gap: 4.8rem;
+			&-box {
+				width: 40rem;
+			}
+
+			&-window {
+				width: 42rem;
+			}
+		}
 	}
 }
 
 @media (width<576px) {
 	.lore {
+		// &__container {
+		// 	// transform: translateY(2.4rem);
+		// }
 		&__world {
 			&-description {
 				width: 100%;
+			}
+		}
+
+		&__character {
+			&-icon {
+				position: absolute;
+				top: 0;
+				z-index: 2000;
+
+				&--first {
+					left: 0;
+				}
+
+				&--second {
+					right: 0;
+				}
+			}
+			&-box {
+				width: 30rem;
+			}
+
+			&-window {
+				display: none;
 			}
 		}
 	}
@@ -542,15 +598,15 @@ ul {
 			background-position: center;
 
 			&--first {
-				background-image: url('../img/eternal\ backgrounds/morning-img.avif');
+				background-image: url('/img/eternal-backgrounds/morning-img.avif');
 			}
 
 			&--second {
-				background-image: url('../img/eternal\ backgrounds/afternoon-img.avif');
+				background-image: url('/img/eternal-backgrounds/afternoon-img.avif');
 			}
 
 			&--third {
-				background-image: url('../img/eternal\ backgrounds/night-img.avif');
+				background-image: url('/img/eternal-backgrounds/night-img.avif');
 			}
 		}
 
@@ -757,7 +813,7 @@ ul {
 	&__img {
 		width: 99%;
 		height: 98%;
-		background-image: url('../img/Floppa.jpg');
+		background-image: url('/img/Floppa.jpg');
 		background-size: cover;
 		background-position: center;
 	}
@@ -782,8 +838,8 @@ ul {
 		border-bottom: 1px solid $eternal-border;
 	}
 
-	&__subheader {
-	}
+	// &__subheader {
+	// }
 
 	&__list {
 		&-item {

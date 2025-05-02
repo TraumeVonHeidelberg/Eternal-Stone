@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 export function createViewer(canvasSel) {
 	const canvas = document.querySelector(canvasSel)
@@ -11,7 +11,6 @@ export function createViewer(canvasSel) {
 		preserveDrawingBuffer: true, // keep last frame
 	})
 	renderer.setPixelRatio(window.devicePixelRatio)
-	// transparent background
 	renderer.setClearColor(0x000000, 0)
 
 	const scene = new THREE.Scene()
@@ -46,15 +45,17 @@ export function createViewer(canvasSel) {
 	}
 
 	function fit(model, extraRotY = 0, yOffset = 0) {
-		// rotate model so its front faces camera:
-		model.rotation.x = -0.5
 		model.rotation.y = -Math.PI / 2 + extraRotY
+		model.rotation.x = -0.5
 		model.rotation.z = 0
+
 		const box = new THREE.Box3().setFromObject(model)
 		const size = box.getSize(new THREE.Vector3()).length()
 		const center = box.getCenter(new THREE.Vector3())
+
 		model.position.sub(center)
-		model.scale.setScalar(1.9 / size)
+		model.scale.setScalar(2 / size)
+
 		box.setFromObject(model)
 		model.position.y -= box.min.y + yOffset
 	}
@@ -68,7 +69,6 @@ export function createViewer(canvasSel) {
 				disposeRecursively(current)
 			}
 			current = gltf.scene
-			// teraz trzecim argumentem jest yOffset
 			fit(current, rotY, yOffset)
 			scene.add(current)
 			resize()
@@ -81,8 +81,8 @@ export function createViewer(canvasSel) {
 	}
 
 	function resize() {
-		const w = canvas.clientWidth,
-			h = canvas.clientHeight
+		const w = canvas.clientWidth
+		const h = canvas.clientHeight
 		if (!w || !h) return
 		renderer.setSize(w, h, false)
 		camera.aspect = w / h
@@ -92,6 +92,7 @@ export function createViewer(canvasSel) {
 	window.addEventListener('resize', resize)
 	new ResizeObserver(resize).observe(canvas)
 	requestAnimationFrame(resize)
+
 	;(function animate() {
 		requestAnimationFrame(animate)
 		controls.update()

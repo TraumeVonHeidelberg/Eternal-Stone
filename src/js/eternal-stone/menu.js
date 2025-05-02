@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const charTitle = loreSec.querySelector('.lore__character-title')
 	const charDesc = loreSec.querySelector('.lore__character-description')
 	const charStats = loreSec.querySelectorAll('.lore__character-list-item--attributes')
+	const leftArrow = loreSec.querySelector('.fa-chevron-left.lore__character-icon')
+	const rightArrow = loreSec.querySelector('.fa-chevron-right.lore__character-icon')
 
 	const applyFilter = () => {
 		const f = `brightness(${prefs.br}) contrast(${prefs.co}) saturate(${prefs.sa})`
@@ -418,6 +420,20 @@ document.addEventListener('DOMContentLoaded', () => {
 		lorePanels.forEach(p => p.classList.remove('active'))
 		play(closeSound)
 	}
+
+	leftArrow.addEventListener('click', () => {
+		// tylko gdy jestem w trybie wyboru postaci
+		if (layer === 'loreItems' && lIdx === 1 && loreItems.length) {
+			liIdx = (liIdx - 1 + loreItems.length) % loreItems.length
+			hiLoreItem(liIdx)
+		}
+	})
+	rightArrow.addEventListener('click', () => {
+		if (layer === 'loreItems' && lIdx === 1 && loreItems.length) {
+			liIdx = (liIdx + 1) % loreItems.length
+			hiLoreItem(liIdx)
+		}
+	})
 
 	hiHdr(hIdx)
 	headerItems.forEach((li, i) => {

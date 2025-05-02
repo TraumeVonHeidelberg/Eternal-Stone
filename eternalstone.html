@@ -12,23 +12,15 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <link rel="icon" href="./img/logo/Eternal-Stone/favicon-64.png" type="image/png">
-    <link rel="apple-touch-icon" href="img/logo/Eternal-Stone/favicon-180.png">
-    <link rel="manifest" href="manifest-eternal.webmanifest">
-    <link rel="stylesheet" href="./css/eternalstone.css">
+    <link rel="icon" href="/img/logo/Eternal-Stone/favicon-64.png" type="image/png">
+    <link rel="apple-touch-icon" href="/img/logo/Eternal-Stone/favicon-180.png">
+    <link rel="manifest" href="/manifest-eternal.webmanifest">
+    <link rel="stylesheet" href="/src/scss/eternalstone.scss">
     <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
-    <script type="importmap">
-        {
-          "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-          }
-        }
-        </script>
-    <script src="./js/getCurrentYear.js" defer></script>
-    <script src="./js/eternal stone/changeBackground.js" defer></script>
-    <script type="module" src="./js/eternal stone/menu.js" defer></script>
-    <script type="module" src="./js/eternal stone/displayModel.js" defer></script>
+    <script type="module" src="/src/js/getCurrentYear.js" defer></script>
+    <script type="module" src="/src/js/eternal-stone/changeBackground.js" defer></script>
+    <script type="module" src="/src/js/eternal-stone/menu.js" defer></script>
+    <script type="module" src="/src/js/eternal-stone/displayModel.js" defer></script>
 </head>
 
 <body>
@@ -78,7 +70,7 @@
             <div class="lore__world">
                 <div class="lore__world-item">
                     <p class="lore__world-title" data-i18n="worldTitle1">Capital of Bright Future</p>
-                    <img src="./img/eternal-cards/Knight.webp"
+                    <img src="/img/eternal-cards/Knight.webp"
                         alt="Card resembling the area in Eternal Stone world portraying a noble knight"
                         class="lore__world-img">
                     <p class="lore__world-description" data-i18n="worldDescription1">A prosperous region where brave
@@ -88,7 +80,7 @@
                 </div>
                 <div class="lore__world-item">
                     <p class="lore__world-title" data-i18n="worldTitle2">Magical Stronghold of Fortune</p>
-                    <img src="./img/eternal-cards/Mage.webp"
+                    <img src="/img/eternal-cards/Mage.webp"
                         alt="Card resembling the area in Eternal Stone world portraying a mage" class="lore__world-img">
                     <p class="lore__world-description" data-i18n="worldDescription2">A land elevated by a magical
                         faction devoted to wisdom,
@@ -96,7 +88,7 @@
                 </div>
                 <div class="lore__world-item">
                     <p class="lore__world-title" data-i18n="worldTitle3">Snalaria, Bastion of Lizards</p>
-                    <img src="./img/eternal-cards/lizard.webp"
+                    <img src="/img/eternal-cards/lizard.webp"
                         alt="Card resembling the area in Eternal Stone world portraying a lizard warrior"
                         class="lore__world-img">
                     <p class="lore__world-description" data-i18n="worldDescription3">A wild region where lizardfolk,
@@ -105,7 +97,7 @@
                 </div>
                 <div class="lore__world-item">
                     <p class="lore__world-title" data-i18n="worldTitle4">Dominion of the Undead</p>
-                    <img src="./img/eternal-cards/Undead.webp"
+                    <img src="/img/eternal-cards/Undead.webp"
                         alt="Card resembling the area in Eternal Stone world portraying a necromancer"
                         class="lore__world-img">
                     <p class="lore__world-description" data-i18n="worldDescription4">A cursed land where necromancers
@@ -114,7 +106,7 @@
                 </div>
                 <div class="lore__world-item">
                     <p class="lore__world-title" data-i18n="worldTitle5">Realm of Eternal Frost</p>
-                    <img src="./img/eternal-cards/Eternal Frost.webp"
+                    <img src="/img/eternal-cards/Eternal Frost.webp"
                         alt="Card resembling the area in Eternal Stone world portraying an ice ghost"
                         class="lore__world-img">
                     <p class="lore__world-description" data-i18n="worldDescription5">A frozen land where ice entities,
@@ -124,6 +116,7 @@
             </div>
 
             <div class="lore__character panel-hidden">
+                <i class="fa-solid fa-chevron-left lore__character-icon lore__character-icon--first"></i>
                 <div class="lore__character-classes">
                     <h2 class="lore__character-subtitle" data-i18n="characters">Characters</h2>
                     <ul class="lore__character-list">
@@ -158,7 +151,6 @@
                     </ul>
                 </div>
                 <div class="lore__character-box" id="model-container">
-                    <!-- <img src="./img/eternal-models/knight-img.png" alt=""> -->
                     <canvas class="lore__character-canvas"></canvas>
                     <div class="lore__character-window">
                         <p class="lore__character-title">Knight</p>
@@ -167,6 +159,7 @@
                             ducimus vero.</p>
                     </div>
                 </div>
+                <i class="fa-solid fa-chevron-right lore__character-icon lore__character-icon--second"></i>
                 <div class="lore__character-attributes">
                     <h2 class="lore__character-subtitle" data-i18n="attributes">Attributes</h2>
                     <ul class="lore__character-list">
