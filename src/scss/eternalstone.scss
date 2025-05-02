@@ -259,7 +259,7 @@ ul {
 				transform: scale(1.05);
 
 				&:hover {
-					cursor: url('../img/cursor-hover.cur'), auto;
+					cursor: url('/img/cursor-hover.cur'), auto;
 				}
 			}
 		}
@@ -289,7 +289,7 @@ ul {
 	}
 
 	&__character.active &__character-canvas:hover {
-		cursor: url('../img/cursor-hover.cur'), auto;
+		cursor: url('/img/cursor-hover.cur'), auto;
 	}
 
 	&__character {
@@ -302,7 +302,7 @@ ul {
 			font-size: 4.4rem;
 
 			&:hover {
-				cursor: url('../img/cursor-hover.cur'), auto;
+				cursor: url('/img/cursor-hover.cur'), auto;
 			}
 		}
 

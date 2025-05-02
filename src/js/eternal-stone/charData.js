@@ -3,7 +3,7 @@ export const CHAR_INFO = [
 		titleKey: 'knight',
 		descKey: 'knightDesc',
 		model: '/img/eternal-models/knight.glb',
-		yOffset: 0.5,
+		yOffset: -0.1,
 		attributes: {
 			Vitality: 12,
 			Strength: 7,
@@ -18,7 +18,7 @@ export const CHAR_INFO = [
 		titleKey: 'paladin',
 		descKey: 'paladinDesc',
 		model: '/img/eternal-models/paladin.glb',
-		yOffset: 0.62,
+		yOffset: 0,
 		attributes: {
 			Vitality: 16,
 			Strength: 12,
@@ -33,7 +33,7 @@ export const CHAR_INFO = [
 		titleKey: 'necromancer',
 		descKey: 'necromancerDesc',
 		model: '/img/eternal-models/necromancer.glb',
-		yOffset: 0.55,
+		yOffset: -0.02,
 		attributes: {
 			Vitality: 7,
 			Strength: 5,
@@ -48,7 +48,7 @@ export const CHAR_INFO = [
 		titleKey: 'gladiator',
 		descKey: 'gladiatorDesc',
 		model: '/img/eternal-models/gladiator.glb',
-		yOffset: 0.5,
+		yOffset: -0.2,
 		attributes: {
 			Vitality: 12,
 			Strength: 10,
@@ -63,7 +63,7 @@ export const CHAR_INFO = [
 		titleKey: 'berserker',
 		descKey: 'berserkerDesc',
 		model: '/img/eternal-models/berserker.glb',
-		yOffset: 0.65,
+		yOffset: 0.03,
 		attributes: {
 			Vitality: 16,
 			Strength: 14,
@@ -78,7 +78,7 @@ export const CHAR_INFO = [
 		titleKey: 'assassin',
 		descKey: 'assassinDesc',
 		model: '/img/eternal-models/assassin.glb',
-		yOffset: 0.7,
+		yOffset: 0.08,
 		attributes: {
 			Vitality: 11,
 			Strength: 9,
@@ -93,7 +93,7 @@ export const CHAR_INFO = [
 		titleKey: 'hunter',
 		descKey: 'hunterDesc',
 		model: '/img/eternal-models/hunter.glb',
-		yOffset: 0.6,
+		yOffset: -0.05,
 		attributes: {
 			Vitality: 8,
 			Strength: 7,

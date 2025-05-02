@@ -8,14 +8,17 @@ export function createViewer(canvasSel) {
 		canvas,
 		antialias: true,
 		alpha: true,
-		preserveDrawingBuffer: true, // keep last frame
+		preserveDrawingBuffer: true,
 	})
 	renderer.setPixelRatio(window.devicePixelRatio)
 	renderer.setClearColor(0x000000, 0)
 
 	const scene = new THREE.Scene()
+
 	const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
-	camera.position.set(0, 1.6, 1)
+	camera.position.set(0, 1.5, 1.9)
+	const ORBIT_CENTER = new THREE.Vector3(0, 0.8, 0)
+	camera.lookAt(ORBIT_CENTER)
 
 	scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.2))
 	const dirLight = new THREE.DirectionalLight(0xffffff, 0.8)
@@ -25,7 +28,10 @@ export function createViewer(canvasSel) {
 	const controls = new OrbitControls(camera, canvas)
 	controls.enableDamping = true
 	controls.enablePan = false
+	controls.enableZoom = false
 	controls.enabled = false
+	controls.target.copy(ORBIT_CENTER)
+	controls.update()
 
 	const loader = new GLTFLoader()
 	let current = null
@@ -35,18 +41,13 @@ export function createViewer(canvasSel) {
 		obj.traverse(node => {
 			if (node.geometry) node.geometry.dispose()
 			if (node.material) {
-				if (Array.isArray(node.material)) {
-					node.material.forEach(m => m.dispose())
-				} else {
-					node.material.dispose()
-				}
+				Array.isArray(node.material) ? node.material.forEach(m => m.dispose()) : node.material.dispose()
 			}
 		})
 	}
 
 	function fit(model, extraRotY = 0, yOffset = 0) {
 		model.rotation.y = -Math.PI / 2 + extraRotY
-		model.rotation.x = -0.5
 		model.rotation.z = 0
 
 		const box = new THREE.Box3().setFromObject(model)
@@ -88,11 +89,9 @@ export function createViewer(canvasSel) {
 		camera.aspect = w / h
 		camera.updateProjectionMatrix()
 	}
-
 	window.addEventListener('resize', resize)
 	new ResizeObserver(resize).observe(canvas)
 	requestAnimationFrame(resize)
-
 	;(function animate() {
 		requestAnimationFrame(animate)
 		controls.update()

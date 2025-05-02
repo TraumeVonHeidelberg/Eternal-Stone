@@ -236,14 +236,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			const info = CHAR_INFO[i] ?? CHAR_INFO[0]
 			const lang = prefs.lg
 
-			// localized title & description
 			charTitle.textContent = i18n[lang][info.titleKey] || ''
 			charDesc.textContent = i18n[lang][info.descKey] || ''
 
-			// show the correct 3D model
 			viewer.show(info.model, info.rotY || 0, info.yOffset || 0)
 
-			// update attributes
 			const attrs = info.attributes || {}
 			charStats.forEach(statEl => {
 				const [nameEl, valEl] = statEl.querySelectorAll('.lore__character-list-text--attributes')
@@ -267,16 +264,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const openLoc = () => {
 		play(openSound)
+
 		headerEl.classList.add('hidden')
 		sections.forEach(s => s.classList.add('hidden'))
+
 		locSec.classList.remove('hidden')
+
 		layer = 'locations'
 	}
+
 	const closeLoc = () => {
 		play(closeSound)
+
 		locSec.classList.add('hidden')
+
+		headerEl.classList.remove('hidden')
+
+		sections.forEach(s => s.classList.add('hidden'))
 		loreSec.classList.remove('hidden')
+
 		layer = 'loreItems'
+
+		lIdx = 0 
+		hiLore(lIdx) 
+		showLoreP(lIdx) 
+		actLore(lIdx) 
+		enterLoreItems() 
 	}
 
 	const openSec = i => {
@@ -365,18 +378,15 @@ document.addEventListener('DOMContentLoaded', () => {
 				? [...panel.querySelectorAll('.lore__world-item')]
 				: [...panel.querySelectorAll('.lore__character-list-item:not(.lore__character-list-item--attributes)')]
 
-		// ustawienie indeksu i aktywnego elementu
 		if (loreItems.length) {
 			liIdx = 0
 			hiLoreItem(liIdx)
 
-			// jeśli to Characters, to włączamy interakcję i pokazujemy pierwszy model
 			if (lIdx === 1) {
 				viewer.setInteractive(true)
 			}
 		}
 
-		// nawigacja myszką
 		loreItems.forEach((el, k) => {
 			const over = () => {
 				liIdx = k
@@ -401,7 +411,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			el.querySelector('.lore__character-list-indicator')?.classList.remove('active')
 			el.querySelector('.lore__character-list-text')?.classList.remove('active')
 
-			// usuwanie handlerów
 			el.removeEventListener('mouseenter', el._overHandler)
 			delete el._overHandler
 
@@ -411,7 +420,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		})
 
-		// wyłącz interakcję z modelem
 		viewer.setInteractive(false)
 
 		loreItems = []
@@ -422,7 +430,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	leftArrow.addEventListener('click', () => {
-		// tylko gdy jestem w trybie wyboru postaci
 		if (layer === 'loreItems' && lIdx === 1 && loreItems.length) {
 			liIdx = (liIdx - 1 + loreItems.length) % loreItems.length
 			hiLoreItem(liIdx)

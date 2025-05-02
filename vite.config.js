@@ -5,6 +5,9 @@ import viteImagemin from 'vite-plugin-imagemin'
 export default defineConfig({
 	root: '.',
 	publicDir: 'public',
+	server: {
+		open: true,
+	},
 	plugins: [
 		viteImagemin({
 			webp: {
