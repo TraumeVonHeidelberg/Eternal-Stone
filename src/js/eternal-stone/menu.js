@@ -285,11 +285,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		layer = 'loreItems'
 
-		lIdx = 0 
-		hiLore(lIdx) 
-		showLoreP(lIdx) 
-		actLore(lIdx) 
-		enterLoreItems() 
+		lIdx = 0
+		hiLore(lIdx)
+		showLoreP(lIdx)
+		actLore(lIdx)
+		enterLoreItems()
 	}
 
 	const openSec = i => {
@@ -511,7 +511,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				} else if (k === 'arrowup') {
 					hIdx = (hIdx - 1 + headerItems.length) % headerItems.length
 					hiHdr(hIdx)
-				} else if (['enter', 'w'].includes(k)) openSec(hIdx)
+				} else if (['enter', 'w'].includes(k)) {
+					const link = headerItems[hIdx].querySelector('a.header__link')
+					if (link) {
+						window.location.href = link.href
+					} else {
+						openSec(hIdx)
+					}
+				}
 			} else if (layer === 'section') {
 				if (['escape', 'q'].includes(k)) closeSec()
 			} else if (layer === 'optBtns') {
