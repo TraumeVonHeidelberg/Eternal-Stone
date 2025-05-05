@@ -804,10 +804,11 @@ ul {
 	}
 
 	&__imgs {
+		position: relative;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		@include eternal-window(100%, 80%);
+		@include eternal-window(80rem, 35rem);
 	}
 
 	&__img {
@@ -819,10 +820,15 @@ ul {
 	}
 
 	&__description {
-		// position: absolute;
+		position: absolute;
+		bottom: -13rem;
+		left: 50%;
+		transform: translateX(-50%);
+		padding: 3.2rem;
 		background-color: #fff;
 		color: #000;
 		width: 80%;
+		height: 12.8rem;
 	}
 
 	&__nav {
@@ -832,17 +838,28 @@ ul {
 		text-align: right;
 	}
 
+	&__heading {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
 	&__header {
-		font-weight: 700;
-		font-size: 3.6rem;
+		font-weight: normal;
+		font-size: 4.4rem;
 		border-bottom: 1px solid $eternal-border;
+		line-height: 3.2rem;
 	}
 
 	// &__subheader {
 	// }
 
 	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 2.4rem;
 		&-item {
+			font-size: 1.6rem;
 			border-bottom: 1px solid $eternal-border;
 			&.active {
 				background-image: $eternal-active-gradient;

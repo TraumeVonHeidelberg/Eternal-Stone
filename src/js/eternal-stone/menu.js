@@ -3,10 +3,13 @@ import { CHAR_INFO } from './charData.js'
 import { createViewer } from './displayModel.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-	const STORAGE_KEY = 'eternalOptions',
-		LANGS = ['English', 'Deutsch', 'Polski'],
-		STYLES = ['Decorative', 'Plain'],
-		DEF_VOL = 1.0
+	const STORAGE_KEY = 'eternalOptions'
+	const CHAR_IDX_KEY = 'charLastIdx'
+
+	const LANGS = ['English', 'Deutsch', 'Polski']
+	const STYLES = ['Decorative', 'Plain']
+	const DEF_VOL = 1.0
+
 	const defaults = { m: DEF_VOL, f: DEF_VOL, br: 1, co: 1, sa: 1.5, lg: LANGS[0], ts: STYLES[0] }
 	const prefs = (() => {
 		try {
@@ -30,17 +33,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	const headerItems = [...document.querySelectorAll('.header__list-element')]
 	const headerVideo = document.getElementById('header-video')
 	const sections = [...document.querySelectorAll('.section')]
-	const navSound = document.getElementById('list-sound'),
-		openSound = document.getElementById('eternal-section-open'),
-		closeSound = document.getElementById('eternal-section-close')
-	const bgMusic = document.getElementById('background-music'),
-		fxAudios = [navSound, openSound, closeSound]
+	const navSound = document.getElementById('list-sound')
+	const openSound = document.getElementById('eternal-section-open')
+	const closeSound = document.getElementById('eternal-section-close')
+	const bgMusic = document.getElementById('background-music')
+	const fxAudios = [navSound, openSound, closeSound]
 
 	const optIdx = headerItems.findIndex(li => li.textContent.trim().toLowerCase() === 'options')
 	const loreIdx = headerItems.findIndex(li => li.textContent.trim().toLowerCase() === 'lore')
-	const optSec = sections[optIdx],
-		loreSec = sections[loreIdx],
-		locSec = document.querySelector('.section.locations')
+
+	const optSec = sections[optIdx]
+	const loreSec = sections[loreIdx]
+	const locSec = document.querySelector('.section.locations')
 
 	const optBtns = [...optSec.querySelectorAll('.options__btn')]
 	const optPanels = [...optSec.querySelectorAll('.options__settings-el')]
@@ -49,15 +53,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const displaySliders = [...optPanels[0].querySelectorAll('.options__settings-range')]
 	const audioSliders = [...optPanels[1].querySelectorAll('.options__settings-range')]
-	const propKey = { 0: 'br', 1: 'co', 2: 'sa' },
-		dispScale = { br: [0.5, 1.5], co: [0.5, 1.5], sa: [0.5, 1.5] }
+	const propKey = { 0: 'br', 1: 'co', 2: 'sa' }
+	const dispScale = { br: [0.5, 1.5], co: [0.5, 1.5], sa: [0.5, 1.5] }
 	const imgsBox = optPanels[0].querySelector('.options__settings-imgs')
+
 	const viewer = createViewer('.lore__character-canvas')
 	const charTitle = loreSec.querySelector('.lore__character-title')
 	const charDesc = loreSec.querySelector('.lore__character-description')
 	const charStats = loreSec.querySelectorAll('.lore__character-list-item--attributes')
 	const leftArrow = loreSec.querySelector('.fa-chevron-left.lore__character-icon')
 	const rightArrow = loreSec.querySelector('.fa-chevron-right.lore__character-icon')
+
+	const locList = [...locSec.querySelectorAll('.locations__list-item')]
+	const locImg = locSec.querySelector('.locations__img')
+	const locDesc = locSec.querySelector('.locations__description')
+	const locHeader = locSec.querySelector('.locations__header')
+	const locSub = locSec.querySelector('.locations__subheader')
+
+	let preloadIdx = +localStorage.getItem(CHAR_IDX_KEY) || 0
+	if (preloadIdx < 0 || preloadIdx >= CHAR_INFO.length) preloadIdx = 0
+
+	const loadChar = idx => {
+		const c = CHAR_INFO[idx]
+		const lang = prefs.lg
+		charTitle.textContent = i18n[lang][c.titleKey] || ''
+		charDesc.textContent = i18n[lang][c.descKey] || ''
+		viewer.show(c.model, c.rotY || 0, c.yOffset || 0)
+		const attrs = c.attributes || {}
+		charStats.forEach(statEl => {
+			const [nameEl, valEl] = statEl.querySelectorAll('.lore__character-list-text--attributes')
+			if (nameEl && valEl) valEl.textContent = attrs[nameEl.textContent.trim()] ?? 0
+		})
+		localStorage.setItem(CHAR_IDX_KEY, idx)
+		preloadIdx = idx
+	}
+
+	loadChar(preloadIdx)
 
 	const applyFilter = () => {
 		const f = `brightness(${prefs.br}) contrast(${prefs.co}) saturate(${prefs.sa})`
@@ -68,8 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		const v = clamp(+val)
 		displaySliders[i].value = v
 		displaySliders[i].parentElement.querySelector('.options__settings-value').textContent = v.toFixed(2)
-		const key = propKey[i],
-			[mn, mx] = dispScale[key]
+		const key = propKey[i]
+		const [mn, mx] = dispScale[key]
 		prefs[key] = +(mn + v * (mx - mn)).toFixed(2)
 		applyFilter()
 		save()
@@ -78,8 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		s.min = 0
 		s.max = 1
 		s.step = 0.1
-		const key = propKey[i],
-			[mn, mx] = dispScale[key]
+		const key = propKey[i]
+		const [mn, mx] = dispScale[key]
 		setDisp(i, (prefs[key] - mn) / (mx - mn))
 		s.addEventListener('input', () => {
 			setDisp(i, s.value)
@@ -131,12 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	const styItem = [...optSec.querySelectorAll('.options__settings-item')].find(n =>
 		n.querySelector('[data-i18n="text.style"]')
 	)
-	const langVal = langItem.querySelector('.options__settings-value'),
-		styVal = styItem.querySelector('.options__settings-value')
-	const langLeft = langItem.querySelector('.fa-angle-left'),
-		langRight = langItem.querySelector('.fa-angle-right')
-	const styLeft = styItem.querySelector('.fa-angle-left'),
-		styRight = styItem.querySelector('.fa-angle-right')
+	const langVal = langItem.querySelector('.options__settings-value')
+	const styVal = styItem.querySelector('.options__settings-value')
+	const langLeft = langItem.querySelector('.fa-angle-left')
+	const langRight = langItem.querySelector('.fa-angle-right')
+	const styLeft = styItem.querySelector('.fa-angle-left')
+	const styRight = styItem.querySelector('.fa-angle-right')
 	const descEl = optSec.querySelector('.options__settings-description')
 	let currentKey = 'music.volume'
 
@@ -174,18 +205,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	styLeft.addEventListener('click', () => setSty(cycle(STYLES, prefs.ts, 'prev')))
 	styRight.addEventListener('click', () => setSty(cycle(STYLES, prefs.ts, 'next')))
 
-	let layer = 'header',
-		hIdx = 0,
-		bIdx = 0,
-		lIdx = 0,
-		iIdx = -1,
-		items = [],
-		loreItems = [],
-		liIdx = -1
-	let lastHdr = -1,
-		lastBtn = -1,
-		lastLore = -1,
-		lastSec = -1
+	let layer = 'header'
+	let hIdx = 0
+	let bIdx = 0
+	let lIdx = 0
+	let iIdx = -1
+	let items = []
+	let loreItems = []
+	let liIdx = -1
+	let locIdx = 0
+	let lastHdr = -1
+	let lastBtn = -1
+	let lastLore = -1
+	let lastSec = -1
 
 	const hiHdr = i => {
 		headerItems.forEach((li, k) => li.classList.toggle('active', k === i))
@@ -202,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (lastLore !== -1 && layer === 'loreBtns') play(navSound)
 		lastLore = i
 	}
-
 	const hiItm = i => {
 		items.forEach((el, k) => {
 			el.classList.toggle('active', k === i)
@@ -216,41 +247,25 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		play(navSound)
 	}
-
 	const hiLoreItem = i => {
 		if (lIdx === 0) {
-			// WORLD
 			loreItems.forEach((el, k) => {
-				const active = k === i
-				el.classList.toggle('active', active)
-				el.querySelector('img')?.classList.toggle('active', active)
+				const a = k === i
+				el.classList.toggle('active', a)
+				el.querySelector('img')?.classList.toggle('active', a)
 			})
 		} else {
-			// CHARACTERS
 			loreItems.forEach((el, k) => {
-				const active = k === i
-				el.querySelector('.lore__character-list-indicator')?.classList.toggle('active', active)
-				el.querySelector('.lore__character-list-text')?.classList.toggle('active', active)
+				const a = k === i
+				el.querySelector('.lore__character-list-indicator')?.classList.toggle('active', a)
+				el.querySelector('.lore__character-list-text')?.classList.toggle('active', a)
 			})
-
-			const info = CHAR_INFO[i] ?? CHAR_INFO[0]
-			const lang = prefs.lg
-
-			charTitle.textContent = i18n[lang][info.titleKey] || ''
-			charDesc.textContent = i18n[lang][info.descKey] || ''
-
-			viewer.show(info.model, info.rotY || 0, info.yOffset || 0)
-
-			const attrs = info.attributes || {}
-			charStats.forEach(statEl => {
-				const [nameEl, valEl] = statEl.querySelectorAll('.lore__character-list-text--attributes')
-				if (nameEl && valEl) {
-					const key = nameEl.textContent.trim()
-					valEl.textContent = String(attrs[key] ?? 0)
-				}
-			})
+			loadChar(i)
 		}
-
+		play(navSound)
+	}
+	const hiLocItem = i => {
+		locList.forEach((el, k) => el.classList.toggle('active', k === i))
 		play(navSound)
 	}
 
@@ -264,27 +279,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const openLoc = () => {
 		play(openSound)
-
 		headerEl.classList.add('hidden')
 		sections.forEach(s => s.classList.add('hidden'))
-
 		locSec.classList.remove('hidden')
-
 		layer = 'locations'
+		locIdx = 0
+		hiLocItem(locIdx)
 	}
-
 	const closeLoc = () => {
 		play(closeSound)
-
 		locSec.classList.add('hidden')
-
-		headerEl.classList.remove('hidden')
-
 		sections.forEach(s => s.classList.add('hidden'))
 		loreSec.classList.remove('hidden')
-
 		layer = 'loreItems'
-
 		lIdx = 0
 		hiLore(lIdx)
 		showLoreP(lIdx)
@@ -372,21 +379,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		layer = 'loreItems'
 		actLore(lIdx)
 		const panel = lorePanels[lIdx]
-
 		loreItems =
 			lIdx === 0
 				? [...panel.querySelectorAll('.lore__world-item')]
 				: [...panel.querySelectorAll('.lore__character-list-item:not(.lore__character-list-item--attributes)')]
-
 		if (loreItems.length) {
-			liIdx = 0
+			liIdx = lIdx === 1 ? preloadIdx : 0
 			hiLoreItem(liIdx)
-
-			if (lIdx === 1) {
-				viewer.setInteractive(true)
-			}
+			if (lIdx === 1) viewer.setInteractive(true)
 		}
-
 		loreItems.forEach((el, k) => {
 			const over = () => {
 				liIdx = k
@@ -394,13 +395,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			el.addEventListener('mouseenter', over)
 			el._overHandler = over
-
 			if (lIdx === 0) {
 				el.addEventListener('click', openLoc)
 				el._clickHandler = openLoc
 			}
 		})
-
 		play(openSound)
 	}
 
@@ -410,18 +409,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			el.querySelector('img')?.classList.remove('active')
 			el.querySelector('.lore__character-list-indicator')?.classList.remove('active')
 			el.querySelector('.lore__character-list-text')?.classList.remove('active')
-
 			el.removeEventListener('mouseenter', el._overHandler)
 			delete el._overHandler
-
 			if (lIdx === 0 && el._clickHandler) {
 				el.removeEventListener('click', el._clickHandler)
 				delete el._clickHandler
 			}
 		})
-
 		viewer.setInteractive(false)
-
 		loreItems = []
 		liIdx = -1
 		layer = 'loreBtns'
@@ -440,6 +435,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			liIdx = (liIdx + 1) % loreItems.length
 			hiLoreItem(liIdx)
 		}
+	})
+
+	locList.forEach((el, i) => {
+		el.addEventListener('mouseenter', () => {
+			if (layer === 'locations') {
+				locIdx = i
+				hiLocItem(i)
+			}
+		})
 	})
 
 	hiHdr(hIdx)
@@ -499,10 +503,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.addEventListener(
 		'keydown',
 		e => {
-			const k = e.key.toLowerCase(),
-				stop = a => {
-					if (a.includes(k)) e.preventDefault()
-				}
+			const k = e.key.toLowerCase()
+			const stop = a => {
+				if (a.includes(k)) e.preventDefault()
+			}
 			if (layer === 'header') {
 				stop(['arrowup', 'arrowdown', 'enter', 'w'])
 				if (k === 'arrowdown') {
@@ -541,12 +545,12 @@ document.addEventListener('DOMContentLoaded', () => {
 				} else if (['escape', 'q'].includes(k)) closeSec()
 			} else if (layer === 'optItems') {
 				stop(['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'e', 'escape', 'q'])
-				const cur = items[iIdx],
-					sld = cur?.querySelector('.options__settings-range'),
-					txt = cur?.querySelector('.options__settings-text')?.dataset.i18n
+				const cur = items[iIdx]
+				const sld = cur?.querySelector('.options__settings-range')
+				const txt = cur?.querySelector('.options__settings-text')?.dataset.i18n
 				if (sld && ['arrowleft', 'arrowright'].includes(k)) {
-					const d = k === 'arrowright' ? 0.1 : -0.1,
-						di = displaySliders.indexOf(sld)
+					const d = k === 'arrowright' ? 0.1 : -0.1
+					const di = displaySliders.indexOf(sld)
 					if (di !== -1) {
 						setDisp(di, +sld.value + d)
 						play(navSound)
@@ -604,8 +608,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				} else if (['enter', 'w'].includes(k) && lIdx === 0) openLoc()
 				else if (['escape', 'q'].includes(k)) leaveLoreItems()
 			} else if (layer === 'locations') {
-				stop(['escape', 'q'])
-				if (['escape', 'q'].includes(k)) closeLoc()
+				stop(['arrowup', 'arrowdown', 'escape', 'q'])
+				if (k === 'arrowdown') {
+					locIdx = (locIdx + 1) % locList.length
+					hiLocItem(locIdx)
+				} else if (k === 'arrowup') {
+					locIdx = (locIdx - 1 + locList.length) % locList.length
+					hiLocItem(locIdx)
+				} else if (['escape', 'q'].includes(k)) closeLoc()
 			}
 		},
 		true
