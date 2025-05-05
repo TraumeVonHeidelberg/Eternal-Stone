@@ -39,6 +39,54 @@ export const i18n = {
 			'A cursed land where necromancers and undead dragons draw power from death itself, seeking to engulf the world in eternal darkness',
 		worldDescription5:
 			'A frozen land where ice entities, frost beasts, and spirits of endless winter reign over desolate, glacial dominions',
+		world1_Item1: "Fortress of the Heroes' Hall",
+		world1_Desc1:
+			'A proud citadel perched high in the mountains, where the Falcon-Winged Heroes train and gather. It serves as both a sanctuary and a bastion of vigilance over the skies and lands below.',
+
+		world1_Item2: 'Castle of Eternal Glory',
+		world1_Desc2:
+			'A shining stronghold bathed in golden light, home to the Knights of the Eternal Dawn. Its banners flutter proudly, a symbol of honor, valor, and unbreakable resolve against the darkness.',
+
+		world1_Item3: 'City of Radiant Future',
+		world1_Desc3:
+			'A grand human metropolis embodying hope, progress, and divine inspiration. It stands as a beacon of unity for all factions, where light guides the path toward a better tomorrow.',
+		world2_Item1: 'Citadel of the Archmages',
+		world2_Desc1:
+			'A towering fortress shimmering with arcane energy, home to the greatest mages whose intellect and power shape the fate of magical realms.',
+
+		world2_Item2: 'Sanctum of Elemental Unity',
+		world2_Desc2:
+			'A mystical stronghold where the powers of fire, water, earth, and air converge into one supreme magical discipline, guarded by the Mystic Brotherhood of Power.',
+
+		world2_Item3: 'Luminous Castle of the Enlightened',
+		world2_Desc3:
+			'A castle radiating spiritual clarity and wisdom, inhabited by mages devoted to the eternal light and the secrets of higher knowledge.',
+		world3_Item1: 'Citadel of the Swamp Lords',
+		world3_Desc1:
+			'A fortress hidden deep in murky wetlands, where the Lizardfolk harness the environment itself to dominate their foes through ambushes and terrain mastery.',
+
+		world3_Item2: 'Fortress of the Venom Grove',
+		world3_Desc2:
+			'A cursed stronghold surrounded by toxic mists and carnivorous flora, home to poison-wielding Lizardfolk who revere the monstrous Basilisk and the Serpent Lord.',
+		world4_Item1: 'Cathedral of the Dark Sovereign',
+		world4_Desc1:
+			'A towering cathedral shrouded in eternal twilight, serving as the throne of Roderich La’Vente and the epicenter of necromantic authority.',
+
+		world4_Item2: 'Fortress of the Undead Dragons',
+		world4_Desc2:
+			'An eerie citadel atop frozen peaks, where ancient dragons, reanimated through forbidden rites, serve the will of the necromancer overlords.',
+
+		world4_Item3: 'Necromancers’ Obsidian Spires',
+		world4_Desc3:
+			'Dark bastions scattered across the world, these towers channel energy from the Rifts and Mythic Catacombs to fuel the dominion of the undead.',
+			
+		world5_Item1: 'Fortress of the Ice Sovereign',
+		world5_Desc1:
+			'A majestic palace carved from eternal frost, home to the ancient beings who command winter and rule over frozen realms with cold authority.',
+
+		world5_Item2: 'Citadel of the Frozen Beasts',
+		world5_Desc2:
+			'A savage stronghold hidden among glacial peaks, where primal ice beasts roam and defend their territory with unmatched ferocity in the endless cold.',
 		attributes: 'Attributes',
 		vitality: 'Vitality',
 		strength: 'Strength',
@@ -109,6 +157,53 @@ export const i18n = {
 			'Ein verfluchtes Land, in dem Nekromanten und untote Drachen Macht aus dem Tod ziehen, um die Welt in ewige Dunkelheit zu stürzen',
 		worldDescription5:
 			'Ein gefrorenes Land, in dem Eiswesen, Frostbestien und Geister endlosen Winters über trostlose, eisige Reiche herrschen',
+		world1_Item1: 'Festung der Heldenhalle',
+		world1_Desc1:
+			'Eine stolze Zitadelle hoch oben in den Bergen, in der die Falkenflügel-Helden trainieren und sich versammeln. Sie dient sowohl als Zufluchtsort als auch als Bollwerk der Wachsamkeit über Himmel und Land.',
+
+		world1_Item2: 'Burg des Ewigen Ruhms',
+		world1_Desc2:
+			'Eine strahlende Festung im goldenen Licht, Heimat der Ritter der Ewigen Dämmerung. Ihre Banner wehen stolz – ein Symbol für Ehre, Tapferkeit und unerschütterliche Entschlossenheit im Kampf gegen die Dunkelheit.',
+
+		world1_Item3: 'Stadt der Strahlenden Zukunft',
+		world1_Desc3:
+			'Eine große menschliche Metropole, die Hoffnung, Fortschritt und göttliche Inspiration verkörpert. Sie ist ein Leuchtturm der Einheit, in dem das Licht den Weg in eine bessere Zukunft weist.',
+		world2_Item1: 'Zitadelle der Erzmagier',
+		world2_Desc1:
+			'Eine gewaltige Festung voller arkaner Energie, Heimat der größten Magier, deren Intellekt und Macht das Schicksal der magischen Reiche formen.',
+
+		world2_Item2: 'Heiligtum der Elementaren Einheit',
+		world2_Desc2:
+			'Eine mystische Festung, in der sich die Kräfte von Feuer, Wasser, Erde und Luft zu einer überragenden magischen Disziplin vereinen, bewacht vom Mystischen Bruderschaft der Macht.',
+
+		world2_Item3: 'Lichtburg der Erleuchteten',
+		world2_Desc3:
+			'Eine Burg, die geistige Klarheit und Weisheit ausstrahlt, bewohnt von Magiern, die sich dem ewigen Licht und den Geheimnissen des höheren Wissens verschrieben haben.',
+		world3_Item1: 'Zitadelle der Sumpfherrscher',
+		world3_Desc1:
+			'Eine Festung tief in trüben Sümpfen verborgen, wo Echsenmenschen ihre Umgebung nutzen, um Feinde mit Hinterhalten und Terrainbeherrschung zu überlisten.',
+
+		world3_Item2: 'Festung des Gifthains',
+		world3_Desc2:
+			'Eine verfluchte Festung, umgeben von giftigen Nebeln und fleischfressenden Pflanzen – Heim der Giftmeister unter den Echsenmenschen, die den Basilisken und Schlangenherrn verehren.',
+		world4_Item1: 'Kathedrale des Dunklen Herrschers',
+		world4_Desc1:
+			'Der finstere Sitz von Roderich La’Vente strahlt eine verfluchte Aura aus und dient als Kommandozentrum der untoten Legionen.',
+
+		world4_Item2: 'Zitadelle der Verrottenden Drachen',
+		world4_Desc2:
+			'Eine zerfallene Bergfestung, in der untote Drachen ruhen, bis sie von Nekromanten erweckt werden, um die Lebenden unter verdunkeltem Himmel zu vernichten.',
+
+		world4_Item3: 'Türme des Risses',
+		world4_Desc3:
+			'Dunkle Türme, verstreut über die Welt, die Energie aus Rissen und mythischen Katakomben ziehen. Sie nähren die Macht der Nekromanten und stören das Gleichgewicht zwischen Leben und Tod.',
+		world5_Item1: 'Festung des Eisherrschers',
+		world5_Desc1:
+			'Ein majestätischer Palast aus ewigem Frost, Heimat uralter Wesen, die über den Winter herrschen und gefrorene Reiche mit eisiger Autorität regieren.',
+
+		world5_Item2: 'Zitadelle der Gefrorenen Bestien',
+		world5_Desc2:
+			'Eine wilde Festung inmitten eisiger Gipfel, in der urtümliche Eisbestien hausen und ihr Territorium mit unübertroffener Wildheit verteidigen.',
 		attributes: 'Attribute',
 		vitality: 'Vitalität',
 		strength: 'Stärke',
@@ -179,6 +274,54 @@ export const i18n = {
 			'Przeklęta ziemia, gdzie nekromanci i nieumarłe smoki czerpią moc z samej śmierci, pragnąc pogrążyć świat w wiecznej ciemności',
 		worldDescription5:
 			'Zamarznięta kraina, gdzie lodowe byty, bestie mrozu i duchy niekończącej się zimy panują nad opustoszałymi lodowymi domenami',
+		world1_Item1: 'Forteca Hali Herosów',
+		world1_Desc1:
+			'Dumna cytadela wysoko w górach, gdzie trenują i zbierają się Herosi Sokolich Skrzydeł. Służy jako sanktuarium i bastion czuwania nad niebem i ziemią.',
+
+		world1_Item2: 'Zamek Wiecznej Chwały',
+		world1_Desc2:
+			'Lśniąca twierdza skąpana w złotym świetle, dom Rycerzy Wiecznego Świtu. Ich sztandary powiewają dumnie – symbol honoru, odwagi i niezłomnej determinacji w walce z ciemnością.',
+
+		world1_Item3: 'Świetlana Przyszłość',
+		world1_Desc3:
+			'Wielka ludzka metropolia ucieleśniająca nadzieję, postęp i boską inspirację. Jest latarnią jedności dla wszystkich frakcji, gdzie światło wskazuje drogę ku lepszemu jutru.',
+		world2_Item1: 'Cytadela Arcymagów',
+		world2_Desc1:
+			'Potężna forteca pulsująca magiczną energią, dom najwyższych magów, których intelekt i moc kształtują losy magicznych krain.',
+
+		world2_Item2: 'Sanctuarium Jedności Żywiołów',
+		world2_Desc2:
+			'Mistyczna twierdza, gdzie ogień, woda, ziemia i powietrze łączą się w jedną potężną dyscyplinę magiczną, strzeżoną przez Mistyczne Bractwo Mocy.',
+
+		world2_Item3: 'Zamek Światłości Oświeconych',
+		world2_Desc3:
+			'Zamek emanujący duchową jasnością i mądrością, zamieszkany przez magów oddanych wiecznemu światłu i tajemnicom wyższej wiedzy.',
+
+		world3_Item1: 'Cytadela Władców Bagien',
+		world3_Desc1:
+			'Forteca ukryta głęboko w mętnych mokradłach, gdzie jaszczuroludzie wykorzystują otoczenie, by zdominować wrogów za pomocą zasadzek i przewagi terenowej.',
+
+		world3_Item2: 'Twierdza Trującego Gaju',
+		world3_Desc2:
+			'Przeklęta twierdza otoczona toksycznymi oparami i mięsożerną florą, zamieszkana przez jaszczuroludzi władających trucizną, którzy czczą Monstrualnego Bazyliszka i Pana Wężów.',
+		world4_Item1: 'Katedra Władcy Zła',
+		world4_Desc1:
+			'Ponure miejsce Rodericha La’Vente, emanujące przeklętą aurą. Katedra stanowi centrum dowodzenia nieumarłymi i symbol mocy nekromantów.',
+
+		world4_Item2: 'Cytadela Gnijących Smoków',
+		world4_Desc2:
+			'Zrujnowana forteca w górach, gdzie śpią nieumarłe smoki, gotowe powstać na rozkaz nekromantów i spalić żywych pod czarnym niebem.',
+
+		world4_Item3: 'Wieże Riftu',
+		world4_Desc3:
+			'Mroczne bastiony rozsiane po świecie, czerpiące energię z Riftów i Mitycznych Katakumb. Wzmacniają moc nekromantów i zaburzają równowagę między życiem a śmiercią.',
+		world5_Item1: 'Forteca Władcy Lodu',
+		world5_Desc1:
+			'Majestatyczny pałac wyrzeźbiony z wiecznego lodu, siedziba starożytnych bytów władających zimą i rządzących mroźnymi krainami z lodową potęgą.',
+
+		world5_Item2: 'Cytadela Lodowych Bestii',
+		world5_Desc2:
+			'Dzikie bastion ukryty wśród lodowych szczytów, gdzie pierwotne bestie lodu przemierzają krainę i bronią jej z bezwzględną siłą w niekończącym się mrozie.',
 		attributes: 'Atrybuty',
 		vitality: 'Witalność',
 		strength: 'Siła',

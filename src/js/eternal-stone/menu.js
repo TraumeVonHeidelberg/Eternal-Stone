@@ -1,6 +1,7 @@
 import { i18n, DESC } from './locales.js'
 import { CHAR_INFO } from './charData.js'
 import { createViewer } from './displayModel.js'
+import { WORLD_LOC } from './locationsData.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 	const STORAGE_KEY = 'eternalOptions'
@@ -68,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const locImg = locSec.querySelector('.locations__img')
 	const locDesc = locSec.querySelector('.locations__description')
 	const locHeader = locSec.querySelector('.locations__header')
-	const locSub = locSec.querySelector('.locations__subheader')
 
 	let preloadIdx = +localStorage.getItem(CHAR_IDX_KEY) || 0
 	if (preloadIdx < 0 || preloadIdx >= CHAR_INFO.length) preloadIdx = 0
@@ -89,6 +89,58 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	loadChar(preloadIdx)
+
+	let wIdx = 0
+	let locIdx = 0
+	const showLocation = (world, idx) => {
+		const lang = prefs.lg
+		const loc = world.locs[idx]
+
+		locHeader.textContent = i18n[lang][world.titleKey] || world.titleKey
+		locImg.style.backgroundImage = `url(${loc.img})`
+		locDesc.textContent = i18n[lang][loc.descKey] || loc.descKey
+
+		locList.forEach((li, k) => li.classList.toggle('active', k === idx))
+		locIdx = idx
+	}
+
+	const setLoc = idx => {
+		showLocation(WORLD_LOC[wIdx], idx)
+		hiLocItem(idx)
+		locIdx = idx
+	}
+
+	const hiLocItem = i => {
+		locList.forEach((el, k) => el.classList.toggle('active', k === i))
+		play(navSound)
+	}
+
+	const loadWorld = () => {
+		const world = WORLD_LOC[wIdx]
+		const lang = prefs.lg
+
+		while (locList.length < world.locs.length) {
+			const li = document.createElement('li')
+			li.className = 'locations__list-item'
+			locSec.querySelector('.locations__list').append(li)
+			locList.push(li)
+			li.addEventListener('mouseenter', () => layer === 'locations' && showLocation(world, locList.indexOf(li)))
+			li.addEventListener('click', () => layer === 'locations' && showLocation(world, locList.indexOf(li)))
+		}
+
+		locList.forEach((li, i) => {
+			if (world.locs[i]) {
+				li.textContent = i18n[lang][world.locs[i].navKey] || world.locs[i].navKey
+				li.style.display = ''
+			} else {
+				li.style.display = 'none'
+			}
+		})
+
+		setLoc(0)
+	}
+
+	loadWorld()
 
 	const applyFilter = () => {
 		const f = `brightness(${prefs.br}) contrast(${prefs.co}) saturate(${prefs.sa})`
@@ -213,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	let items = []
 	let loreItems = []
 	let liIdx = -1
-	let locIdx = 0
 	let lastHdr = -1
 	let lastBtn = -1
 	let lastLore = -1
@@ -264,10 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		play(navSound)
 	}
-	const hiLocItem = i => {
-		locList.forEach((el, k) => el.classList.toggle('active', k === i))
-		play(navSound)
-	}
 
 	const showPanel = i =>
 		optPanels.forEach((p, k) => {
@@ -283,20 +330,25 @@ document.addEventListener('DOMContentLoaded', () => {
 		sections.forEach(s => s.classList.add('hidden'))
 		locSec.classList.remove('hidden')
 		layer = 'locations'
-		locIdx = 0
-		hiLocItem(locIdx)
+
+		wIdx = liIdx
+		loadWorld()
 	}
 	const closeLoc = () => {
 		play(closeSound)
-		locSec.classList.add('hidden')
+
+		locSec.classList.add('hidden') // schowaj Locations
 		sections.forEach(s => s.classList.add('hidden'))
-		loreSec.classList.remove('hidden')
-		layer = 'loreItems'
-		lIdx = 0
+		loreSec.classList.remove('hidden') // pokaż sekcję Lore
+
+		layer = 'loreItems' // wróć do listy kart
+
+		lIdx = 0 // aktywny panel „World”
 		hiLore(lIdx)
 		showLoreP(lIdx)
 		actLore(lIdx)
-		enterLoreItems()
+
+		hiLoreItem(liIdx) // podświetl TĘ samą kartę
 	}
 
 	const openSec = i => {
@@ -324,6 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		} else layer = 'section'
 	}
 	const closeSec = () => {
+		headerEl.classList.remove('hidden')
 		if (lastSec !== -1) {
 			play(closeSound)
 			sections.forEach(s => s.classList.add('hidden'))
@@ -437,11 +490,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	})
 
-	locList.forEach((el, i) => {
-		el.addEventListener('mouseenter', () => {
+	locList.forEach((li, i) => {
+		li.addEventListener('mouseenter', () => {
 			if (layer === 'locations') {
 				locIdx = i
-				hiLocItem(i)
+				const world = WORLD_LOC[wIdx]
+				setLoc(i)
+			}
+		})
+		li.addEventListener('click', () => {
+			if (layer === 'locations') {
+				const world = WORLD_LOC[wIdx]
+				setLoc(i)
 			}
 		})
 	})
@@ -610,11 +670,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			} else if (layer === 'locations') {
 				stop(['arrowup', 'arrowdown', 'escape', 'q'])
 				if (k === 'arrowdown') {
-					locIdx = (locIdx + 1) % locList.length
-					hiLocItem(locIdx)
+					setLoc((locIdx + 1) % locList.length)
 				} else if (k === 'arrowup') {
-					locIdx = (locIdx - 1 + locList.length) % locList.length
-					hiLocItem(locIdx)
+					setLoc((locIdx - 1 + locList.length) % locList.length)
 				} else if (['escape', 'q'].includes(k)) closeLoc()
 			}
 		},

@@ -200,9 +200,23 @@ ul {
 // -------------------------------------------------------
 // GAMEPLAY
 
-// .gameplay {
-// 	position: relative;
-// }
+.gameplay {
+	position: relative;
+
+}
+
+#ui {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	color: white;
+	font-size: 18px;
+	z-index: 1;
+}
+
+#ui > div {
+	margin-bottom: 5px;
+}
 
 // -------------------------------------------------------
 // LORE
@@ -814,7 +828,6 @@ ul {
 	&__img {
 		width: 99%;
 		height: 98%;
-		background-image: url('/img/Floppa.jpg');
 		background-size: cover;
 		background-position: center;
 	}
@@ -838,12 +851,6 @@ ul {
 		text-align: right;
 	}
 
-	&__heading {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-	}
-
 	&__header {
 		font-weight: normal;
 		font-size: 4.4rem;
@@ -851,13 +858,11 @@ ul {
 		line-height: 3.2rem;
 	}
 
-	// &__subheader {
-	// }
-
 	&__list {
 		display: flex;
 		flex-direction: column;
 		gap: 2.4rem;
+
 		&-item {
 			font-size: 1.6rem;
 			border-bottom: 1px solid $eternal-border;

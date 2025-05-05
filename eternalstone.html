@@ -21,6 +21,7 @@
     <script type="module" src="/src/js/eternal-stone/changeBackground.js" defer></script>
     <script type="module" src="/src/js/eternal-stone/menu.js" defer></script>
     <script type="module" src="/src/js/eternal-stone/displayModel.js" defer></script>
+    <script type="module" src="/src/js/eternal-stone/game.js"></script>
 </head>
 
 <body>
@@ -57,7 +58,10 @@
 
 
     <section class="section gameplay hidden">
-        11111111111111
+        <div id="ui">
+            <div id="playerHP">HP: 100</div>
+            <div id="bossHP">Boss HP: 100</div>
+        </div>
     </section>
 
 
@@ -68,7 +72,7 @@
         </div>
         <div class="lore__container">
             <div class="lore__world">
-                <div class="lore__world-item">
+                <div class="lore__world-item" data-world="0">
                     <p class="lore__world-title" data-i18n="worldTitle1">Capital of Bright Future</p>
                     <img src="/img/eternal-cards/Knight.webp"
                         alt="Card resembling the area in Eternal Stone world portraying a noble knight"
@@ -78,7 +82,7 @@
                         against the darkness and defend the light of the world
                     </p>
                 </div>
-                <div class="lore__world-item">
+                <div class="lore__world-item" data-world="1">
                     <p class="lore__world-title" data-i18n="worldTitle2">Magical Stronghold of Fortune</p>
                     <img src="/img/eternal-cards/Mage.webp"
                         alt="Card resembling the area in Eternal Stone world portraying a mage" class="lore__world-img">
@@ -86,7 +90,7 @@
                         faction devoted to wisdom,
                         guarding secrets of the universe known only to the worthy</p>
                 </div>
-                <div class="lore__world-item">
+                <div class="lore__world-item" data-world="2">
                     <p class="lore__world-title" data-i18n="worldTitle3">Snalaria, Bastion of Lizards</p>
                     <img src="/img/eternal-cards/lizard.webp"
                         alt="Card resembling the area in Eternal Stone world portraying a lizard warrior"
@@ -95,7 +99,7 @@
                         wyvern riders, and wyrm masters
                         harness the power of nature, poison, and ancient beasts</p>
                 </div>
-                <div class="lore__world-item">
+                <div class="lore__world-item" data-world="3">
                     <p class="lore__world-title" data-i18n="worldTitle4">Dominion of the Undead</p>
                     <img src="/img/eternal-cards/Undead.webp"
                         alt="Card resembling the area in Eternal Stone world portraying a necromancer"
@@ -104,7 +108,7 @@
                         and undead dragons draw power
                         from death itself, seeking to engulf the world in eternal darkness</p>
                 </div>
-                <div class="lore__world-item">
+                <div class="lore__world-item" data-world="4">
                     <p class="lore__world-title" data-i18n="worldTitle5">Realm of Eternal Frost</p>
                     <img src="/img/eternal-cards/Eternal Frost.webp"
                         alt="Card resembling the area in Eternal Stone world portraying an ice ghost"
@@ -372,15 +376,13 @@
             <div class="locations__main">
                 <div class="locations__imgs">
                     <div class="locations__img"></div>
-                    <div class="locations__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias
+                    <div class="locations__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        Molestias
                         autem fugit impedit enim ducimus iusto earum nihil labore, explicabo beatae.</div>
-                </div>   
+                </div>
             </div>
             <div class="locations__nav">
-                <div class="locations__heading">
-                    <h2 class="locations__header">Sexo</h2>
-                    <p class="locations__subheader">Place of hardcore sex</p>
-                </div>
+                <h2 class="locations__header">Sexo</h2>
                 <ul class="locations__list">
                     <li class="locations__list-item">Sex</li>
                     <li class="locations__list-item">Sex2</li>
