@@ -238,6 +238,10 @@ ul {
 			width: 40%;
 		}
 
+		&--boss {
+			width: 60rem;
+		}
+
 		&-fill {
 			position: absolute;
 			top: 50%;
@@ -303,6 +307,19 @@ ul {
 				margin-top: 0.4rem;
 			}
 		}
+	}
+
+	&__boss-ui {
+		position: fixed;
+		z-index: 1001;
+		bottom: 20%;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	&__boss-name {
+		font-size: 1.6rem;
+		text-shadow: 0px 0px 0px 1px #000;
 	}
 }
 
@@ -910,10 +927,10 @@ ul {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		@include eternal-window(75rem, 35rem, rgba(255, 255, 255, 0.5));
+		@include eternal-window(47vw, 35rem, rgba(255, 255, 255, 0.5)); //70rem
 
 		&::before {
-			border:2px solid rgba(255, 255, 255, 0.5);
+			border: 2px solid rgba(255, 255, 255, 0.5);
 		}
 	}
 
@@ -936,7 +953,7 @@ ul {
 		width: 80%;
 		height: 15.8rem;
 		color: #fff;
-		background-image: url('/img/test2.png');
+		background-image: url('/img/eternal-locations/description.webp');
 		background-size: cover;
 		background-position: center;
 		line-height: 2.4rem;
@@ -947,8 +964,9 @@ ul {
 		display: flex;
 		flex-direction: column;
 		gap: 3.2rem;
+		margin-top: 1.6rem;
 		text-align: right;
-		width: 28rem;
+		width: 30%;
 	}
 
 	&__header {
@@ -970,7 +988,66 @@ ul {
 			&.active {
 				background-image: $eternal-active-gradient;
 				filter: brightness(100%);
+				font-weight: 500;
 			}
+
+			&:hover {
+				cursor: url('/img/cursor.cur'), auto;
+			}
+		}
+	}
+}
+
+@media (width<992px) {
+	.locations {
+		// &__header{
+		// 	font-size: 2.4rem;
+		// }
+
+		&__description,
+		&__header {
+			display: none;
+		}
+
+		&__window {
+			flex-direction: column;
+			gap: 3.2rem;
+			width: 100%;
+			border: none;
+
+			&::before {
+				border: none;
+				box-shadow: none;
+			}
+		}
+
+		&__imgs {
+			width: 100%;
+		}
+
+		&__nav {
+			width: 100%;
+		}
+
+		&__list {
+			flex-direction: row;
+			justify-content: center;
+		}
+	}
+}
+
+@media (width<576px) {
+	.locations {
+		&__window {
+			justify-content: center;
+			gap: 2.4rem;
+		}
+		&__imgs {
+			width: 85vw;
+		}
+		&__list {
+			flex-direction: column;
+			text-align: center;
 		}
 	}
 }
