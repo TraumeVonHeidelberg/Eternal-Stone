@@ -201,21 +201,109 @@ ul {
 // GAMEPLAY
 
 .gameplay {
-	position: relative;
+	padding: 0;
 
-}
+	& canvas {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
 
-#ui {
-	position: absolute;
-	top: 10px;
-	left: 10px;
-	color: white;
-	font-size: 18px;
-	z-index: 1;
-}
+	&__ui-bars {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 1001;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		padding: 3.2rem;
+	}
 
-#ui > div {
-	margin-bottom: 5px;
+	&__bar {
+		position: relative;
+		height: 1.2rem;
+		width: 24.8rem;
+		// background-color: rgba(0, 0, 0, 0.2);
+		border-left: 2px solid rgba(255, 255, 255, 0.7);
+		border-right: 2px solid rgba(255, 255, 255, 0.7);
+
+		&--mana {
+			width: 70%;
+		}
+
+		&--stamina {
+			width: 40%;
+		}
+
+		&-fill {
+			position: absolute;
+			top: 50%;
+			left: 0;
+			transform: translateY(-50%);
+			z-index: 2000;
+
+			width: 99.9%;
+			height: 50%;
+
+			transition: width 0.3s;
+
+			&--health {
+				background-color: #d60004;
+			}
+
+			&--mana {
+				background-color: #2995c7;
+			}
+
+			&--stamina {
+				background-color: #27b418;
+			}
+		}
+	}
+
+	&__inventory {
+		position: fixed;
+		left: 0;
+		bottom: 0;
+		z-index: 1001;
+		display: flex;
+		gap: 1.2rem;
+		padding: 3.2rem;
+
+		&-field {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			gap: 1.2rem;
+		}
+
+		&-slot {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 8rem;
+			height: 9.6rem;
+			background-color: rgba(0, 0, 0, 0.4);
+			border: 1px solid rgba(255, 255, 255, 1);
+			border-radius: 1.2rem;
+			overflow: hidden;
+		}
+
+		&-img {
+			width: 100%;
+
+			&--sword {
+				margin-top: 2.4rem;
+			}
+
+			&--potion {
+				margin-top: 0.4rem;
+			}
+		}
+	}
 }
 
 // -------------------------------------------------------
@@ -822,7 +910,11 @@ ul {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		@include eternal-window(80rem, 35rem);
+		@include eternal-window(75rem, 35rem, rgba(255, 255, 255, 0.5));
+
+		&::before {
+			border:2px solid rgba(255, 255, 255, 0.5);
+		}
 	}
 
 	&__img {
@@ -834,14 +926,21 @@ ul {
 
 	&__description {
 		position: absolute;
-		bottom: -13rem;
+		bottom: -16rem;
 		left: 50%;
 		transform: translateX(-50%);
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		padding: 3.2rem;
-		background-color: #fff;
-		color: #000;
 		width: 80%;
-		height: 12.8rem;
+		height: 15.8rem;
+		color: #fff;
+		background-image: url('/img/test2.png');
+		background-size: cover;
+		background-position: center;
+		line-height: 2.4rem;
+		font-size: 1.4rem;
 	}
 
 	&__nav {
@@ -849,11 +948,12 @@ ul {
 		flex-direction: column;
 		gap: 3.2rem;
 		text-align: right;
+		width: 28rem;
 	}
 
 	&__header {
 		font-weight: normal;
-		font-size: 4.4rem;
+		font-size: 3.6rem;
 		border-bottom: 1px solid $eternal-border;
 		line-height: 3.2rem;
 	}
@@ -866,8 +966,10 @@ ul {
 		&-item {
 			font-size: 1.6rem;
 			border-bottom: 1px solid $eternal-border;
+			filter: brightness(50%);
 			&.active {
 				background-image: $eternal-active-gradient;
+				filter: brightness(100%);
 			}
 		}
 	}

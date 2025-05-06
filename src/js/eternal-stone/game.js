@@ -2,308 +2,324 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 
-// --------------------------- KONFIG --------------------------- //
-const CAMERA_BACK = 6
-const CAMERA_UP = 1
-const MODEL_DOWN = 1
-const MODEL_SCALE = 0.02
+const CB = 6,
+	CU = 1,
+	MD = 1,
+	MS = 0.02,
+	SPD = 5,
+	BSPD = 10,
+	STEP = 1.5,
+	SENS = 0.002,
+	INV = 1,
+	STAMINA_COST = 20,
+	STAMINA_REGEN = 10
 
-const MOVE_SPEED = 15
-const BOSS_SPEED = 10 // prędkość ścigania bossa
-const ROLL_SPEED = 30
-const STEP_HEIGHT = 1.5
-const MOUSE_SENS = 0.002
-const ROLL_DURATION = 0.6
-const ROLL_COOLDOWN = 2.0
-const INVINCIBILITY_DURATION = 1.0
-const ATTACK_COOLDOWN = 0.6 // czas między atakami gracza (s)
-const ATTACK_ANGLE = Math.PI / 3 // kąt 60 stopni
-const ATTACK_RANGE = 5 // zasięg ataku
+let scene,
+	camera,
+	renderer,
+	player,
+	camRig,
+	mix,
+	boss,
+	bmix,
+	idle,
+	walk,
+	run,
+	atk,
+	drink,
+	bossTimer = null,
+	bossHP = 100,
+	pHP = 100,
+	stamina = 100,
+	prev = 0,
+	canAtk = true,
+	move = 0,
+	inv = 0,
+	ip = new THREE.Vector3(),
+	ib = new THREE.Vector3(),
+	started = 0,
+	paused = 1,
+	raf = 0,
+	healthBar,
+	staminaBar,
+	potionEl,
+	usedPotion = false,
+	isDrinking = false
 
-// --------------------------- ZMIENNE GŁÓWNE --------------------------- //
-let scene, camera, renderer
-let player, cameraRig, playerMixer
-let boss, bossMixer
-let idleAction, walkAction, rollAction, attackAction
+const keys = { KeyW: 0, KeyS: 0, KeyA: 0, KeyD: 0, ShiftLeft: 0 },
+	ray = new THREE.Raycaster(),
+	dn = new THREE.Vector3(0, -1, 0),
+	lvl = []
 
-let bossHP = 100,
-	playerHP = 100
-let prevTime = performance.now()
-let canAttack = true
-let canRoll = true
-let isMoving = false
-let isRolling = false
-let isInvincible = false
+export function startGame() {
+	if (started) return resumeGame()
+	started = 1
+	paused = 0
+	init()
+	prev = performance.now()
+	loop()
+}
 
-let initialPlayerPos = new THREE.Vector3()
-let initialBossPos = new THREE.Vector3()
+export function pauseGame() {
+	if (paused) return
+	paused = 1
+	cancelAnimationFrame(raf)
+	clearInterval(bossTimer)
+	bossTimer = null
+	document.exitPointerLock?.()
+}
 
-// --- INPUT ---
-const keys = { KeyW: false, KeyS: false, KeyA: false, KeyD: false, ShiftLeft: false }
-let pointerLocked = false
-
-// --- RAYCASTERY ---
-const raycaster = new THREE.Raycaster()
-const downVec = new THREE.Vector3(0, -1, 0)
-const levelMeshes = []
-
-// --------------------------- INICJALIZACJA --------------------------- //
-init()
-animate()
+export function resumeGame() {
+	if (!started || !paused) return
+	paused = 0
+	prev = performance.now()
+	if (!bossTimer) bossTimer = setInterval(bossHit, 2000)
+	loop()
+}
 
 function init() {
-	// --- SCENA, KAMERA, RENDERER ---
 	scene = new THREE.Scene()
 	scene.background = new THREE.Color(0x202020)
-
-	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+	camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1e3)
 	renderer = new THREE.WebGLRenderer({ antialias: true })
-	renderer.setSize(window.innerWidth, window.innerHeight)
+	renderer.setPixelRatio(devicePixelRatio)
+	renderer.setSize(innerWidth, innerHeight)
 	renderer.shadowMap.enabled = true
-	document.querySelector('.gameplay').appendChild(renderer.domElement)
+	document.querySelector('.gameplay').append(renderer.domElement)
 
-	// --- GRACZ ---
 	player = new THREE.Object3D()
 	player.position.set(0, 0, 10)
 	scene.add(player)
-	initialPlayerPos.copy(player.position)
+	ip.copy(player.position)
 
-	// --- RIG KAMERY ---
-	cameraRig = new THREE.Object3D()
-	cameraRig.position.set(0, CAMERA_UP, 0)
-	player.add(cameraRig)
-	camera.position.set(0, 0, CAMERA_BACK)
-	cameraRig.add(camera)
+	camRig = new THREE.Object3D()
+	camRig.position.set(0, CU, 0)
+	player.add(camRig)
+	camera.position.set(0, 0, CB)
+	camRig.add(camera)
 
-	// --- MODELE I ANIMACJE ---
-	const fbxLoader = new FBXLoader()
+	healthBar = document.querySelector('.gameplay__bar-fill--health')
+	staminaBar = document.querySelector('.gameplay__bar-fill--stamina')
+	potionEl = document.querySelector('.gameplay__inventory-img--potion')
+	healthBar.style.width = '100%'
+	staminaBar.style.width = '100%'
 
-	// Gracz
-	fbxLoader.load('public/img/eternal-game-assets/player.fbx', model => {
-		setupModel(model, player)
-		playerMixer = new THREE.AnimationMixer(model)
-		loadPlayerAnimations(fbxLoader)
+	const fb = new FBXLoader()
+	fb.load('/img/eternal-game-assets/player.fbx', m => {
+		setup(m, player)
+		mix = new THREE.AnimationMixer(m)
+		loadAnims(fb)
+		mix.addEventListener('finished', e => {
+			if (e.action === atk) {
+				canAtk = true
+				if (move) {
+					if (keys.ShiftLeft && stamina > 0) run?.play()
+					else walk?.play()
+				} else idle?.play()
+			} else if (e.action === drink) {
+				isDrinking = false
+				canAtk = true
+				idle?.play()
+			}
+		})
 	})
 
-	// Boss
-	const fbxBossLoader = new FBXLoader()
-	fbxBossLoader.load('public/img/eternal-game-assets/boss.fbx', model => {
-		setupModel(model)
-		boss = model
-		const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quaternion)
-		model.position.copy(player.position.clone().addScaledVector(forward, 15))
-		initialBossPos.copy(model.position)
-		scene.add(model)
-		bossMixer = new THREE.AnimationMixer(model)
-		setInterval(bossAutoAttack, 2000)
+	const fb2 = new FBXLoader()
+	fb2.load('/img/eternal-game-assets/boss.fbx', m => {
+		setup(m)
+		boss = m
+		const f = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quaternion)
+		m.position.copy(player.position.clone().addScaledVector(f, 15))
+		ib.copy(m.position)
+		scene.add(m)
+		bmix = new THREE.AnimationMixer(m)
+		bossTimer = setInterval(bossHit, 2000)
 	})
 
-	// Mapa
-	new GLTFLoader().load('public/img/eternal-game-assets/modular_dungeon.glb', gltf => {
-		gltf.scene.traverse(c => c.isMesh && (c.castShadow = c.receiveShadow = true) && levelMeshes.push(c))
-		scene.add(gltf.scene)
+	new GLTFLoader().load('/img/eternal-game-assets/modular_dungeon.glb', g => {
+		g.scene.traverse(c => c.isMesh && ((c.castShadow = c.receiveShadow = true), lvl.push(c)))
+		scene.add(g.scene)
 	})
 
-	// Oświetlenie
 	scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1))
-	const dirLight = new THREE.DirectionalLight(0xffffff, 0.8)
-	dirLight.position.set(-10, 20, -10)
-	dirLight.castShadow = true
-	scene.add(dirLight)
+	const d = new THREE.DirectionalLight(0xffffff, 0.8)
+	d.position.set(-10, 20, -10)
+	d.castShadow = true
+	scene.add(d)
 
-	// Zdarzenia
-	window.addEventListener('keydown', onKeyDown)
-	window.addEventListener('keyup', onKeyUp)
-	document.body.addEventListener('mousemove', onMouseMove)
-	document.body.addEventListener('click', () => pointerLocked || document.body.requestPointerLock())
-	window.addEventListener('mousedown', onMouseDown)
-	window.addEventListener('resize', onResize)
-	document.addEventListener('pointerlockchange', () => (pointerLocked = document.pointerLockElement === document.body))
+	addEvents()
 }
 
-function setupModel(model, parent = scene) {
-	model.traverse(c => c.isMesh && (c.castShadow = c.receiveShadow = true))
-	model.scale.setScalar(MODEL_SCALE)
-	model.position.set(0, -MODEL_DOWN, 0)
-	model.rotation.y = Math.PI
-	parent.add(model)
+function setup(m, p = scene) {
+	m.traverse(c => c.isMesh && (c.castShadow = c.receiveShadow = true))
+	m.scale.setScalar(MS)
+	m.position.set(0, -MD, 0)
+	m.rotation.y = Math.PI
+	p.add(m)
 }
 
-function loadPlayerAnimations(loader) {
-	loader.load(
-		'public/img/eternal-game-assets/idle.fbx',
-		a => (idleAction = playAction(a, { loop: THREE.LoopRepeat, autoStart: true }))
-	)
-	loader.load('public/img/eternal-game-assets/walk.fbx', a => (walkAction = playAction(a, { loop: THREE.LoopRepeat })))
-	loader.load('public/img/eternal-game-assets/roll.fbx', a => (rollAction = playAction(a, { loop: THREE.LoopOnce })))
-	loader.load(
-		'public/img/eternal-game-assets/attack.fbx',
-		a => (attackAction = playAction(a, { loop: THREE.LoopOnce }))
-	)
+function loadAnims(loader) {
+	loader.load('/img/eternal-game-assets/idle.fbx', a => (idle = clip(a, true)))
+	loader.load('/img/eternal-game-assets/walk.fbx', a => (walk = clip(a)))
+	loader.load('/img/eternal-game-assets/run.fbx', a => (run = clip(a)))
+	loader.load('/img/eternal-game-assets/attack.fbx', a => (atk = clip(a, false, true)))
+	loader.load('/img/eternal-game-assets/drink.fbx', a => (drink = clip(a, false, true)))
+
+	function clip(a, auto = false, once = false) {
+		const ac = mix.clipAction(a.animations[0])
+		ac.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat)
+		ac.clampWhenFinished = true
+		if (auto) ac.play()
+		return ac
+	}
 }
 
-function playAction(anim, { loop, autoStart = false }) {
-	const action = playerMixer.clipAction(anim.animations[0])
-	action.setLoop(loop)
-	action.clampWhenFinished = true
-	autoStart && action.play()
-	return action
-}
-
-// --------------------------- PĘTLA GRY --------------------------- //
-function animate() {
-	requestAnimationFrame(animate)
-	const delta = (performance.now() - prevTime) / 1000
-	prevTime = performance.now()
-	playerMixer?.update(delta)
-	bossMixer?.update(delta)
-	updatePlayer(delta)
-	updateBoss(delta)
+function loop() {
+	if (paused) return
+	raf = requestAnimationFrame(loop)
+	const dt = (performance.now() - prev) / 1000
+	prev = performance.now()
+	mix?.update(dt)
+	bmix?.update(dt)
+	updPlayer(dt)
+	updBoss(dt)
+	regenStamina(dt)
 	renderer.render(scene, camera)
 }
 
-// --------------------------- STEROWANIE --------------------------- //
-function updatePlayer(delta) {
-	if (isRolling) return applyRoll(delta)
-	const move = new THREE.Vector3(keys.KeyA ? -1 : keys.KeyD ? 1 : 0, 0, keys.KeyW ? -1 : keys.KeyS ? 1 : 0)
-	const moving = move.lengthSq() > 0
-	if (moving !== isMoving) (isMoving = moving) ? transition(walkAction, idleAction) : transition(idleAction, walkAction)
-	if (moving) applyMove(move.normalize(), delta)
-	applyGravity()
-	clampCamera()
+function addEvents() {
+	addEventListener('keydown', e => {
+		keys[e.code] = 1
+		if (e.code === 'KeyE') usePotion()
+	})
+	addEventListener('keyup', e => (keys[e.code] = 0))
+
+	document.body.addEventListener('mousemove', e => {
+		if (document.pointerLockElement !== document.body) return
+		player.rotation.y -= e.movementX * SENS
+		camRig.rotation.x -= e.movementY * SENS
+	})
+	document.body.addEventListener('mousedown', e => {
+		if (e.button === 0 && document.pointerLockElement) swing()
+	})
+	document.body.addEventListener('click', () => !document.pointerLockElement && document.body.requestPointerLock())
+	addEventListener('resize', () => {
+		camera.aspect = innerWidth / innerHeight
+		camera.updateProjectionMatrix()
+		renderer.setSize(innerWidth, innerHeight)
+	})
 }
 
-function applyRoll(delta) {
-	const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quaternion)
-	player.position.addScaledVector(dir, ROLL_SPEED * delta)
+function updPlayer(dt) {
+	if (isDrinking) return
+	const dir = new THREE.Vector3(keys.KeyA ? -1 : keys.KeyD ? 1 : 0, 0, keys.KeyW ? -1 : keys.KeyS ? 1 : 0)
+	const mv = dir.lengthSq() > 0
+	const runPressed = keys.ShiftLeft && stamina > 0
+	const speed = runPressed ? 10 : SPD
+	if (mv !== move || runPressed !== updPlayer.wasRunning) {
+		move = mv
+		updPlayer.wasRunning = runPressed
+		if (atk?.isRunning()) return
+		idle?.stop()
+		walk?.stop()
+		run?.stop()
+		if (mv) (runPressed ? run : walk)?.play()
+		else idle?.play()
+	}
+	if (mv) step(dir.normalize(), dt, speed)
+	if (mv && runPressed) stamina = Math.max(0, stamina - STAMINA_COST * dt)
+	grav()
+	camClamp()
+	staminaBar.style.width = `${stamina}%`
+}
+updPlayer.wasRunning = false
+
+function step(dir, dt, speed) {
+	const w = dir.applyQuaternion(player.quaternion)
+	const o = player.position.clone().add(new THREE.Vector3(0, STEP, 0))
+	ray.set(o, w)
+	const h = ray.intersectObjects(lvl, true)[0]
+	const s = speed * dt
+	if (!h || h.distance > s + 0.2) player.position.addScaledVector(w, s)
 }
 
-function applyMove(local, delta) {
-	const worldDir = local.applyQuaternion(player.quaternion)
-	const origin = player.position.clone().add(new THREE.Vector3(0, STEP_HEIGHT, 0))
-	raycaster.set(origin, worldDir)
-	const hit = raycaster.intersectObjects(levelMeshes, true)[0]
-	const step = MOVE_SPEED * delta
-	if (!hit || hit.distance > step + 0.2) player.position.addScaledVector(worldDir, step)
+function grav() {
+	ray.set(player.position.clone().add(new THREE.Vector3(0, STEP * 2, 0)), dn)
+	const g = ray.intersectObjects(lvl, true)[0]
+	if (g) player.position.y = g.point.y + STEP
 }
 
-function applyGravity() {
-	raycaster.set(player.position.clone().add(new THREE.Vector3(0, STEP_HEIGHT * 2, 0)), downVec)
-	const ground = raycaster.intersectObjects(levelMeshes, true)[0]
-	ground && (player.position.y = ground.point.y + STEP_HEIGHT)
+function camClamp() {
+	camRig.rotation.x = THREE.MathUtils.clamp(camRig.rotation.x, -Math.PI / 3, Math.PI / 3)
 }
 
-function clampCamera() {
-	cameraRig.rotation.x = THREE.MathUtils.clamp(cameraRig.rotation.x, -Math.PI / 3, Math.PI / 3)
+function swing() {
+	if (isDrinking || !canAtk || stamina < STAMINA_COST) return
+	canAtk = false
+	atk.reset().play()
+	stamina = Math.max(0, stamina - STAMINA_COST)
+	staminaBar.style.width = `${stamina}%`
 }
 
-function updateBoss(delta) {
-	if (!boss || playerHP <= 0) return
-	const dir = player.position.clone().sub(boss.position)
-	const dist = dir.length()
-	if (dist > 2) {
-		dir.normalize()
-		boss.position.addScaledVector(dir, BOSS_SPEED * delta)
+function regenStamina(dt) {
+	if (stamina < 100) {
+		stamina = Math.min(100, stamina + STAMINA_REGEN * dt)
+		staminaBar.style.width = `${stamina}%`
+	}
+}
+
+function updBoss(dt) {
+	if (!boss || pHP <= 0) return
+	const v = player.position.clone().sub(boss.position)
+	if (v.length() > 2) {
+		boss.position.addScaledVector(v.normalize(), BSPD * dt)
 		boss.lookAt(player.position)
 	}
 }
 
-function transition(start, end) {
-	start.stop()
-	end.play()
-}
-
-// --------------------------- ZDARZENIA --------------------------- //
-function onKeyDown(e) {
-	keys[e.code] = true
-	if (e.code === 'ShiftLeft' && !isRolling && canRoll) startRoll()
-	if (e.code === 'Escape' && pointerLocked) document.exitPointerLock()
-}
-function onKeyUp(e) {
-	keys[e.code] = false
-}
-function onMouseMove(e) {
-	if (!pointerLocked) return
-	player.rotation.y -= e.movementX * MOUSE_SENS
-	cameraRig.rotation.x -= e.movementY * MOUSE_SENS
-}
-function onMouseDown(e) {
-	e.button === 0 && pointerLocked && !isRolling && attack()
-}
-function onResize() {
-	camera.aspect = window.innerWidth / window.innerHeight
-	camera.updateProjectionMatrix()
-	renderer.setSize(window.innerWidth, window.innerHeight)
-}
-
-// --------------------------- AKCJE --------------------------- //
-function startRoll() {
-	if (!canRoll) return
-	isRolling = canRoll = true
-	isInvincible = true
-	rollAction.reset().play()
-	setTimeout(() => {
-		isRolling = false
-		isInvincible = false
-		idleAction.play()
-	}, ROLL_DURATION * 1000)
-	setTimeout(() => (canRoll = true), ROLL_COOLDOWN * 1000)
-}
-
-function attack() {
-	if (!canAttack || !boss) return
-	canAttack = false
-	attackAction.reset().play()
-	setTimeout(() => {
-		// sprawdź zasięg i kąt ataku
-		const toBoss = boss.position.clone().sub(player.position)
-		const dist = toBoss.length()
-		if (dist <= ATTACK_RANGE) {
-			const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quaternion)
-			const angle = forward.angleTo(toBoss.normalize())
-			if (angle <= ATTACK_ANGLE) {
-				bossHP = Math.max(0, bossHP - 25)
-				document.getElementById('bossHP').textContent = `Boss HP: ${bossHP}`
-				if (bossHP <= 0) return endGame(true)
-			}
-		}
-		// powrót do animacji
-		isMoving ? walkAction.play() : idleAction.play()
-	}, ATTACK_COOLDOWN * 1000)
-	setTimeout(() => (canAttack = true), ATTACK_COOLDOWN * 1000)
-}
-
-function bossAutoAttack() {
-	if (!boss || playerHP <= 0) return
-	if (player.position.distanceTo(boss.position) < 5 && !isInvincible) {
-		playerHP = Math.max(0, playerHP - 10)
-		document.getElementById('playerHP').textContent = `HP: ${playerHP}`
-		if (playerHP <= 0) return endGame(false)
-		isInvincible = true
-		setTimeout(() => (isInvincible = false), INVINCIBILITY_DURATION * 1000)
+function bossHit() {
+	if (!boss || pHP <= 0) return
+	if (player.position.distanceTo(boss.position) < 5 && !inv) {
+		pHP = Math.max(0, pHP - 10)
+		healthBar.style.width = `${pHP}%`
+		if (!pHP) return finish(false)
+		inv = 1
+		setTimeout(() => (inv = 0), INV * 1000)
 	}
 }
 
-// --------------------------- RESET GRY --------------------------- //
-function endGame(victory) {
+function usePotion() {
+	if (usedPotion || isDrinking || pHP >= 100 || !drink) return
+	usedPotion = true
+	isDrinking = true
+	canAtk = false
+	idle?.stop()
+	walk?.stop()
+	run?.stop()
+	drink.reset().play()
+	potionEl?.classList.add('hidden')
+	pHP = Math.min(100, pHP + 50)
+	healthBar.style.width = `${pHP}%`
+}
+
+function finish(victory) {
 	setTimeout(() => {
 		alert(victory ? 'Zwycięstwo!' : 'Game Over!')
-		resetGame()
+		reset()
 	}, 100)
 }
 
-function resetGame() {
-	player.position.copy(initialPlayerPos)
-	boss.position.copy(initialBossPos)
-	playerHP = bossHP = 100
-	document.getElementById('playerHP').textContent = `HP: ${playerHP}`
-	document.getElementById('bossHP').textContent = `Boss HP: ${bossHP}`
-	canAttack = true
-	canRoll = true
-	isRolling = false
-	isInvincible = false
-	idleAction.play()
+function reset() {
+	player.position.copy(ip)
+	boss.position.copy(ib)
+	pHP = bossHP = 100
+	stamina = 100
+	healthBar.style.width = '100%'
+	staminaBar.style.width = '100%'
+	potionEl?.classList.remove('hidden')
+	usedPotion = false
+	isDrinking = false
+	canAtk = true
+	inv = 0
+	idle?.play()
 }
-
-// --------------------------- UI --------------------------- //
-// Upewnij się, że w HTML są elementy #playerHP i #bossHP do aktualizacji

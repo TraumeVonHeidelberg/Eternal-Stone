@@ -58,9 +58,35 @@
 
 
     <section class="section gameplay hidden">
-        <div id="ui">
-            <div id="playerHP">HP: 100</div>
-            <div id="bossHP">Boss HP: 100</div>
+        <div class="gameplay__ui-bars">
+            <div class="gameplay__bar gameplay__bar--health">
+                <div class="gameplay__bar-fill gameplay__bar-fill--health"></div>
+            </div>
+            <div class="gameplay__bar gameplay__bar--mana">
+                <div class="gameplay__bar-fill gameplay__bar-fill--mana"></div>
+            </div>
+            <div class="gameplay__bar gameplay__bar--stamina">
+                <div class="gameplay__bar-fill gameplay__bar-fill--stamina"></div>
+            </div>
+        </div>
+
+        <div class="gameplay__inventory">
+            <div class="gameplay__inventory-field">
+                <div class="gameplay__inventory-slot">
+                    <img src="/img/eternal-game-assets/shield.webp" alt="Shield icon" class="gameplay__inventory-img">
+                </div>
+            </div>
+            <div class="gameplay__inventory-field">
+                <div class="gameplay__inventory-slot"></div>
+                <div class="gameplay__inventory-slot">
+                    <img src="/img/eternal-game-assets/potion.webp" alt="Potion icon" class="gameplay__inventory-img gameplay__inventory-img--potion">
+                </div>
+            </div>
+            <div class="gameplay__inventory-field">
+                <div class="gameplay__inventory-slot">
+                    <img src="/img/eternal-game-assets/sword.webp" alt="Sword icon" class="gameplay__inventory-img gameplay__inventory-img--sword">
+                </div>
+            </div>
         </div>
     </section>
 
@@ -382,10 +408,10 @@
                 </div>
             </div>
             <div class="locations__nav">
-                <h2 class="locations__header">Sexo</h2>
+                <h2 class="locations__header"></h2>
                 <ul class="locations__list">
-                    <li class="locations__list-item">Sex</li>
-                    <li class="locations__list-item">Sex2</li>
+                    <li class="locations__list-item"></li>
+                    <li class="locations__list-item"></li>
                 </ul>
             </div>
         </div>

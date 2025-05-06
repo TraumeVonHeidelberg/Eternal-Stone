@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const optIdx = headerItems.findIndex(li => li.textContent.trim().toLowerCase() === 'options')
 	const loreIdx = headerItems.findIndex(li => li.textContent.trim().toLowerCase() === 'lore')
 
+	const gameIdx = headerItems.findIndex(li => li.textContent.trim().toLowerCase() === 'gameplay')
+	let game = null
+
 	const optSec = sections[optIdx]
 	const loreSec = sections[loreIdx]
 	const locSec = document.querySelector('.section.locations')
@@ -337,18 +340,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	const closeLoc = () => {
 		play(closeSound)
 
-		locSec.classList.add('hidden') // schowaj Locations
+		locSec.classList.add('hidden') 
 		sections.forEach(s => s.classList.add('hidden'))
-		loreSec.classList.remove('hidden') // pokaż sekcję Lore
+		loreSec.classList.remove('hidden') 
 
-		layer = 'loreItems' // wróć do listy kart
+		layer = 'loreItems' 
 
-		lIdx = 0 // aktywny panel „World”
+		lIdx = 0 
 		hiLore(lIdx)
 		showLoreP(lIdx)
 		actLore(lIdx)
 
-		hiLoreItem(liIdx) // podświetl TĘ samą kartę
+		hiLoreItem(liIdx) 
 	}
 
 	const openSec = i => {
@@ -356,6 +359,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			const a = headerItems[i].querySelector('a.header__link')
 			if (a) window.location.href = a.href
 			return
+		}
+
+		if (lastSec === gameIdx && i !== gameIdx && game) {
+			game.pauseGame()
+			if (document.pointerLockElement) document.exitPointerLock()
 		}
 		if (lastSec !== -1 && lastSec !== i) play(closeSound)
 		if (lastSec !== i) play(openSound)
@@ -373,6 +381,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			lIdx = 0
 			hiLore(lIdx)
 			showLoreP(lIdx)
+		} else if (i === gameIdx) {
+			layer = 'section'
+
+			if (!game) {
+				import('./game.js').then(mod => {
+					game = mod
+					game.startGame()
+				})
+			} else {
+				game.resumeGame()
+			}
 		} else layer = 'section'
 	}
 	const closeSec = () => {
@@ -381,6 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			play(closeSound)
 			sections.forEach(s => s.classList.add('hidden'))
 			lorePanels.forEach(p => p.classList.remove('active'))
+		}
+		if (lastSec === gameIdx && game) {
+			game.pauseGame()
 		}
 		lastSec = -1
 		layer = 'header'
