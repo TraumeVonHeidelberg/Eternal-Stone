@@ -13,18 +13,21 @@ const CB = 6,
 	INV = 1,
 	STAMINA_COST = 20,
 	STAMINA_REGEN = 10,
-	RUN_COOLDOWN = 1.5, // Nowa stała - cooldown biegu w sekundach
-	MIN_STAMINA_TO_RUN = 1, // Minimalna stamina do biegu
+	RUN_COOLDOWN = 1.5,
+	MIN_STAMINA_TO_RUN = 1,
 	BOSS_ANIM_SPEED = 1.2,
 	BOSS_SCALE = 0.03,
 	PLAYER_DAMAGE = 10,
 	BOSS_MAX_HP = 100,
-	BOSS_ATTACK_RADIUS = 100 * BOSS_SCALE, // Nowa stała dla zasięgu ataku
-	BOSS_ATTACK_DAMAGE = 15, // Nowa stała dla obrażeń
-	BOSS_ATTACK_COOLDOWN = 2000,
-	BOSS_ATTACK_ANIMATION_SPEED = 1.5,
-	BOSS_ANIMATION_TRANSITION = 0.2,
-	MAX_STEP_HEIGHT = 0.5
+	BOSS_ATTACK_RADIUS = 100 * BOSS_SCALE,
+	BOSS_ATTACK_DAMAGE = 15,
+	MAX_STEP_HEIGHT = 0.5,
+	AVOID_DISTANCE = 5,
+	AVOID_STRENGTH = 2.5,
+	BOSS_SPAWN_POINT = new THREE.Vector3(50, 20, 50),
+	BOSS_AGRO_DISTANCE = 30,
+	BOSS_IDLE_SPEED = 0,
+	BOSS_CHASE_SPEED = BSPD
 
 let scene,
 	camera,
@@ -51,9 +54,9 @@ let scene,
 	prev = 0,
 	canAtk = true,
 	move = 0,
-	inv = 0,
 	ip = new THREE.Vector3(),
 	ib = new THREE.Vector3(),
+	inv = 0,
 	started = 0,
 	paused = 1,
 	raf = 0,
@@ -62,18 +65,15 @@ let scene,
 	potionEl,
 	usedPotion = false,
 	isDrinking = false,
-	lastRunBlockTime = 0
+	lastRunBlockTime = 0,
+	swordMesh,
+	hitRegistered = false,
+	bossState = 'idle'
 
-let swordMesh
 const swordBox = new THREE.Box3()
 const bossBox = new THREE.Box3()
-let hitRegistered = false
+const bossUI = document.querySelector('.gameplay__boss-ui')
 
-/**
- * Płynne przejście między animacjami
- * @param {THREE.AnimationAction} targetAction – docelowa akcja
- * @param {number} duration – czas cross-fade’u w sekundach
- */
 function transitionTo(targetAction, duration = 0.2) {
 	if (!targetAction) return
 	targetAction.reset().fadeIn(duration).play()
@@ -127,18 +127,15 @@ function init() {
 	renderer.shadowMap.enabled = true
 	document.querySelector('.gameplay').append(renderer.domElement)
 
-	// Stworzenie obiektu gracza
 	player = new THREE.Object3D()
 	scene.add(player)
 
-	// Kamera w rig-u
 	camRig = new THREE.Object3D()
 	camRig.position.set(0, CU, 0)
 	player.add(camRig)
 	camera.position.set(0, 0, CB)
 	camRig.add(camera)
 
-	// UI
 	healthBar = document.querySelector('.gameplay__bar-fill--health')
 	staminaBar = document.querySelector('.gameplay__bar-fill--stamina')
 	potionEl = document.querySelector('.gameplay__inventory-img--potion')
@@ -146,7 +143,6 @@ function init() {
 	healthBar.style.width = '100%'
 	staminaBar.style.width = '100%'
 
-	// Ładowanie modelu gracza
 	const fb = new FBXLoader()
 	fb.load('/img/eternal-game-assets/player.fbx', m => {
 		setup(m, player)
@@ -154,11 +150,11 @@ function init() {
 		loadAnims(fb)
 		mix.addEventListener('finished', e => {
 			if (e.action === atk) {
-				e.action.fadeOut(0.15) // Dodaj fade-out dla ataku
+				e.action.fadeOut(0.15)
 				canAtk = true
 				checkMovement()
 			} else if (e.action === drink) {
-				e.action.fadeOut(0.15) // Dodaj fade-out dla picia
+				e.action.fadeOut(0.15)
 				isDrinking = false
 				canAtk = true
 				checkMovement()
@@ -166,62 +162,6 @@ function init() {
 		})
 	})
 
-	// Ładowanie modelu bossa
-	const fb2 = new FBXLoader()
-	fb2.load('/img/eternal-game-assets/boss.fbx', m => {
-		setup(m)
-		boss = m
-
-		// Ustawienie początkowej pozycji bossa z raycastingiem
-		const bossSpawnPoint = new THREE.Vector3(20, 100, 20) // Tymczasowo wysoko nad mapą
-		const down = new THREE.Vector3(0, -1, 0)
-
-		// Wykonaj raycasting aby znaleźć podłoże
-		ray.set(bossSpawnPoint, down)
-		const hits = ray.intersectObjects(lvl, true)
-
-		let spawnY = 0
-		if (hits.length) {
-			spawnY = hits[0].point.y + BOSS_SCALE * 2 // Dodaj margines bezpieczeństwa
-		}
-
-		// Ustaw skalę i pozycję
-		boss.scale.set(BOSS_SCALE, BOSS_SCALE, BOSS_SCALE)
-		boss.position.set(20, spawnY, 20) // X i Z na stałe, Y z raycastingu
-		boss.rotation.y = Math.PI // Obróć bossa przodem do gracza
-
-		scene.add(m)
-		bmix = new THREE.AnimationMixer(m)
-
-		// Ładowanie animacji biegu
-		const bossRunLoader = new FBXLoader()
-		bossRunLoader.load('/img/eternal-game-assets/boss-run.fbx', anim => {
-			if (anim.animations.length > 0) {
-				const runClip = anim.animations[0]
-				const bossRunAction = bmix.clipAction(runClip)
-				bossRunAction.timeScale = BOSS_ANIM_SPEED
-				bossRunAction.setEffectiveWeight(1.0)
-				bossRunAction.play()
-
-				// Aktualizuj pozycję po załadowaniu animacji
-				boss.position.set(20, spawnY, 20)
-			} else {
-				console.error('Brak animacji w pliku boss-run.fbx!')
-			}
-		})
-
-		const bossAttackLoader = new FBXLoader()
-		bossAttackLoader.load('/img/eternal-game-assets/boss-attack1.fbx', anim => {
-			const attackClip = anim.animations[0]
-			bossAttackAction = bmix.clipAction(attackClip)
-			bossAttackAction.setLoop(THREE.LoopOnce)
-			bossAttackAction.clampWhenFinished = true
-		})
-
-		bossTimer = setInterval(bossHit, 2000)
-	})
-
-	// Ładowanie mapy i ustawienie pozycji startowej gracza
 	new GLTFLoader().load('/img/eternal-game-assets/map.glb', g => {
 		g.scene.traverse(c => {
 			if (c.isMesh) {
@@ -233,8 +173,7 @@ function init() {
 		g.scene.scale.set(10, 10, 10)
 		scene.add(g.scene)
 
-		// Zmodyfikuj pozycję Y spawnPoint na wyższą wartość (np. 500)
-		const spawnPoint = new THREE.Vector3(0, 500, 10) // Zmiana Y z 100 na 500
+		const spawnPoint = new THREE.Vector3(0, 500, 10)
 		const down = new THREE.Vector3(0, -1, 0)
 		ray.set(spawnPoint, down)
 		const hits = ray.intersectObjects(lvl, true)
@@ -245,13 +184,83 @@ function init() {
 		player.position.set(spawnPoint.x, startY, spawnPoint.z)
 		ip.copy(player.position)
 
-		// --------------------------------------------------
-
-		// Teraz, kiedy gracz ustawiony, możemy włączyć idle
 		idle?.play()
 	})
 
-	// Oświetlenie
+	const fb2 = new FBXLoader()
+	fb2.load('/img/eternal-game-assets/boss.fbx', m => {
+		// Podstawowa konfiguracja modelu
+		setup(m)
+		boss = m
+		bossState = 'idle'
+
+		// Transformacje
+		boss.scale.set(BOSS_SCALE, BOSS_SCALE, BOSS_SCALE)
+		boss.rotation.y = Math.PI
+
+		// Kolizja z podłożem
+		const spawnPoint = BOSS_SPAWN_POINT.clone()
+		const rayOrigin = spawnPoint.clone().setY(1000)
+		ray.set(rayOrigin, new THREE.Vector3(0, -1, 0))
+		const hits = ray.intersectObjects(lvl, true)
+
+		// Pozycja Y
+		const groundY = hits.length ? hits[0].point.y : 50
+		boss.position.set(
+			spawnPoint.x,
+			groundY + BOSS_SCALE * 2, // Dostosowanie do skali
+			spawnPoint.z
+		)
+		ib.copy(boss.position)
+
+		// Dodanie do sceny
+		scene.add(m)
+		if (!bossTimer) bossTimer = setInterval(bossHit, 2000)
+
+		// Inicjalizacja systemu animacji
+		bmix = new THREE.AnimationMixer(m)
+
+		// Ładowanie animacji
+		const loadAnimations = () => {
+			// Animacja Idle
+			new FBXLoader().load('/img/eternal-game-assets/boss-idle.fbx', anim => {
+				boss.idleAction = bmix.clipAction(anim.animations[0])
+				boss.idleAction.setLoop(THREE.LoopRepeat)
+				boss.idleAction.play() // Kluczowe: odtwarzaj od razu!
+			})
+
+			// Animacja Stand (przejście do walki)
+			new FBXLoader().load('/img/eternal-game-assets/boss-stand.fbx', anim => {
+				boss.standAction = bmix.clipAction(anim.animations[0])
+				boss.standAction.setLoop(THREE.LoopOnce)
+				boss.standAction.clampWhenFinished = true
+			})
+
+			// Animacja Biegu
+			new FBXLoader().load('/img/eternal-game-assets/boss-run.fbx', anim => {
+				boss.runAction = bmix.clipAction(anim.animations[0])
+				boss.runAction.timeScale = BOSS_ANIM_SPEED
+			})
+
+			new FBXLoader().load('/img/eternal-game-assets/boss-attack1.fbx', anim => {
+				bossAttackAction = bmix.clipAction(anim.animations[0]);
+				bossAttackAction.setLoop(THREE.LoopOnce);
+				bossAttackAction.clampWhenFinished = true;
+			  });
+
+			// Event zmiany stanu
+			bmix.addEventListener('finished', e => {
+				if (e.action === boss.standAction && bossState === 'standing') {
+					bossState = 'chasing'
+					boss.runAction.play()
+				}
+			})
+		}
+
+		// Od razu ładujemy animacje
+		loadAnimations()
+	})
+
 	scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1))
 	const d = new THREE.DirectionalLight(0xffffff, 0.8)
 	d.position.set(-10, 20, -10)
@@ -262,22 +271,19 @@ function init() {
 }
 
 function updateCameraCollision() {
-	// pozycja "głowy" gracza w świecie
 	const headWorld = player.localToWorld(new THREE.Vector3(0, CU, 0))
-	// docelowa pozycja kamery w lokalnych współrzędnych rig’a
+
 	const desiredCamLocal = new THREE.Vector3(0, 0, CB)
 	const desiredCamWorld = camRig.localToWorld(desiredCamLocal.clone())
-	// kierunek od głowy do kamery
+
 	const dir = new THREE.Vector3().subVectors(desiredCamWorld, headWorld).normalize()
 	camRay.set(headWorld, dir)
 	camRay.far = CB
 	const hits = camRay.intersectObjects(lvl, true)
 	if (hits.length) {
-		// jeśli jest kolizja, cofnij kamerę tuż przed przeszkodą
-		const dist = hits[0].distance - 0.3 // margines 0.3
+		const dist = hits[0].distance - 0.3
 		camera.position.set(0, 0, Math.max(0.5, dist))
 	} else {
-		// inaczej pełna odległość
 		camera.position.set(0, 0, CB)
 	}
 }
@@ -286,7 +292,6 @@ function setup(m, p = scene) {
 	m.traverse(c => {
 		if (c.isMesh) {
 			c.castShadow = c.receiveShadow = true
-			// ← tutaj: jeżeli to nasz miecz, złap referencję
 			if (c.name === 'Paladin_J_Nordstrom_Sword') {
 				swordMesh = c
 				console.log('Złapano mesh miecza:', c.name)
@@ -327,19 +332,15 @@ function loop() {
 	const dt = (performance.now() - prev) / 1000
 	prev = performance.now()
 
-	// Aktualizuj wszystkie animacje gracza
 	mix?.update(dt)
 
-	// ← DETEKCJA KOLIZJI MIECZ–BOSS
 	if (atk?.isRunning() && !hitRegistered && swordMesh && boss) {
-		// ułamek czasu trwania animacji (0.0–1.0)
 		const t = atk.time / atk.getClip().duration
-		// okienko, w którym klinga leci przez bossowy mesh
+
 		if (t > 0.2 && t < 0.4) {
-			// aktualizacja bounding boxów
 			swordBox.setFromObject(swordMesh)
 			bossBox.setFromObject(boss)
-			// jeśli się przecinają, raz zadaj obrażenia
+
 			if (swordBox.intersectsBox(bossBox)) {
 				hitRegistered = true
 				bossHP = Math.max(0, bossHP - PLAYER_DAMAGE)
@@ -349,10 +350,8 @@ function loop() {
 		}
 	}
 
-	// Aktualizuj wszystkie animacje bossa
 	bmix?.update(dt)
 
-	// Reszta dotychczasowej logiki
 	updPlayer(dt)
 	updBoss(dt)
 	regenStamina(dt)
@@ -361,39 +360,31 @@ function loop() {
 }
 
 function addEvents() {
-	// Klawiatura
 	addEventListener('keydown', e => {
 		keys[e.code] = 1
 		if (e.code === 'KeyE') usePotion()
 	})
 	addEventListener('keyup', e => (keys[e.code] = 0))
 
-	// Ruch myszy (obrót kamery)
 	document.body.addEventListener('mousemove', e => {
 		if (document.pointerLockElement !== document.body) return
 		player.rotation.y -= e.movementX * SENS
 		camRig.rotation.x -= e.movementY * SENS
 	})
 
-	// Lewy przycisk – atak
 	document.body.addEventListener('mousedown', e => {
 		if (e.button === 0 && document.pointerLockElement) swing()
 	})
 
-	// Prawy przycisk – blokowanie tarczą
-	// 1) Zablokuj menu kontekstowe
 	document.body.addEventListener('contextmenu', e => e.preventDefault())
-	// 2) Mousedown => start bloku
+
 	document.body.addEventListener('mousedown', e => {
 		if (e.button === 2 && document.pointerLockElement && !isDrinking) {
 			isBlocking = true
-			transitionTo(block, 0.1)[
-				// Zatrzymaj inne animacje
-				(idle, walk, run, atk, drink)
-			].forEach(a => a?.stop())
+			transitionTo(block, 0.1)[(idle, walk, run, atk, drink)].forEach(a => a?.stop())
 		}
 	})
-	// 3) Mouseup => koniec bloku
+
 	document.body.addEventListener('mouseup', e => {
 		if (e.button === 2) {
 			isBlocking = false
@@ -401,12 +392,10 @@ function addEvents() {
 		}
 	})
 
-	// Lock pointer na click
 	document.body.addEventListener('click', () => {
 		if (!document.pointerLockElement) document.body.requestPointerLock()
 	})
 
-	// Resize okna
 	addEventListener('resize', () => {
 		camera.aspect = innerWidth / innerHeight
 		camera.updateProjectionMatrix()
@@ -415,23 +404,18 @@ function addEvents() {
 }
 
 function updPlayer(dt) {
-	// Blokada ruchu podczas picia
 	if (isDrinking || isBlocking) return
 
-	// Aktualizacja wektora ruchu
 	const dir = new THREE.Vector3(keys.KeyA ? -1 : keys.KeyD ? 1 : 0, 0, keys.KeyW ? -1 : keys.KeyS ? 1 : 0)
 	const mv = dir.lengthSq() > 0
 
-	// Logika blokady biegu
 	const timeSinceLastBlock = performance.now() - lastRunBlockTime
 	const runBlocked = timeSinceLastBlock < RUN_COOLDOWN * 1000
 	const effectiveMinStamina = runBlocked ? 30 : MIN_STAMINA_TO_RUN
 	const runPressed = keys.ShiftLeft && stamina >= effectiveMinStamina && !runBlocked
 	const speed = runPressed ? BSPD : SPD
 
-	// Aktualizacja stanu animacji tylko jeśli nie jesteśmy w trakcie ataku/picia
 	if (!atk?.isRunning() && !drink?.isRunning()) {
-		// Sprawdź zmianę stanu ruchu
 		if (mv !== move || runPressed !== updPlayer.wasRunning) {
 			move = mv
 			updPlayer.wasRunning = runPressed
@@ -444,11 +428,9 @@ function updPlayer(dt) {
 		}
 	}
 
-	// Aktualizacja pozycji gracza
 	if (mv && !atk?.isRunning() && !isDrinking) {
 		step(dir.normalize(), dt, speed)
 
-		// Zużycie staminy dla biegu
 		if (runPressed) {
 			stamina = Math.max(0, stamina - STAMINA_COST * dt)
 			if (stamina < effectiveMinStamina) {
@@ -458,7 +440,6 @@ function updPlayer(dt) {
 		}
 	}
 
-	// Fizyka i aktualizacja UI
 	grav()
 	camClamp()
 	staminaBar.style.width = `${Math.floor(stamina)}%`
@@ -467,22 +448,18 @@ function updPlayer(dt) {
 function regenStamina(dt) {
 	if (stamina < 100) {
 		stamina = Math.min(100, stamina + STAMINA_REGEN * dt)
-		// Usuń resetowanie lastRunBlockTime podczas regeneracji
 		if (stamina > 99.9) stamina = 100
 	}
 }
 updPlayer.wasRunning = false
 
 function step(dir, dt, speed) {
-	// obliczamy wektor ruchu w świecie
 	const w = dir.applyQuaternion(player.quaternion)
 	const moveDistance = (stamina > 0 ? speed : SPD) * dt
 	const moveVector = w.clone().multiplyScalar(moveDistance)
 
-	// nowa, proponowana pozycja (tylko XY)
 	const proposedPos = player.position.clone().add(moveVector)
 
-	// rzutujemy w dół z wysokości ok. 2×STEP, aby znaleźć poziom terenu
 	const downOrigin = proposedPos.clone().add(new THREE.Vector3(0, STEP * 2, 0))
 	ray.set(downOrigin, dn)
 	const hit = ray.intersectObjects(lvl, true)[0]
@@ -491,13 +468,10 @@ function step(dir, dt, speed) {
 		const groundY = hit.point.y + STEP
 		const deltaY = groundY - player.position.y
 
-		// jeśli różnica wysokości jest w dopuszczalnym limicie, wykonujemy ruch
 		if (deltaY <= MAX_STEP_HEIGHT) {
 			player.position.set(proposedPos.x, groundY, proposedPos.z)
 		}
-		// w przeciwnym razie – blokujemy ruch (postać nie wchodzi na przeszkodę)
 	} else {
-		// wolna przestrzeń – normalny ruch po płaskim
 		player.position.add(moveVector)
 	}
 }
@@ -515,41 +489,100 @@ function camClamp() {
 function swing() {
 	if (isDrinking || !canAtk || stamina < STAMINA_COST) return
 
-	// resetujemy flagę, by w tej animacji znów móc trafić bossa
 	hitRegistered = false
 
-	// blokujemy kolejny atak do czasu zakończenia animacji
 	canAtk = false
 
-	// start animacji ataku
 	transitionTo(atk, 0.1)
 
-	// odejmujemy staminy i aktualizujemy pasek
 	stamina = Math.max(0, stamina - STAMINA_COST)
 	staminaBar.style.width = `${stamina}%`
+}
+
+function getAvoidance(pos, dir) {
+	const origin = pos.clone().add(new THREE.Vector3(0, BOSS_SCALE * 2, 0))
+	const avoid = new THREE.Vector3()
+	const up = new THREE.Vector3(0, 1, 0)
+
+	;[0, 0.5, -0.5].forEach(angle => {
+		const rDir = dir.clone().applyAxisAngle(up, angle).normalize()
+		const avoidRay = new THREE.Raycaster(origin, rDir, 0, AVOID_DISTANCE)
+		if (avoidRay.intersectObjects(lvl, true).length > 0) {
+			const perp = new THREE.Vector3(-rDir.z, 0, rDir.x)
+			if (angle > 0) avoid.add(perp)
+			else avoid.sub(perp)
+		}
+	})
+
+	if (avoid.lengthSq() > 0) {
+		return avoid.normalize().multiplyScalar(AVOID_STRENGTH)
+	}
+	return new THREE.Vector3(0, 0, 0)
 }
 
 function updBoss(dt) {
 	if (!boss || pHP <= 0 || isBossAttacking) return
 
-	// 1. Ruch poziomy
-	const direction = new THREE.Vector3().subVectors(player.position, boss.position).normalize()
-	const speed = BSPD * dt * Math.min(1, player.position.distanceTo(boss.position) / 10)
-	boss.position.addScaledVector(direction, speed)
+	// Obliczenia podstawowe
+	const toPlayer = player.position.clone().sub(boss.position)
+	const distanceToPlayer = toPlayer.length()
+	const prevState = bossState
 
-	// 2. Raycast w dół
+	// Automat stanów
+	if (distanceToPlayer > BOSS_AGRO_DISTANCE) {
+		switch (bossState) {
+			case 'chasing':
+				bossState = 'idle'
+				boss.runAction?.stop()
+				boss.idleAction?.reset().play()
+				break
+			case 'standing':
+				bossState = 'idle'
+				boss.standAction?.stop()
+				boss.idleAction?.reset().play()
+				break
+		}
+	} else {
+		if (bossState === 'idle') {
+			bossState = 'standing'
+			boss.idleAction?.stop()
+			boss.standAction?.reset().play()
+			bossUI.classList.remove('hidden')
+		}
+	}
+
+	// Aktualizacja animacji tylko przy zmianie stanu
+	if (prevState !== bossState) {
+		console.log(`Boss state changed: ${prevState} -> ${bossState}`)
+	}
+
+	// Stała korekta pozycji Y bez względu na stan
 	const origin = boss.position.clone().add(new THREE.Vector3(0, BOSS_SCALE * 2, 0))
 	ray.set(origin, dn)
 	const hit = ray.intersectObjects(lvl, true)[0]
 	if (hit) {
 		boss.position.y = hit.point.y + BOSS_SCALE * 2
+	} else {
+		// Fallback - delikatne opuszczanie gdy brak kolizji
+		boss.position.y -= 0.1 * dt
 	}
 
-	// 3. Obrót tylko w osi Y
-	const target = player.position.clone()
-	target.y = boss.position.y // ← wyrównujemy wysokość
-	boss.lookAt(target)
+	// Logika ruchu tylko w stanie pościgu
+	if (bossState === 'chasing') {
+		toPlayer.normalize()
+		const avoid = getAvoidance(boss.position, toPlayer)
+		const moveDir = toPlayer.add(avoid).normalize()
+
+		const speed = BOSS_CHASE_SPEED * dt * Math.min(1, distanceToPlayer / 10)
+		boss.position.addScaledVector(moveDir, speed)
+
+		// Rotacja
+		const lookTarget = boss.position.clone().add(moveDir)
+		lookTarget.y = boss.position.y
+		boss.lookAt(lookTarget)
+	}
 }
+
 function bossHit() {
 	if (!boss || pHP <= 0 || isBossAttacking) return
 
@@ -558,12 +591,9 @@ function bossHit() {
 	if (distance < BOSS_ATTACK_RADIUS) {
 		isBossAttacking = true
 
-		// Odtwórz animację ataku
 		bossAttackAction.reset().play()
 
-		// Zadaj obrażenia po 0.5s animacji
 		setTimeout(() => {
-			// jeśli blokujemy, otrzymujemy tylko 40% obrażeń
 			const damage = isBlocking ? Math.ceil(BOSS_ATTACK_DAMAGE * 0.4) : BOSS_ATTACK_DAMAGE
 
 			pHP = Math.max(0, pHP - damage)
@@ -571,7 +601,6 @@ function bossHit() {
 
 			if (pHP <= 0) finish(false)
 
-			// invincibility frame
 			inv = 1
 			setTimeout(() => (inv = 0), INV * 1000)
 
@@ -605,11 +634,11 @@ function reset() {
 	player.position.copy(ip)
 	boss.position.copy(ib)
 	pHP = 100
-	bossHP = BOSS_MAX_HP // Reset zdrowia bossa
+	bossHP = BOSS_MAX_HP
 	stamina = 100
 	healthBar.style.width = '100%'
 	staminaBar.style.width = '100%'
-	bossHealthBar.style.width = '100%' // Reset paska bossa
+	bossHealthBar.style.width = '100%'
 	potionEl?.classList.remove('hidden')
 	usedPotion = false
 	isDrinking = false
@@ -621,8 +650,7 @@ function reset() {
 }
 
 function checkMovement() {
-	if (isBlocking) return // Blokada zmiany animacji podczas blokowania
-
+	if (isBlocking) return
 	const movePressed = keys.KeyW || keys.KeyA || keys.KeyS || keys.KeyD
 	const runPossible = stamina > MIN_STAMINA_TO_RUN
 
