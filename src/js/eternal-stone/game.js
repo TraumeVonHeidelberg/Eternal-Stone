@@ -26,7 +26,6 @@ const CB = 6,
 	AVOID_STRENGTH = 2.5,
 	BOSS_SPAWN_POINT = new THREE.Vector3(50, 20, 50),
 	BOSS_AGRO_DISTANCE = 30,
-	BOSS_IDLE_SPEED = 0,
 	BOSS_CHASE_SPEED = BSPD
 
 let scene,
@@ -68,7 +67,15 @@ let scene,
 	lastRunBlockTime = 0,
 	swordMesh,
 	hitRegistered = false,
-	bossState = 'idle'
+	bossState = 'idle',
+	footstepSound,
+	lastFootstepTime = 0,
+	swordSwingSound,
+	playerHurtSound,
+	bossHurtSound,
+	shieldSound,
+	potionSound,
+	bossSleepSound
 
 const swordBox = new THREE.Box3()
 const bossBox = new THREE.Box3()
@@ -78,7 +85,6 @@ function transitionTo(targetAction, duration = 0.2) {
 	if (!targetAction) return
 	targetAction.reset().fadeIn(duration).play()
 	;[idle, walk, run, atk, drink, block].forEach(a => {
-		// Dodano block
 		if (a && a !== targetAction && a.isRunning()) {
 			a.fadeOut(duration)
 		}
@@ -119,8 +125,68 @@ export function resumeGame() {
 
 function init() {
 	scene = new THREE.Scene()
-	scene.background = new THREE.Color(0x202020)
+	scene.background = new THREE.Color(0x101010)
+	scene.fog = new THREE.FogExp2(0x101010, 0.06)
 	camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1e3)
+
+	const listener = new THREE.AudioListener()
+	camera.add(listener)
+
+	footstepSound = new THREE.Audio(listener)
+	const audioLoader = new THREE.AudioLoader()
+	audioLoader.load('audio/eternal-game/footstep.mp3', buffer => {
+		footstepSound.setBuffer(buffer)
+		footstepSound.setLoop(false)
+		footstepSound.setVolume(0.1)
+		const resumeContext = () => {
+			listener.context.resume()
+			document.body.removeEventListener('click', resumeContext)
+		}
+		document.body.addEventListener('click', resumeContext)
+	})
+
+	swordSwingSound = new THREE.Audio(listener)
+	audioLoader.load('audio/eternal-game/sword-swing.mp3', buffer => {
+		swordSwingSound.setBuffer(buffer)
+		swordSwingSound.setLoop(false)
+		swordSwingSound.setVolume(0.6)
+	})
+
+	playerHurtSound = new THREE.Audio(listener)
+	audioLoader.load('audio/eternal-game/player-hurt.mp3', buffer => {
+		playerHurtSound.setBuffer(buffer)
+		playerHurtSound.setLoop(false)
+		playerHurtSound.setVolume(0.7)
+	})
+
+	bossHurtSound = new THREE.Audio(listener)
+	audioLoader.load('audio/eternal-game/boss-hurt.mp3', buffer => {
+		bossHurtSound.setBuffer(buffer)
+		bossHurtSound.setLoop(false)
+		bossHurtSound.setVolume(0.7)
+	})
+
+	shieldSound = new THREE.Audio(listener)
+	audioLoader.load('audio/eternal-game/shield.mp3', buffer => {
+		shieldSound.setBuffer(buffer)
+		shieldSound.setLoop(false)
+		shieldSound.setVolume(0.6)
+	})
+
+	potionSound = new THREE.Audio(listener)
+	audioLoader.load('audio/eternal-game/potion.mp3', buffer => {
+		potionSound.setBuffer(buffer)
+		potionSound.setLoop(false)
+		potionSound.setVolume(0.7)
+	})
+
+	bossSleepSound = new THREE.Audio(listener)
+	audioLoader.load('audio/eternal-game/boss-sleep.mp3', buffer => {
+		bossSleepSound.setBuffer(buffer)
+		bossSleepSound.setLoop(true)
+		bossSleepSound.setVolume(0.5)
+	})
+
 	renderer = new THREE.WebGLRenderer({ antialias: true })
 	renderer.setPixelRatio(devicePixelRatio)
 	renderer.setSize(innerWidth, innerHeight)
@@ -173,7 +239,7 @@ function init() {
 		g.scene.scale.set(10, 10, 10)
 		scene.add(g.scene)
 
-		const spawnPoint = new THREE.Vector3(0, 500, 10)
+		const spawnPoint = new THREE.Vector3(90, 500, -35)
 		const down = new THREE.Vector3(0, -1, 0)
 		ray.set(spawnPoint, down)
 		const hits = ray.intersectObjects(lvl, true)
@@ -189,66 +255,51 @@ function init() {
 
 	const fb2 = new FBXLoader()
 	fb2.load('/img/eternal-game-assets/boss.fbx', m => {
-		// Podstawowa konfiguracja modelu
 		setup(m)
 		boss = m
 		bossState = 'idle'
 
-		// Transformacje
 		boss.scale.set(BOSS_SCALE, BOSS_SCALE, BOSS_SCALE)
 		boss.rotation.y = Math.PI
 
-		// Kolizja z podłożem
 		const spawnPoint = BOSS_SPAWN_POINT.clone()
 		const rayOrigin = spawnPoint.clone().setY(1000)
 		ray.set(rayOrigin, new THREE.Vector3(0, -1, 0))
 		const hits = ray.intersectObjects(lvl, true)
 
-		// Pozycja Y
 		const groundY = hits.length ? hits[0].point.y : 50
-		boss.position.set(
-			spawnPoint.x,
-			groundY + BOSS_SCALE * 2, // Dostosowanie do skali
-			spawnPoint.z
-		)
+		boss.position.set(spawnPoint.x, groundY + BOSS_SCALE * 2, spawnPoint.z)
 		ib.copy(boss.position)
 
-		// Dodanie do sceny
 		scene.add(m)
 		if (!bossTimer) bossTimer = setInterval(bossHit, 2000)
 
-		// Inicjalizacja systemu animacji
 		bmix = new THREE.AnimationMixer(m)
 
-		// Ładowanie animacji
 		const loadAnimations = () => {
-			// Animacja Idle
 			new FBXLoader().load('/img/eternal-game-assets/boss-idle.fbx', anim => {
 				boss.idleAction = bmix.clipAction(anim.animations[0])
 				boss.idleAction.setLoop(THREE.LoopRepeat)
-				boss.idleAction.play() // Kluczowe: odtwarzaj od razu!
+				boss.idleAction.play()
 			})
 
-			// Animacja Stand (przejście do walki)
 			new FBXLoader().load('/img/eternal-game-assets/boss-stand.fbx', anim => {
 				boss.standAction = bmix.clipAction(anim.animations[0])
 				boss.standAction.setLoop(THREE.LoopOnce)
 				boss.standAction.clampWhenFinished = true
 			})
 
-			// Animacja Biegu
 			new FBXLoader().load('/img/eternal-game-assets/boss-run.fbx', anim => {
 				boss.runAction = bmix.clipAction(anim.animations[0])
 				boss.runAction.timeScale = BOSS_ANIM_SPEED
 			})
 
 			new FBXLoader().load('/img/eternal-game-assets/boss-attack1.fbx', anim => {
-				bossAttackAction = bmix.clipAction(anim.animations[0]);
-				bossAttackAction.setLoop(THREE.LoopOnce);
-				bossAttackAction.clampWhenFinished = true;
-			  });
+				bossAttackAction = bmix.clipAction(anim.animations[0])
+				bossAttackAction.setLoop(THREE.LoopOnce)
+				bossAttackAction.clampWhenFinished = true
+			})
 
-			// Event zmiany stanu
 			bmix.addEventListener('finished', e => {
 				if (e.action === boss.standAction && bossState === 'standing') {
 					bossState = 'chasing'
@@ -257,7 +308,6 @@ function init() {
 			})
 		}
 
-		// Od razu ładujemy animacje
 		loadAnimations()
 	})
 
@@ -343,6 +393,7 @@ function loop() {
 
 			if (swordBox.intersectsBox(bossBox)) {
 				hitRegistered = true
+				if (bossHurtSound.buffer) bossHurtSound.play()
 				bossHP = Math.max(0, bossHP - PLAYER_DAMAGE)
 				bossHealthBar.style.width = `${(bossHP / BOSS_MAX_HP) * 100}%`
 				if (bossHP <= 0) finish(true)
@@ -431,6 +482,15 @@ function updPlayer(dt) {
 	if (mv && !atk?.isRunning() && !isDrinking) {
 		step(dir.normalize(), dt, speed)
 
+		const now = performance.now() / 1000
+		const interval = updPlayer.wasRunning ? 0.3 : 0.5
+		if (now - lastFootstepTime > interval && footstepSound.buffer) {
+			const rate = runPressed ? 1.5 : 1.0
+			footstepSound.setPlaybackRate(rate)
+			footstepSound.play()
+			lastFootstepTime = now
+		}
+
 		if (runPressed) {
 			stamina = Math.max(0, stamina - STAMINA_COST * dt)
 			if (stamina < effectiveMinStamina) {
@@ -489,6 +549,10 @@ function camClamp() {
 function swing() {
 	if (isDrinking || !canAtk || stamina < STAMINA_COST) return
 
+	if (swordSwingSound.buffer) {
+		swordSwingSound.play()
+	}
+
 	hitRegistered = false
 
 	canAtk = false
@@ -523,12 +587,10 @@ function getAvoidance(pos, dir) {
 function updBoss(dt) {
 	if (!boss || pHP <= 0 || isBossAttacking) return
 
-	// Obliczenia podstawowe
 	const toPlayer = player.position.clone().sub(boss.position)
 	const distanceToPlayer = toPlayer.length()
 	const prevState = bossState
 
-	// Automat stanów
 	if (distanceToPlayer > BOSS_AGRO_DISTANCE) {
 		switch (bossState) {
 			case 'chasing':
@@ -544,6 +606,15 @@ function updBoss(dt) {
 		}
 	} else {
 		if (bossState === 'idle') {
+			if (bossState === 'idle') {
+				if (bossSleepSound.buffer && !bossSleepSound.isPlaying) {
+					bossSleepSound.play()
+				}
+			} else {
+				if (bossSleepSound.isPlaying) {
+					bossSleepSound.stop()
+				}
+			}
 			bossState = 'standing'
 			boss.idleAction?.stop()
 			boss.standAction?.reset().play()
@@ -551,23 +622,19 @@ function updBoss(dt) {
 		}
 	}
 
-	// Aktualizacja animacji tylko przy zmianie stanu
 	if (prevState !== bossState) {
 		console.log(`Boss state changed: ${prevState} -> ${bossState}`)
 	}
 
-	// Stała korekta pozycji Y bez względu na stan
 	const origin = boss.position.clone().add(new THREE.Vector3(0, BOSS_SCALE * 2, 0))
 	ray.set(origin, dn)
 	const hit = ray.intersectObjects(lvl, true)[0]
 	if (hit) {
 		boss.position.y = hit.point.y + BOSS_SCALE * 2
 	} else {
-		// Fallback - delikatne opuszczanie gdy brak kolizji
 		boss.position.y -= 0.1 * dt
 	}
 
-	// Logika ruchu tylko w stanie pościgu
 	if (bossState === 'chasing') {
 		toPlayer.normalize()
 		const avoid = getAvoidance(boss.position, toPlayer)
@@ -576,7 +643,6 @@ function updBoss(dt) {
 		const speed = BOSS_CHASE_SPEED * dt * Math.min(1, distanceToPlayer / 10)
 		boss.position.addScaledVector(moveDir, speed)
 
-		// Rotacja
 		const lookTarget = boss.position.clone().add(moveDir)
 		lookTarget.y = boss.position.y
 		boss.lookAt(lookTarget)
@@ -594,6 +660,12 @@ function bossHit() {
 		bossAttackAction.reset().play()
 
 		setTimeout(() => {
+			if (isBlocking && shieldSound.buffer) {
+				shieldSound.play()
+			} else if (playerHurtSound.buffer) {
+				playerHurtSound.play()
+			}
+
 			const damage = isBlocking ? Math.ceil(BOSS_ATTACK_DAMAGE * 0.4) : BOSS_ATTACK_DAMAGE
 
 			pHP = Math.max(0, pHP - damage)
@@ -611,6 +683,8 @@ function bossHit() {
 
 function usePotion() {
 	if (usedPotion || isDrinking || pHP >= 100 || !drink) return
+
+	if (potionSound.buffer) potionSound.play()
 	usedPotion = true
 	isDrinking = true
 	canAtk = false

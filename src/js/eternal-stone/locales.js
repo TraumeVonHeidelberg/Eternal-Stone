@@ -79,7 +79,7 @@ export const i18n = {
 		world4_Item3: 'Necromancers’ Obsidian Spires',
 		world4_Desc3:
 			'Dark bastions scattered across the world, these towers channel energy from the Rifts and Mythic Catacombs to fuel the dominion of the undead.',
-			
+
 		world5_Item1: 'Fortress of the Ice Sovereign',
 		world5_Desc1:
 			'A majestic palace carved from eternal frost, home to the ancient beings who command winter and rule over frozen realms with cold authority.',
@@ -116,6 +116,7 @@ export const i18n = {
 			'Stealthy and lethal, Assassins strike swiftly from shadows, using teleportation and deception to deliver devastating blows before disappearing into darkness.',
 		hunterDesc:
 			'Marksmen bonded with their beast companions, Hunters coordinate lethal ranged attacks, enhancing both their and their pets’ capabilities through precise strategy and coordination.',
+		narebutsuki: 'Narebutsuki, the men eater',
 	},
 	Deutsch: {
 		English: 'Englisch',
@@ -233,6 +234,7 @@ export const i18n = {
 			'Heimlich und tödlich, Attentäter schlagen blitzschnell aus den Schatten zu, nutzen Teleportation und Täuschung für verheerende Angriffe und verschwinden dann wieder.',
 		hunterDesc:
 			'Fernkämpfer im Bündnis mit ihren Bestien, Jäger koordinieren tödliche Fernangriffe und verbessern ihre und die Fähigkeiten ihrer Gefährten durch präzise Strategie.',
+		narebutsuki: 'Narebutsuki, der Menschenfresser',
 	},
 	Polski: {
 		English: 'Angielski',
@@ -351,6 +353,7 @@ export const i18n = {
 			'Cisi i śmiertelni, Zabójcy uderzają błyskawicznie z cienia, wykorzystując teleportację i podstęp, a następnie znikają.',
 		hunterDesc:
 			'Strzelcy w sojuszu z bestiami, Łowcy koordynują zabójcze ataki z dystansu, wzmacniając zarówno siebie, jak i swoje zwierzęta poprzez precyzyjną strategię.',
+		narebutsuki: 'Narebutsuki, pożeracz ludzi',
 	},
 }
 

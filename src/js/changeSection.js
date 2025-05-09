@@ -3,7 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	const worksSection = document.querySelector('section.works')
 	const sections = [header, worksSection]
 
+	//which section is currently visible
 	let currentSectionIndex = 0
+
+	//prevents multiple scroll events occuring at once
 	let scrolling = false
 
 	function scrollToSection(index) {
