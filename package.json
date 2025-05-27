@@ -4,7 +4,9 @@
 	"type": "module",
 	"main": "index.js",
 	"scripts": {
-		"dev": "vite",
+		"dev": "concurrently \"npm run dev:api\" \"npm run dev:front\"",
+		"dev:front": "vite",
+		"dev:api": "npm --prefix api start",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "echo \"Error: no test specified\" && exit 1"
@@ -15,6 +17,7 @@
 	"description": "",
 	"devDependencies": {
 		"autoprefixer": "^10.4.21",
+		"concurrently": "^9.1.2",
 		"imagemin-webp": "^8.0.0",
 		"postcss": "^8.5.3",
 		"sass-embedded": "^1.87.0",

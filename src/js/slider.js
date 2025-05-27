@@ -7,8 +7,8 @@ const slides = [
 		videoSrc: './img/slider/Eternal Stone.mp4',
 	},
 	{
-		title: 'Coming Soon',
-		description: 'Visual Novel Project',
+		title: 'Anicole',
+		description: 'Anime Streaming Website',
 		image: './img/slider/VisualNovel.webp',
 		bgImage: 'url("./img/slider/VisualNovel-large.png")',
 		videoSrc: './img/slider/Visual Novel.mp4',
@@ -94,12 +94,15 @@ function initializeSlider() {
 
 		if (index === 0) {
 			a.href = 'eternalstone.html'
+		} else if (index === 1) {
+			a.href = 'anicole.html'
 		} else {
 			a.href = `/link-${index + 1}`
 		}
 
 		a.classList.add('works__list-link')
-		if (index === 1 || index === 2) {
+
+		if (index === 2) {
 			a.removeAttribute('href')
 			a.style.pointerEvents = 'none'
 			a.style.cursor = 'default'
@@ -119,6 +122,7 @@ function initializeSlider() {
 		li.appendChild(a)
 		listElement.appendChild(li)
 	})
+
 
 	listElement.style.setProperty('--rotateAngle', rotationPerSlide)
 	updateActiveSlide(0)

@@ -10,14 +10,14 @@ body {
 	font-family: 'Cinzel', sans-serif;
 	background-color: #303030;
 	overflow: hidden;
-	cursor: url('/img/cursor.cur'), auto;
+	cursor: url('/img/cursors/cursor.cur'), auto;
 }
 
 button:hover,
 a:hover,
 input:hover,
 li:hover {
-	cursor: url('/img/cursor-hover.cur'), auto;
+	cursor: url('/img/cursors/cursor-hover.cur'), auto;
 }
 
 button {
@@ -378,7 +378,7 @@ ul {
 				transform: scale(1.05);
 
 				&:hover {
-					cursor: url('/img/cursor-hover.cur'), auto;
+					cursor: url('/img/cursors/cursor-hover.cur'), auto;
 				}
 			}
 		}
@@ -408,7 +408,7 @@ ul {
 	}
 
 	&__character.active &__character-canvas:hover {
-		cursor: url('/img/cursor-hover.cur'), auto;
+		cursor: url('/img/cursors/cursor-hover.cur'), auto;
 	}
 
 	&__character {
@@ -421,7 +421,7 @@ ul {
 			font-size: 4.4rem;
 
 			&:hover {
-				cursor: url('/img/cursor-hover.cur'), auto;
+				cursor: url('/img/cursors/cursor-hover.cur'), auto;
 			}
 		}
 
@@ -992,7 +992,7 @@ ul {
 			}
 
 			&:hover {
-				cursor: url('/img/cursor.cur'), auto;
+				cursor: url('/img/cursors/cursor.cur'), auto;
 			}
 		}
 	}

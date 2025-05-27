@@ -1,0 +1,113 @@
+@use './mixins' as *;
+@use './colors' as *;
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+html {
+	font-size: 62.5%;
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: 'Noto Sans', sans-serif;
+	color: #dbdbda;
+    background-color: #000;
+	overflow: auto;
+	cursor: url('/img/cursors/ani-cursor.cur'), auto;
+}
+
+
+button:hover,
+a:hover,
+input:hover,
+li:hover {
+	cursor: url('/img/cursors/ani-cursor-hover.cur'), auto;
+}
+
+li {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+	color: #dbdbda;
+}
+
+.nav {
+	position: fixed;
+	top: 0;
+	z-index: 1000;
+	display: flex;
+	justify-content: space-between;
+	padding: 0 1.2rem;
+	width: 100%;
+	font-size: 2rem;
+	font-weight: 600;
+	background-color: rgba(0, 0, 0, 0.9);
+
+	&__list {
+		display: flex;
+		align-items: center;
+
+		&-el {
+			display: flex;
+			align-items: center;
+			gap: 1.2rem;
+			padding: 1.6rem 3.2rem;
+			height: 100%;
+
+			&:hover {
+				background-color: rgba(0, 0, 0, 1);
+			}
+
+			&--logo {
+				&:hover {
+					background-color: inherit;
+					filter: invert(1);
+				}
+			}
+		}
+	}
+
+	&__img {
+		width: 12.8rem;
+
+		&--user {
+			width: 4.8rem;
+			height: 4.8rem;
+			border-radius: 50%;
+		}
+	}
+
+	&__icon {
+		font-size: 3rem;
+
+		&--profile {
+			font-size: 2rem;
+		}
+	}
+}
+
+.header {
+	height: 100vh;
+	overflow: hidden;
+
+	&__video {
+		// position: absolute;
+		// z-index: -1;
+		width: 100vw;
+		height: 100vh;
+		object-fit: cover;
+	}
+}
+
+.anime-list {
+	min-height: 100vh;
+
+}
