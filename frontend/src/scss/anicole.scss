@@ -17,11 +17,10 @@ html {
 body {
 	font-family: 'Noto Sans', sans-serif;
 	color: #dbdbda;
-    background-color: #000;
+	background-color: #000;
 	overflow: auto;
 	cursor: url('/img/cursors/ani-cursor.cur'), auto;
 }
-
 
 button:hover,
 a:hover,
@@ -107,7 +106,27 @@ a {
 	}
 }
 
+.main {
+	margin: 0 auto;
+	max-width: 120rem;
+}
+
 .anime-list {
+	display: grid;
+	grid-template-columns: repeat(4,1fr);
+	justify-items: center;
+	row-gap: 3.2rem;
+	padding: 4.8rem 0;
 	min-height: 100vh;
 
+	&-card{
+		display: flex;
+		flex-direction: column;
+		gap:1.2rem;
+		width: 24rem;
+
+		&-img{
+			height: 36rem;
+		}
+	}
 }

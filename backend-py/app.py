@@ -1,9 +1,47 @@
 from flask import Flask, render_template, request, Response
 import requests
 from urllib.parse import urljoin, unquote
+from flask_cors import CORS
+app = Flask(__name__)
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}}) 
 BASE_URL = "http://localhost:3000/anime/zoro"
+
+@app.route("/api/top-snippet")
+def top_snippet():
+    # ?page=1, 2, 3 … (domyślnie 1)
+    page = int(request.args.get("page", 1))
+
+    try:
+        # konsumet ma paginację top-airing?page=N
+        r = requests.get(f"{BASE_URL}/top-airing?page={page}", timeout=10)
+        items = r.json().get("results", []) if r.status_code == 200 else []
+    except Exception as e:
+        print("top-snippet error:", e)
+        items = []
+
+    # budujemy HTML tylko z obrazkiem + tytułem
+    html = "".join(
+        f'''
+        <div class="anime-list-card">
+            <img src="{a["image"]}" class="anime-list-card-img" alt="{a["title"]}">
+            <h3 class="anime-list-card-title">{a["title"]}</h3>
+        </div>
+        ''' for a in items
+    )
+    return Response(html, mimetype="text/html")
+
+
+@app.route('/top')
+def top_airing():
+    try:
+        r = requests.get(f"{BASE_URL}/top-airing")
+        top_list = r.json().get("results", []) if r.status_code == 200 else []
+    except Exception as e:
+        print("Błąd top-airing:", e)
+        top_list = []
+    return render_template('top.html', top=top_list)
 
 @app.route('/')
 def index():

@@ -7,6 +7,13 @@ export default defineConfig({
 	publicDir: 'public',
 	server: {
 		open: true,
+		proxy: {
+			'^/api/.*': {
+				target: 'http://localhost:5000',
+				changeOrigin: true,
+				secure: false,
+			},
+		},
 	},
 	plugins: [
 		viteImagemin({
@@ -21,6 +28,7 @@ export default defineConfig({
 			input: {
 				main: resolve(__dirname, 'index.html'),
 				eternal: resolve(__dirname, 'eternalstone.html'),
+				anicike: resolve(__dirname, 'anicole.html'),
 			},
 		},
 	},
