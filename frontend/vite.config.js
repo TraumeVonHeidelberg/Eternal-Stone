@@ -13,6 +13,7 @@ export default defineConfig({
 				changeOrigin: true,
 				secure: false,
 			},
+			'/proxy': { target: 'http://localhost:5000', changeOrigin: true },
 		},
 	},
 	plugins: [
@@ -28,7 +29,9 @@ export default defineConfig({
 			input: {
 				main: resolve(__dirname, 'index.html'),
 				eternal: resolve(__dirname, 'eternalstone.html'),
-				anicike: resolve(__dirname, 'anicole.html'),
+				anicole: resolve(__dirname, 'anicole.html'),
+				anilist: resolve(__dirname, 'anime-list.html'),
+				aniplayer: resolve(__dirname, 'anime-player.html'),
 			},
 		},
 	},

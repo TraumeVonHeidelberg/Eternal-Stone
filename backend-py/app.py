@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response,stream_with_context
 import requests
-from urllib.parse import urljoin, unquote
+from urllib.parse import urljoin, unquote, quote_plus
 from flask_cors import CORS
 app = Flask(__name__)
 
@@ -21,16 +21,43 @@ def top_snippet():
         print("top-snippet error:", e)
         items = []
 
-    # budujemy HTML tylko z obrazkiem + tytułem
     html = "".join(
         f'''
-        <div class="anime-list-card">
+        <a href="/anime-list.html?id={a["id"]}" class="anime-list-card">
             <img src="{a["image"]}" class="anime-list-card-img" alt="{a["title"]}">
-            <h3 class="anime-list-card-title">{a["title"]}</h3>
-        </div>
-        ''' for a in items
+            <h2 class="anime-list-card-title">{a["title"]}</h2>
+        </a>
+        '''
+        for a in items
     )
     return Response(html, mimetype="text/html")
+
+
+@app.route("/api/anime")
+def anime_api():
+    anime_id = request.args.get("id")
+    if not anime_id:
+        return {"error": "no id"}, 400
+
+    try:
+        r = requests.get(f"{BASE_URL}/info?id={anime_id}", timeout=10)
+        return r.json(), r.status_code
+    except Exception as e:
+        print("anime_api error:", e)
+        return {"error": "upstream fail"}, 500
+    
+@app.route("/api/watch")
+def watch_api():
+    ep_id = request.args.get("episodeId")
+    if not ep_id:
+        return {"error": "no episodeId"}, 400
+
+    try:
+        r = requests.get(f"{BASE_URL}/watch?episodeId={ep_id}", timeout=10)
+        return r.json(), r.status_code
+    except Exception as e:
+        print("watch_api error:", e)
+        return {"error": "upstream fail"}, 500
 
 
 @app.route('/top')
@@ -57,65 +84,60 @@ def index():
             print(f"Błąd podczas pobierania danych: {e}")
     return render_template('index.html', results=results, query=query)
 
-@app.route('/anime/<anime_id>')
-def anime(anime_id):
-    try:
-        response = requests.get(f"{BASE_URL}/info?id={anime_id}")
-        if response.status_code == 200:
-            anime_data = response.json()
-            return render_template('episodes.html', anime=anime_data)
-    except Exception as e:
-        print(f"Błąd podczas pobierania danych o anime: {e}")
-    return "Anime not found or API error", 404
 
-@app.route('/watch/<episode_id>')
-def watch(episode_id):
-    try:
-        response = requests.get(f"{BASE_URL}/watch?episodeId={episode_id}")
-        if response.status_code == 200:
-            data = response.json()
-            sources = data.get('sources', [])
-            subtitles = data.get('subtitles', [])
-            video_url = None
-            for source in sources:
-                if source.get('quality') == 'default':
-                    video_url = source['url']
-                    break
-            if not video_url and sources:
-                video_url = sources[0]['url']
-            print("▶️ Finalny link do odtwarzania:", video_url)
-            return render_template('player.html', video_url="/proxy?url=" + video_url, subtitles=subtitles)
-    except Exception as e:
-        print(f"Błąd podczas pobierania odcinka: {e}")
-    return "Odcinek niedostępny lub API error", 404
-
-@app.route('/proxy')
+@app.route("/proxy")
 def proxy():
-    raw_url = request.args.get('url')
+    raw_url = request.args.get("url")
     if not raw_url:
         return "Brak URL", 400
+
     url = unquote(raw_url)
     headers = {"Referer": "https://zoro.to"}
-    print(f"🔁 Proxy żąda: {url}")
+
     try:
-        r = requests.get(url, headers=headers, stream=True)
+        r = requests.get(url, headers=headers, stream=True, timeout=15)
         if r.status_code != 200:
-            print(f"❌ Błąd HTTP {r.status_code} przy pobieraniu: {url}")
             return f"Błąd pobierania: {r.status_code}", 404
-        if ".m3u8" in url:
+
+        # ── LISTA M3U8 ─────────────────────────────────────
+        if url.lower().endswith(".m3u8"):
             playlist = r.text
-            base_url = url.rsplit("/", 1)[0] + "/"
-            rewritten = []
-            for line in playlist.splitlines():
-                if line.strip().endswith(".ts") or line.strip().endswith(".m3u8"):
-                    proxied_line = "/proxy?url=" + urljoin(base_url, line.strip())
-                    rewritten.append(proxied_line)
-                else:
-                    rewritten.append(line)
-            return Response("\n".join(rewritten), content_type='application/vnd.apple.mpegurl')
-        return Response(r.raw, content_type=r.headers.get('content-type'))
+            base = url.rsplit("/", 1)[0] + "/"
+
+            def rewrite(line: str) -> str:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    return line                           # komentarz/metadata zostawiamy
+                # absolutny czy względny, wszystko przepuszczamy przez proxy
+                absolute = urljoin(base, line)
+                return "/proxy?url=" + quote_plus(absolute)
+
+            rewritten = "\n".join(rewrite(l) for l in playlist.splitlines())
+            return Response(
+                rewritten,
+                mimetype="application/x-mpegURL"
+            )
+
+        # ── SEGMENTY ──────────────────────────────────────
+        def gen():
+            for chunk in r.iter_content(chunk_size=8192):
+                if chunk:
+                    yield chunk
+
+        resp = Response(
+            stream_with_context(gen()),
+            content_type=r.headers.get("Content-Type", "video/mp2t"),
+            direct_passthrough=True
+        )
+        # przekazujemy przydatne nagłówki
+        for h in ("Content-Length", "Content-Range"):
+            if h in r.headers:
+                resp.headers[h] = r.headers[h]
+        resp.headers["Access-Control-Allow-Origin"] = "*"
+        return resp
+
     except Exception as e:
-        print(f"❌ Błąd proxy: {e}")
+        print("❌ Błąd proxy:", e)
         return "Błąd proxy", 500
 
 if __name__ == '__main__':
