@@ -58,19 +58,23 @@ a {
 			display: flex;
 			align-items: center;
 			gap: 1.2rem;
-			padding: 1.6rem 3.2rem;
 			height: 100%;
 
-			&:hover {
-				background-color: rgba(0, 0, 0, 1);
+			&--user {
+				padding: 1.2rem 3.2rem;
 			}
+		}
+	}
 
-			&--logo {
-				&:hover {
-					background-color: inherit;
-					filter: invert(1);
-				}
-			}
+	&__link {
+		display: inline-flex;
+		align-items: center;
+		padding: 1.2rem 3.2rem;
+		height: 100%;
+		// background-color: red;
+
+		&:hover {
+			background-color: rgba(0, 0, 0, 1);
 		}
 	}
 
@@ -113,20 +117,31 @@ a {
 
 .anime-list {
 	display: grid;
-	grid-template-columns: repeat(4,1fr);
+	grid-template-columns: repeat(4, 1fr);
 	justify-items: center;
 	row-gap: 3.2rem;
 	padding: 4.8rem 0;
 	min-height: 100vh;
 
-	&-card{
+	&-card {
 		display: flex;
 		flex-direction: column;
-		gap:1.2rem;
+		gap: 1.2rem;
 		width: 24rem;
 
-		&-img{
+		&-img {
 			height: 36rem;
 		}
+	}
+}
+
+.video-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+
+	&__video {
+		width: 60vw;
 	}
 }

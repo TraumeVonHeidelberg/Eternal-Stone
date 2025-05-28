@@ -3,15 +3,24 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Odtwarzacz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="/img/logo/anicole/favicon-64.png" type="image/png">
+    <link rel="apple-touch-icon" href="/img/anicole/favicon-180.png">
+    <link rel="manifest" href="/manifest-anicole.webmanifest">
+    <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/src/scss/anicole.scss" />
+    <script type="module" src="/src/js/anicole/animePlayer.js" defer></script>
 </head>
 
 <body>
-    <video id="video" controls style="width:100%;max-width:960px;margin:auto;display:block;"></video>
-
-    <!-- Twój skrypt playera (pobiera /api/watch ...) -->
-    <script type="module" src="/src/js/anicole/animePlayer.js"></script>
+    <div class="video-container">
+        <video class="video-container__video" id="video" controls></video>
+    </div>
 </body>
 
 </html>
