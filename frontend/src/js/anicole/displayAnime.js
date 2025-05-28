@@ -1,75 +1,100 @@
-const container = document.getElementById('anime-list') // sekcja, w której rysujemy
-if (!container) console.warn('Brak #anime-popular na tej stronie')
+const container = document.getElementById('anime-list')
+const navHeight = document.querySelector('.nav')?.offsetHeight || 0
+const tabs = document.querySelectorAll('.nav__list-el[data-category]')
+const form = document.querySelector('.nav__form')
+const searchInput = form.querySelector('.nav__form-search')
 
 const ENDPOINT = {
-	// mapowanie kategorii → endpoint Flaska
 	popular: '/api/top-snippet',
 	new: '/api/new-snippet',
+	search: '/api/search-snippet',
 }
 
-let current = 'popular' // co aktualnie pokazujemy
-const pages = { popular: 1, new: 1 } // osobny licznik stron
-let loading = false // blokada podwójnego fetchu
-let endOfData = { popular: false, new: false } // czy API zwróciło pustą stronę?
+let current = localStorage.getItem('category') || 'popular'
+const pages = { popular: 1, new: 1, search: 1 }
+let loading = false
+let endOfData = { popular: false, new: false, search: false }
+let query = ''
+
+function buildURL() {
+	let url = `${ENDPOINT[current]}?page=${pages[current]}`
+	if (current === 'search') url += `&q=${encodeURIComponent(query)}`
+	return url
+}
 
 function loadPage() {
-	if (loading || endOfData[current] || !container) return
+	if (loading || endOfData[current]) return
 	loading = true
-
-	fetch(`${ENDPOINT[current]}?page=${pages[current]}`)
-		.then(r => r.text())
+	const url = buildURL()
+	console.log('[Anime] fetch URL:', url)
+	console.log('[Anime] page:', pages[current])
+	fetch(url)
+		.then(r => {
+			console.log('[Anime] response status:', r.status)
+			return r.text()
+		})
 		.then(html => {
 			if (html.trim()) {
 				container.insertAdjacentHTML('beforeend', html)
-				pages[current]++ // przygotuj kolejną stronę
+				pages[current]++
 			} else {
-				endOfData[current] = true // brak kolejnych danych
+				endOfData[current] = true
+				console.log('[Anime] endOfData reached for', current)
 			}
 			loading = false
 		})
 		.catch(err => {
-			console.error(`Błąd ładowania ${current}:`, err)
+			console.error('[Anime] fetch error:', err)
 			loading = false
 		})
 }
 
 function handleScroll() {
-	const bottom = window.innerHeight + window.scrollY
-	if (bottom >= document.body.offsetHeight - 150) loadPage()
+	if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 150) {
+		loadPage()
+	}
+}
+
+function resetView() {
+	container.innerHTML = ''
+	pages[current] = 1
+	endOfData[current] = false
+	const y = container.getBoundingClientRect().top + window.scrollY - navHeight + 1
+	window.scrollTo({ top: y, behavior: 'smooth' })
+}
+
+function setActiveTabs() {
+	tabs.forEach(el => el.classList.toggle('nav__list-el--active', el.dataset.category === current))
 }
 
 function switchCategory(cat) {
-	if (cat === current) return // klik na aktywną zakładkę → nic
-
+	if (cat === current) return
 	current = cat
-
-	// 1) zmień wyróżnienie w menu
-	document
-		.querySelectorAll('.nav__link[data-category]')
-		.forEach(a => a.classList.toggle('nav__link--active', a.dataset.category === cat))
-
-	// 2) wyczyść ekran i przewiń do góry
-	container.innerHTML = ''
-	window.scrollTo({ top: 0, behavior: 'instant' })
-
-	// 3) zresetuj licznik i flagę końca danych
-	pages[cat] = 1
-	endOfData[cat] = false
-
-	// 4) pobierz pierwszą stronę nowej kategorii
+	localStorage.setItem('category', cat)
+	console.log('[Anime] switchCategory:', current)
+	query = ''
+	setActiveTabs()
+	resetView()
 	loadPage()
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-	// podpinamy kliknięcia w navbarze (delegacja po data-category)
-	document.querySelectorAll('.nav__link[data-category]').forEach(link =>
-		link.addEventListener('click', e => {
-			e.preventDefault()
-			switchCategory(link.dataset.category)
-		})
-	)
+tabs.forEach(el => el.addEventListener('click', () => switchCategory(el.dataset.category)))
 
-	// inicjalne dane + scroll
+form.addEventListener('submit', e => {
+	e.preventDefault()
+	const q = searchInput.value.trim()
+	if (!q) return
+	query = q
+	current = 'search'
+	console.log('[Anime] search query:', query)
+	setActiveTabs()
+	resetView()
 	loadPage()
-	window.addEventListener('scroll', handleScroll)
+})
+
+window.addEventListener('scroll', handleScroll)
+
+document.addEventListener('DOMContentLoaded', () => {
+	setActiveTabs()
+	loadPage()
 })

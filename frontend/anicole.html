@@ -23,29 +23,22 @@
     <audio id="bg-music" src="/audio/anicole/welcome.mp3" preload="auto" loop></audio>
     <nav class="nav">
         <ul class="nav__list">
-            <li class="nav__list-el nav__list-el--logo">
-                <a href="anicole.html" class="nav__link" rel="noopener">
-                    <img src="./img/logo/anicole/logo.webp" alt="Logo of anicole" class="nav__img">
-                </a>
-            </li>
             <li class="nav__list-el">
-                <a href="" class="nav__link" rel="noopener" data-category="new">New</a>
+                <img src="./img/logo/anicole/logo.webp" alt="Logo of anicole" class="nav__img">
             </li>
-            <li class="nav__list-el">
-                <a href="" class="nav__link" rel="noopener" data-category="popular">Popular</a>
-            </li>
+            <li class="nav__list-el" data-category="new">New</li>
+            <li class="nav__list-el" data-category="popular">Popular</li>
         </ul>
 
         <ul class="nav__list">
             <li class="nav__list-el">
-                <a href="" class="nav__link" rel="noopener">
-                    <i class="fa-solid fa-magnifying-glass nav__icon"></i>
-                </a>
+                <form action="" class="nav__form">
+                    <input type="search" class="nav__form-search" autofocus required>
+                    <i class="fa-solid fa-magnifying-glass nav__icon nav__icon--search"></i>
+                </form>
             </li>
             <li class="nav__list-el">
-                <a href="" class="nav__link" rel="noopener">
-                    <i class="fa-regular fa-bookmark nav__icon"></i>
-                </a>
+                <i class="fa-regular fa-bookmark nav__icon"></i>
             </li>
             <li class="nav__list-el nav__list-el--user">
                 <img src="./img/anicole/user-example.webp" alt="User profile picture" class="nav__img nav__img--user">

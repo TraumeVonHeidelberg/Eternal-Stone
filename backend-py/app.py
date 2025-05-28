@@ -56,6 +56,34 @@ def top_snippet():
     )
     return Response(html, mimetype="text/html")
 
+@app.route("/api/search-snippet")
+def search_snippet():
+    page = int(request.args.get("page", 1))
+    q = request.args.get("q", "").strip()
+    if not q:
+        return Response("", mimetype="text/html")
+
+    # ⬇︎ JEDYNA ZMIANA – wstawiamy frazę bezpośrednio w ścieżkę
+    upstream_url = f"{BASE_URL}/{quote_plus(q)}?page={page}"
+    app.logger.debug(f"[search-snippet] GET {upstream_url}")
+
+    try:
+        r     = requests.get(upstream_url, timeout=10)
+        data  = r.json()
+        items = data.get("results", []) or data.get("data", []) or []
+    except Exception as e:
+        app.logger.error(f"[search-snippet] ERROR: {e}")
+        items = []
+
+    html = "".join(
+        f'''
+        <a href="/anime-list.html?id={a["id"]}" class="anime-list-card">
+            <img src="{a["image"]}" class="anime-list-card-img" alt="{a["title"]}">
+            <h2 class="anime-list-card-title">{a["title"]}</h2>
+        </a>
+        ''' for a in items
+    )
+    return Response(html, mimetype="text/html")
 
 @app.route("/api/anime")
 def anime_api():
