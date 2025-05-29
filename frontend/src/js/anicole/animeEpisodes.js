@@ -10,12 +10,15 @@ fetch(`/api/anime?id=${encodeURIComponent(animeId)}`)
 		titleEl.textContent = data.title
 		data.episodes.forEach(ep => {
 			const card = document.createElement('div')
-			card.className = 'anime-list-card'
+			card.className = 'episode-item'
 			card.innerHTML = `
-    <img src="${ep.thumbnail}" alt="Odcinek ${ep.number}" class="anime-list-card-img">
-    <h2 class="anime-list-card-title">Odcinek ${ep.number}</h2>
-    <a href="/anime-player.html?id=${encodeURIComponent(ep.id)}">▶️ Oglądaj</a>
-  `
+		<p class="episode-number">Episode ${ep.number}</p>
+		<h2 class="episode-name">${ep.title || `Odcinek ${ep.number}`}</h2>
+		<a class="episode-watch-btn" href="/anime-player.html?id=${encodeURIComponent(ep.id)}">
+			<i class="fa-solid fa-play"></i>
+			Oglądaj
+		</a>
+	`
 			listEl.appendChild(card)
 		})
 	})

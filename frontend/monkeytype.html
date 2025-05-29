@@ -15,10 +15,95 @@
     <link rel="manifest" href="/manifest-anicole.webmanifest">
     <script src="https://kit.fontawesome.com/3b7d7d2b37.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/src/scss/anicole.scss">
+    <script type="module" src="src/js/anicole/monkeytype.js" defer></script>
+
 </head>
 
 <body>
-    
+    <section class="typing-test">
+        <div class="typing-test__container">
+
+            <h1 class="typing-test__title">Typing Speed Test</h1>
+
+            <div class="typing-test__controls">
+                <button id="startBtn" class="typing-test__button typing-test__button--primary">
+                    Start Test
+                </button>
+                <button id="statsBtn" class="typing-test__button typing-test__button--secondary">
+                    Show Statistics
+                </button>
+                <button id="clearBtn" class="typing-test__button typing-test__button--danger">
+                    Clear History
+                </button>
+            </div>
+
+            <div id="timer" class="typing-test__timer hidden">0.0 s</div>
+
+            <div id="typingArea" class="typing-test__typing-area hidden">
+                <div id="textDisplay" class="typing-test__text-display"></div>
+
+                <textarea id="inputArea" class="typing-test__input" placeholder="Start typing here..."
+                    disabled></textarea>
+            </div>
+
+            <div id="currentStats" class="typing-test__stats hidden">
+                <div class="typing-test__stat">
+                    <div class="typing-test__stat-label">Time</div>
+                    <div id="timeValue" class="typing-test__stat-value">0 s</div>
+                </div>
+
+                <div class="typing-test__stat">
+                    <div class="typing-test__stat-label">Words/min</div>
+                    <div id="wpmValue" class="typing-test__stat-value">0</div>
+                </div>
+
+                <div class="typing-test__stat">
+                    <div class="typing-test__stat-label">Chars/min</div>
+                    <div id="cpmValue" class="typing-test__stat-value">0</div>
+                </div>
+
+                <div class="typing-test__stat">
+                    <div class="typing-test__stat-label">Accuracy</div>
+                    <div id="accuracyValue" class="typing-test__stat-value">0 %</div>
+                </div>
+
+                <div class="typing-test__stat">
+                    <div class="typing-test__stat-label">Errors</div>
+                    <div id="errorsValue" class="typing-test__stat-value">0</div>
+                </div>
+
+            </div>
+
+            <div id="resultsSection" class="typing-test__results hidden">
+                <h2 class="typing-test__subtitle">Test History</h2>
+                <div id="resultsContainer" class="typing-test__results-container"></div>
+            </div>
+
+        </div>
+
+        <div id="resultModal" class="typing-test__modal hidden">
+            <div class="typing-test__modal-content">
+                <h2 class="typing-test__subtitle">Test Result</h2>
+
+                <div class="typing-test__stats">
+                    <div class="typing-test__stat">
+                        <div class="typing-test__stat-label">Time</div>
+                        <div id="modalTime" class="typing-test__stat-value">0 s</div>
+                    </div>
+                    <div class="typing-test__stat">
+                        <div class="typing-test__stat-label">Words/min</div>
+                        <div id="modalWpm" class="typing-test__stat-value">0</div>
+                    </div>
+                    <div class="typing-test__stat">
+                        <div class="typing-test__stat-label">Accuracy</div>
+                        <div id="modalAccuracy" class="typing-test__stat-value">0 %</div>
+                    </div>
+                </div>
+
+                <button class="typing-test__button typing-test__button--primary" id="closeModal">OK</button>
+            </div>
+        </div>
+    </section>
 </body>
 
 </html>
