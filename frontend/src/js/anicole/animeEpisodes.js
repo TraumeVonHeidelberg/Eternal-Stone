@@ -12,9 +12,10 @@ fetch(`/api/anime?id=${encodeURIComponent(animeId)}`)
 			const card = document.createElement('div')
 			card.className = 'anime-list-card'
 			card.innerHTML = `
-        <h2 class="anime-list-card-title">Odcinek ${ep.number}</h2>
-        <a href="/anime-player.html?id=${encodeURIComponent(ep.id)}">▶️ Oglądaj</a>
-      `
+    <img src="${ep.thumbnail}" alt="Odcinek ${ep.number}" class="anime-list-card-img">
+    <h2 class="anime-list-card-title">Odcinek ${ep.number}</h2>
+    <a href="/anime-player.html?id=${encodeURIComponent(ep.id)}">▶️ Oglądaj</a>
+  `
 			listEl.appendChild(card)
 		})
 	})

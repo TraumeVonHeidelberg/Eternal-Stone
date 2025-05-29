@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, Response,stream_with_context
+from flask import Flask, render_template, request, Response,stream_with_context,jsonify
 import requests
 from urllib.parse import urljoin, unquote, quote_plus
+from bs4 import BeautifulSoup
 from flask_cors import CORS
 app = Flask(__name__)
 
-app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}}) 
 BASE_URL = "http://localhost:3000/anime/zoro"
 
@@ -91,12 +91,26 @@ def anime_api():
     if not anime_id:
         return {"error": "no id"}, 400
 
-    try:
-        r = requests.get(f"{BASE_URL}/info?id={anime_id}", timeout=10)
-        return r.json(), r.status_code
-    except Exception as e:
-        print("anime_api error:", e)
-        return {"error": "upstream fail"}, 500
+    r = requests.get(f"{BASE_URL}/info?id={anime_id}", timeout=10)
+    if r.status_code != 200:
+        return {"error": "upstream fail"}, r.status_code
+    info = r.json()
+
+    for ep in info.get("episodes", []):
+        # domyślnie globalny cover serialu
+        thumb = info.get("image")
+        try:
+            # jedno wywołanie JSON zamiast scrapowania HTML
+            w = requests.get(
+                f"{BASE_URL}/watch?episodeId={ep['id']}", timeout=5
+            ).json()
+            # wybieramy klucz, który zawiera miniaturkę
+            thumb = w.get("thumbnail") or w.get("poster") or thumb
+        except Exception:
+            pass
+        ep["thumbnail"] = thumb
+
+    return jsonify(info)
     
 @app.route("/api/watch")
 def watch_api():
@@ -151,7 +165,6 @@ def proxy():
         if r.status_code != 200:
             return f"Błąd pobierania: {r.status_code}", 404
 
-        # ── LISTA M3U8 ─────────────────────────────────────
         if url.lower().endswith(".m3u8"):
             playlist = r.text
             base = url.rsplit("/", 1)[0] + "/"
@@ -159,8 +172,7 @@ def proxy():
             def rewrite(line: str) -> str:
                 line = line.strip()
                 if not line or line.startswith("#"):
-                    return line                           # komentarz/metadata zostawiamy
-                # absolutny czy względny, wszystko przepuszczamy przez proxy
+                    return line                         
                 absolute = urljoin(base, line)
                 return "/proxy?url=" + quote_plus(absolute)
 
@@ -169,8 +181,7 @@ def proxy():
                 rewritten,
                 mimetype="application/x-mpegURL"
             )
-
-        # ── SEGMENTY ──────────────────────────────────────
+        
         def gen():
             for chunk in r.iter_content(chunk_size=8192):
                 if chunk:
@@ -181,7 +192,7 @@ def proxy():
             content_type=r.headers.get("Content-Type", "video/mp2t"),
             direct_passthrough=True
         )
-        # przekazujemy przydatne nagłówki
+   
         for h in ("Content-Length", "Content-Range"):
             if h in r.headers:
                 resp.headers[h] = r.headers[h]

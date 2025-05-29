@@ -32,6 +32,7 @@ export default defineConfig({
 				anicole: resolve(__dirname, 'anicole.html'),
 				anilist: resolve(__dirname, 'anime-list.html'),
 				aniplayer: resolve(__dirname, 'anime-player.html'),
+				monkeytype: resolve(__dirname, 'monkeytype.html'),
 			},
 		},
 	},

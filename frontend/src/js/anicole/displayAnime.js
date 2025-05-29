@@ -23,28 +23,20 @@ function buildURL() {
 }
 
 function loadPage() {
-	if (loading || endOfData[current]) return
+	if (current === 'games' || loading || endOfData[current]) return
 	loading = true
-	const url = buildURL()
-	console.log('[Anime] fetch URL:', url)
-	console.log('[Anime] page:', pages[current])
-	fetch(url)
-		.then(r => {
-			console.log('[Anime] response status:', r.status)
-			return r.text()
-		})
+	fetch(buildURL())
+		.then(r => r.text())
 		.then(html => {
 			if (html.trim()) {
 				container.insertAdjacentHTML('beforeend', html)
 				pages[current]++
 			} else {
 				endOfData[current] = true
-				console.log('[Anime] endOfData reached for', current)
 			}
 			loading = false
 		})
-		.catch(err => {
-			console.error('[Anime] fetch error:', err)
+		.catch(() => {
 			loading = false
 		})
 }
@@ -67,15 +59,37 @@ function setActiveTabs() {
 	tabs.forEach(el => el.classList.toggle('nav__list-el--active', el.dataset.category === current))
 }
 
+function renderGames() {
+	const link = document.createElement('a')
+	link.href = '/monkeytype.html'
+	link.className = 'anime-list-card-link'
+
+	const card = document.createElement('div')
+	card.className = 'anime-list-card'
+	card.innerHTML = `
+    <img
+      src="/img/anicole/user-example.webp"
+      alt="Monkeytype"
+      class="anime-list-card-img"
+    >
+    <h2 class="anime-list-card-title">Monkeytype</h2>
+  `
+
+	link.appendChild(card)
+	container.appendChild(link)
+}
 function switchCategory(cat) {
 	if (cat === current) return
 	current = cat
 	localStorage.setItem('category', cat)
-	console.log('[Anime] switchCategory:', current)
 	query = ''
 	setActiveTabs()
 	resetView()
-	loadPage()
+	if (cat === 'games') {
+		renderGames()
+	} else {
+		loadPage()
+	}
 }
 
 tabs.forEach(el => el.addEventListener('click', () => switchCategory(el.dataset.category)))
@@ -86,7 +100,7 @@ form.addEventListener('submit', e => {
 	if (!q) return
 	query = q
 	current = 'search'
-	console.log('[Anime] search query:', query)
+	localStorage.setItem('category', current)
 	setActiveTabs()
 	resetView()
 	loadPage()
@@ -96,5 +110,10 @@ window.addEventListener('scroll', handleScroll)
 
 document.addEventListener('DOMContentLoaded', () => {
 	setActiveTabs()
-	loadPage()
+	if (current === 'games') {
+		resetView()
+		renderGames()
+	} else {
+		loadPage()
+	}
 })
