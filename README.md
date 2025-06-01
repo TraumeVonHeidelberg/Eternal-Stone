@@ -18,12 +18,12 @@ python --version
 
 ```bash
 git clone https://github.com/TraumeVonHeidelberg/Eternal-Stone
-cd Eternal-Stone-Industries
+cd Eternal-Stone
 npm install
 npm --prefix frontend install
 npm --prefix api-node install
-python -m venv venv
-venv\Scripts\activate
+python -m venv backend-py/venv
+backend-py\venv\Scripts\Activate.ps1
 pip install -r backend-py/requirements.txt
 ```
 
@@ -42,3 +42,12 @@ npm --prefix frontend run build
 ```
 
 Built files are located in the dist/ directory.
+
+## Description
+
+**Anicole** is a service that allows users to watch anime online and play exciting games related to the main theme.
+In the current version, users can browse new and popular anime or search for a specific title.
+The games section currently includes only the Monkeytype game, which fully meets the requirements of the final project.
+I'm planning to expand this app futher in the future adding new options like login, saving episodes, AI subtitles
+translation and improving it's design.
+App logo and header animation were made by me.
